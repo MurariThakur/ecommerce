@@ -22,10 +22,9 @@
         <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
+                <a class="h1"><b>Admin</b></a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
 
                 @include('admin.layouts.message')
 
@@ -50,40 +49,55 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" name="remember" id="remember"
-                                    {{ old('remember') ? 'checked' : '' }}>
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                        <!-- /.col -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="icheck-primary">
+              <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+              <label for="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block py-2">Sign In</button>
+          </div>
+        </div>
                     </div>
                 </form>
 
-                <div class="social-auth-links text-center mt-2 mb-3">
-                    <a href="#" class="btn btn-block btn-primary">
-                        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                    </a>
-                    <a href="#" class="btn btn-block btn-danger">
-                        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                    </a>
+                <!-- OR Divider -->
+                <div class="text-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <hr class="flex-grow-1">
+                        <span class="px-3 text-muted small">OR</span>
+                        <hr class="flex-grow-1">
+                    </div>
+                </div>
+
+                <div class="social-auth-links text-center mb-4">
+                    <div class="row" style="margin: 0 8px;">
+                        <div class="col-6 pr-1">
+                            <a href="#" class="btn btn-block btn-primary py-2 mb-2">
+                                <i class="fab fa-facebook mr-1"></i> Facebook
+                            </a>
+                        </div>
+                        <div class="col-6 pl-1">
+                            <a href="#" class="btn btn-block btn-danger py-2 mb-2">
+                                <i class="fab fa-google-plus mr-1"></i> Google+
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.social-auth-links -->
 
-                <p class="mb-1">
-                    <a href="forgot-password.html">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="register.html" class="text-center">Register a new membership</a>
-                </p>
+                <div class="text-center mb-3">
+                    <a href="forgot-password.html" class="text-muted">
+                        <i class="fas fa-key mr-1"></i>Forgot your password?
+                    </a>
+                </div>
             </div>
             <!-- /.card-body -->
         </div>
