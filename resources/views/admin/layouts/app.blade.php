@@ -37,6 +37,61 @@
     </div>
     <!-- ./wrapper -->
 
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" style="max-width: 60%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0;">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="logoutModalLabel">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Confirm Logout
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 4rem;"></i>
+                    <h5 class="mb-3">Are you sure you want to logout?</h5>
+                    <p class="text-muted">You will be logged out from this session and redirected to the login page.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                    <form method="POST" action="{{ route('logout') }}" style="display: inline-block;">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Yes, Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    #logoutModal .modal-dialog {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    #logoutModal .modal-content {
+        width: 100%;
+        max-width: none;
+    }
+    
+    @media (max-width: 768px) {
+        #logoutModal .modal-dialog {
+            max-width: 90%;
+            padding: 15px;
+        }
+    }
+    </style>
+
     <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->

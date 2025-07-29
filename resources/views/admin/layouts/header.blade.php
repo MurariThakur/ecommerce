@@ -390,15 +390,11 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) { document.getElementById('logout-form').submit(); }">
+                    <a href="#" class="nav-link" data-toggle="modal" data-target="#logoutModal">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>
                     </a>
                 </li>
-
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
 
             </ul>
         </nav>
