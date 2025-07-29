@@ -125,7 +125,13 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Alexander Pierce</a>
+                <a href="#" class="d-block">
+                    {{ Auth::user()->name ?? 'User' }}
+                    @if(Auth::user()->isAdmin())
+                        <span class="badge badge-warning badge-sm ml-1">Admin</span>
+                    @endif
+                </a>
+                <small class="text-muted">{{ Auth::user()->status }}</small>
             </div>
         </div>
 
@@ -146,12 +152,11 @@
                     </a>
                 </li>
 
-                 <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{ url('admin/dsd') }}" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Admin
-
                         </p>
                     </a>
                 </li>
@@ -383,6 +388,17 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) { document.getElementById('logout-form').submit(); }">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
 
             </ul>
         </nav>
