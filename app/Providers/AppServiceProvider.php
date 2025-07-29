@@ -17,8 +17,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+public function boot(): void
     {
+        // Register admin middleware alias
+        $this->app['router']->aliasMiddleware('admin', \App\Http\Middleware\AdminMiddleware::class);
         //
     }
 }
