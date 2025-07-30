@@ -96,9 +96,15 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-1">
+                                                    <!-- View Button -->
+                                                    <a href="{{ route('admin.show', $admin->id) }}"
+                                                       class="btn btn-primary btn-sm" title="View">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+
                                                     <!-- Edit Button -->
                                                     <a href="{{ route('admin.edit', $admin->id) }}"
-                                                       class="btn btn-info btn-sm" title="Edit">
+                                                       class="btn btn-info btn-sm ml-1" title="Edit">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
 

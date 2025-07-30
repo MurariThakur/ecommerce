@@ -46,6 +46,17 @@ class AdminController extends Controller
     }
 
     /**
+     * Show admin details
+     */
+    public function show($id)
+    {
+        $title = 'View Admin';
+        $admin = User::findOrFail($id);
+
+        return view('admin.admin.show', compact('title', 'admin'));
+    }
+
+    /**
      * Edit admin
      */
     public function edit($id)
