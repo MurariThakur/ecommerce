@@ -53,6 +53,26 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ url('admin/brand') }}"
+                        class="nav-link {{ request()->is('admin/brand*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-briefcase"></i>
+                        <p>
+                            Brand
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url('admin/color') }}"
+                        class="nav-link {{ request()->is('admin/color*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-palette"></i>
+                        <p>
+                            Color
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ url('admin/products') }}" class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-box"></i>
                         <p>

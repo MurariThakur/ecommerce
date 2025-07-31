@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\BrandController;
+
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('login.post');
@@ -48,6 +50,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/subcategory/update/{subcategory}', [SubcategoryController::class, 'update'])->name('admin.subcategory.update');
     Route::delete('/admin/subcategory/delete/{subcategory}', [SubcategoryController::class, 'destroy'])->name('admin.subcategory.destroy');
     Route::post('/admin/subcategory/toggle-status/{subcategory}', [SubcategoryController::class, 'toggleStatus'])->name('admin.subcategory.toggle.status');
+
+    // Brand management routes
+    Route::resource('admin/brand', BrandController::class)->names([
+        'index' => 'admin.brand.index',
+        'create' => 'admin.brand.create',
+        'store' => 'admin.brand.store',
+        'show' => 'admin.brand.show',
+        'edit' => 'admin.brand.edit',
+        'update' => 'admin.brand.update',
+        'destroy' => 'admin.brand.destroy',
+    ]);
+    Route::post('admin/brand/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('admin.brand.toggle.status');
 
     // Product management routes
     Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.product.index');
