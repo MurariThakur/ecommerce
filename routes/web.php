@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\ColorController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -62,6 +63,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'destroy' => 'admin.brand.destroy',
     ]);
     Route::post('admin/brand/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('admin.brand.toggle.status');
+
+    // Color management routes
+    Route::resource('admin/color', ColorController::class)->names([
+        'index' => 'admin.color.index',
+        'create' => 'admin.color.create',
+        'store' => 'admin.color.store',
+        'show' => 'admin.color.show',
+        'edit' => 'admin.color.edit',
+        'update' => 'admin.color.update',
+        'destroy' => 'admin.color.destroy',
+    ]);
+    Route::post('admin/color/{color}/toggle-status', [ColorController::class, 'toggleStatus'])->name('admin.color.toggle.status');
 
     // Product management routes
     Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.product.index');
