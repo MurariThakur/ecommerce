@@ -88,6 +88,14 @@ class Product extends Model
     }
 
     /**
+     * Direct relationship with ProductImage 
+     */
+    public function productImages()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('order');
+    }
+
+    /**
      * Get product sizes as array of size names
      */
     public function getSizeNamesAttribute()
