@@ -14,7 +14,7 @@
     <!-- icheck bootstrap -->
     <link rel="stylesheet" href="{{ url('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte.min.css') }}"
 </head>
 
 <body class="hold-transition login-page">
@@ -28,7 +28,7 @@
 
                 @include('admin.layouts.message')
 
-                <form action="{{ route('login') }}" method="post">
+                <form action="{{ route('login.post') }}" method="post">
                     @csrf
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"

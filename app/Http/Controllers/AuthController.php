@@ -49,7 +49,7 @@ class AuthController extends Controller
         // Convert remember field from 'on' to boolean
         $data = $request->all();
         $data['remember'] = $request->has('remember') ? true : false;
-        
+
         // Validate input
         $validator = Validator::make($data, [
             'email' => ['required', 'string', 'email', 'max:255'],
@@ -62,10 +62,11 @@ class AuthController extends Controller
             return back()->withErrors($validator)->withInput($request->only('email'));
         }
 
+
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
-        // Check if user exists and is active
+        // Check if user exists and is admin
         $user = User::where('email', $credentials['email'])->first();
 
         if (!$user) {
@@ -75,11 +76,26 @@ class AuthController extends Controller
             ])->withInput($request->only('email'));
         }
 
+        if ($user->is_admin != 1) {
+            RateLimiter::hit($key);
+            return back()->withErrors([
+                'email' => 'You do not have admin access.'
+            ])->withInput($request->only('email'));
+        }
+
         // Check if user account is active
         if (!$user->isActive()) {
             RateLimiter::hit($key);
             return back()->withErrors([
                 'email' => 'Your account has been deactivated. Please contact administrator.'
+            ])->withInput($request->only('email'));
+        }
+
+        // Check if user is an admin
+        if (!$user->isAdmin()) {
+            RateLimiter::hit($key);
+            return back()->withErrors([
+                'email' => 'Access denied. Admin privileges required.'
             ])->withInput($request->only('email'));
         }
 
