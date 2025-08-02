@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Models\Brand;
+use App\Models\Color;
+use App\Models\ProductColor;
+use App\Models\ProductSize;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
 
@@ -28,9 +32,11 @@ class ProductController extends Controller
      */
     public function create()
     {
+
         $categories = Category::active()->pluck('name', 'id');
-        $subcategories = Subcategory::active()->pluck('name', 'id');
-        return view('admin.product.create', compact('categories', 'subcategories'));
+        $brands = Brand::active()->pluck('name', 'id');
+        $colors = Color::active()->pluck('name', 'id');
+        return view('admin.product.create', compact('categories', 'brands', 'colors'));
     }
 
     /**
@@ -38,7 +44,36 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        Product::create($request->validated());
+        // Create the product
+        // dd($request->all());
+        $productData = $request->validated();
+        unset($productData['colors'], $productData['sizes']); // Remove colors and sizes from product data
+
+        $product = Product::create($productData);
+
+        // Store colors if provided
+        if ($request->has('colors') && !empty($request->colors)) {
+            foreach ($request->colors as $colorId) {
+                ProductColor::create([
+                    'product_id' => $product->id,
+                    'color_id' => $colorId
+                ]);
+            }
+        }
+
+        // Store sizes if provided
+        if ($request->has('sizes') && !empty($request->sizes)) {
+            foreach ($request->sizes as $sizeData) {
+                ProductSize::create([
+                    'product_id' => $product->id,
+                    'size_name' => $sizeData['size_name'],
+                    'size_value' => $sizeData['size_value'] ?? '', // Assuming size_value is the same as size_name
+                    'additional_price' => $sizeData['additional_price'] ?? 0,
+                    'quantity' => $sizeData['stock_quantity'] ?? 0
+                ]);
+            }
+        }
+
         return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
     }
 
@@ -57,8 +92,29 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::active()->pluck('name', 'id');
-        $subcategories = Subcategory::active()->pluck('name', 'id');
-        return view('admin.product.edit', compact('product', 'categories', 'subcategories'));
+        $brands = Brand::active()->pluck('name', 'id');
+        $colors = Color::active()->pluck('name', 'id');
+
+        // Load subcategories for the selected category only
+        $subcategories = [];
+        if ($product->category_id) {
+            $subcategories = Subcategory::where('category_id', $product->category_id)
+                ->active()
+                ->pluck('name', 'id');
+        }
+
+        // Load current product colors
+        $selectedColors = ProductColor::where('product_id', $product->id)
+            ->pluck('color_id')
+            ->toArray();
+
+        // Load current product sizes with full data
+        $selectedSizes = ProductSize::where('product_id', $product->id)
+            ->get(['size_name','size_value', 'additional_price', 'quantity'])
+            ->toArray();
+            // dd($selectedSizes);
+
+        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'brands', 'colors', 'selectedColors', 'selectedSizes'));
     }
 
     /**
@@ -66,7 +122,41 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
+        // Update the product
+        $productData = $request->validated();
+        unset($productData['colors'], $productData['sizes']); // Remove colors and sizes from product data
+
+        $product->update($productData);
+
+        // Update colors - first remove previous data, then add new data
+        ProductColor::where('product_id', $product->id)->delete();
+
+        // Add new colors if provided
+        if ($request->has('colors') && !empty($request->colors)) {
+            foreach ($request->colors as $colorId) {
+                ProductColor::create([
+                    'product_id' => $product->id,
+                    'color_id' => $colorId
+                ]);
+            }
+        }
+
+        // Update sizes - first remove previous data, then add new data
+        ProductSize::where('product_id', $product->id)->delete();
+
+        // Add new sizes if provided
+        if ($request->has('sizes') && !empty($request->sizes)) {
+            foreach ($request->sizes as $sizeData) {
+                ProductSize::create([
+                    'product_id' => $product->id,
+                    'size_name' => $sizeData['size_name'],
+                    'size_value' => $sizeData['size_value'] ?? '',
+                    'additional_price' => $sizeData['additional_price'] ?? 0,
+                    'quantity' => $sizeData['stock_quantity'] ?? 0
+                ]);
+            }
+        }
+
         return redirect()->route('admin.product.index')->with('success', 'Product updated successfully.');
     }
 

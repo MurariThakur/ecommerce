@@ -23,7 +23,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $productId = $this->route('product') ? $this->route('product')->id : null;
-        
+
         return [
             'title' => 'required|string|max:255',
             'slug' => [
@@ -41,7 +41,14 @@ class ProductRequest extends FormRequest
             'description' => 'nullable|string',
             'additional_information' => 'nullable|string',
             'shipping_return' => 'nullable|string',
-            'status' => 'boolean'
+            'status' => 'boolean',
+            'colors' => 'nullable|array',
+            'colors.*' => 'exists:colors,id',
+            'sizes' => 'nullable|array',
+            'sizes.*.size_name' => 'required|string|max:50',
+            'sizes.*.size_value' => 'nullable',
+            'sizes.*.additional_price' => 'nullable',
+            'sizes.*.stock_quantity' => 'nullable'
         ];
     }
 
@@ -63,6 +70,13 @@ class ProductRequest extends FormRequest
             'price.min' => 'Price must be greater than or equal to 0.',
             'old_price.numeric' => 'Old price must be a valid number.',
             'old_price.min' => 'Old price must be greater than or equal to 0.',
+            'sizes.*.size_name.required' => 'Size name is required for each size variation.',
+            'sizes.*.size_name.string' => 'Size name must be a string.',
+            'sizes.*.size_name.max' => 'Size name cannot be longer than 50 characters.',
+            'sizes.*.additional_price.numeric' => 'Additional price must be a valid number.',
+            'sizes.*.additional_price.min' => 'Additional price cannot be negative.',
+            'sizes.*.stock_quantity.integer' => 'Stock quantity must be a whole number.',
+            'sizes.*.stock_quantity.min' => 'Stock quantity cannot be negative.',
         ];
     }
 

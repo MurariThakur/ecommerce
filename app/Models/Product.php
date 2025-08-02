@@ -56,6 +56,46 @@ class Product extends Model
     }
 
     /**
+     * Relationship with Brand
+     */
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    /**
+     * Many-to-many relationship with Colors through ProductColor
+     */
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_colors');
+    }
+
+    /**
+     * Direct relationship with ProductColor
+     */
+    public function productColors()
+    {
+        return $this->hasMany(ProductColor::class);
+    }
+
+    /**
+     * Direct relationship with ProductSize
+     */
+    public function productSizes()
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+
+    /**
+     * Get product sizes as array of size names
+     */
+    public function getSizeNamesAttribute()
+    {
+        return $this->productSizes->pluck('size_name')->toArray();
+    }
+
+    /**
      * Scope to get only active products
      */
     public function scopeActive($query)

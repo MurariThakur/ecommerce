@@ -73,7 +73,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ url('admin/products') }}" class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}">
+                    <a href="{{ url('admin/products') }}" class="nav-link {{ request()->is('admin/products*') || request()->is('admin/product*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-box"></i>
                         <p>
                             Products

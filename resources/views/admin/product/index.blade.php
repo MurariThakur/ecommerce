@@ -42,7 +42,6 @@
                                     <tr>
                                         <th>Title</th>
                                         <th>Category</th>
-                                        <th>Subcategory</th>
                                         <th>Price</th>
                                         <th>Status</th>
                                         <th>Created At</th>
@@ -57,9 +56,6 @@
                                             </td>
                                             <td>
                                                 {{ $product->category ? $product->category->name : 'N/A' }}
-                                            </td>
-                                            <td>
-                                                {{ $product->subcategory ? $product->subcategory->name : 'N/A' }}
                                             </td>
                                             <td>
                                                 @if($product->old_price && $product->old_price > $product->price)
@@ -219,7 +215,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> 
+                            <i class="fas fa-trash"></i>
                             Delete Product
                         </button>
                     </form>
@@ -286,7 +282,7 @@
                     <form action="{{ route('admin.product.toggle.status', $product) }}" method="POST" style="display: inline-block;">
                         @csrf
                         <button type="submit" class="btn {{ $product->status == 1 ? 'btn-warning' : 'btn-success' }}">
-                            <i class="fas fa-{{ $product->status == 1 ? 'ban' : 'check' }}"></i> 
+                            <i class="fas fa-{{ $product->status == 1 ? 'ban' : 'check' }}"></i>
                             {{ $product->status == 1 ? 'Deactivate' : 'Activate' }} Product
                         </button>
                     </form>

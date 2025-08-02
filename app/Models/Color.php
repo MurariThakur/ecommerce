@@ -78,11 +78,19 @@ class Color extends Model
     }
 
     /**
-     * Relationship with Products
+     * Many-to-many relationship with Products through ProductColor
      */
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'product_colors');
+    }
+
+    /**
+     * Direct relationship with ProductColor
+     */
+    public function productColors()
+    {
+        return $this->hasMany(ProductColor::class);
     }
 
     /**
@@ -90,6 +98,8 @@ class Color extends Model
      */
     public function activeProducts()
     {
-        return $this->hasMany(Product::class)->active();
+        return $this->belongsToMany(Product::class, 'product_colors')
+                    ->where('products.status', true)
+                    ->where('products.isdelete', false);
     }
 }
