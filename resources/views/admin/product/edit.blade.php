@@ -28,6 +28,7 @@
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
+            @include('admin.layouts.message')
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -174,6 +175,29 @@
                                     </div>
                                 </div>
 
+                                <!-- Product Images Section -->
+                                <div class="form-group">
+                                    <label>Product Images</label>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">Image Gallery</h6>
+                                            <button type="button" class="btn btn-primary btn-sm float-right" id="add-image">Add Images</button>
+                                        </div>
+                                        <div class="card-body">
+                                            <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                                            <div id="images-container">
+                                                <div class="text-center p-4" id="no-images-message" style="display: none;">
+                                                    <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No images uploaded yet. Click "Add Images" to start.</p>
+                                                </div>
+                                            </div>
+                                            <div id="sortable" class="row">
+                                                <!-- Sortable images will be displayed here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="short_description">Short Description</label>
                                     <textarea class="form-control @error('short_description') is-invalid @enderror" id="short_description" name="short_description" rows="3">{{ old('short_description', $product->short_description) }}</textarea>
@@ -246,6 +270,7 @@
 
 @push('scripts')
 <script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
+<script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
             // Initialize Summernote editor
@@ -393,6 +418,142 @@ $(document).ready(function() {
         $(document).on('click', '.remove-size', function() {
             $(this).closest('.size-row').remove();
         });
+
+        // Image Upload Management
+        let imageIndex = 1000; // Start with high number to avoid conflicts with existing images
+        let uploadedImages = [];
+
+        // Initialize sortable for images
+        $("#sortable").sortable({
+            update: function(event, ui) {
+                updateImageOrder();
+            }
+        });
+
+        // Load existing images on page load
+        let existingImages = @json($product->productImages ?? []);
+        if (existingImages.length > 0) {
+            existingImages.forEach(function(image, index) {
+                const imageCard = `
+                    <div class="col-md-3 mb-3 image-item existing-image" data-index="existing_${image.id}" data-image-id="${image.id}">
+                        <div class="card">
+                            <img src="${image.image_data}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <input type="hidden" name="existing_images[${image.id}][id]" value="${image.id}">
+                                <input type="hidden" name="existing_images[${image.id}][order]" value="${image.order}" class="image-order">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${image.original_name}</small>
+                                    <button type="button" class="btn btn-danger btn-sm remove-image">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#sortable').append(imageCard);
+            });
+            updateImageDisplay();
+        } else {
+            updateImageDisplay();
+        }
+
+        // Add image button click
+        $('#add-image').on('click', function() {
+            $('#image-input').click();
+        });
+
+        // Handle file selection
+        $('#image-input').on('change', function() {
+            const files = this.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    processImage(files[i], imageIndex);
+                    imageIndex++;
+                }
+            }
+            this.value = ''; // Reset input
+        });
+
+        // Process and display image
+        function processImage(file, index) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                const imageCard = `
+                    <div class="col-md-3 mb-3 image-item" data-index="${index}">
+                        <div class="card">
+                            <img src="${imageData}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <input type="hidden" name="images[${index}][image_data]" value="${imageData}">
+                                <input type="hidden" name="images[${index}][mime_type]" value="${file.type}">
+                                <input type="hidden" name="images[${index}][original_name]" value="${file.name}">
+                                <input type="hidden" name="images[${index}][order]" value="${index}" class="image-order">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${file.name}</small>
+                                    <button type="button" class="btn btn-danger btn-sm remove-image">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                uploadedImages.push({
+                    index: index,
+                    data: imageData,
+                    type: file.type,
+                    name: file.name
+                });
+
+                $('#sortable').append(imageCard);
+                updateImageDisplay();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remove image
+        $(document).on('click', '.remove-image', function() {
+            const imageItem = $(this).closest('.image-item');
+            const index = imageItem.data('index');
+
+            // If it's an existing image, mark it for deletion
+            if (typeof index === 'string' && index.startsWith('existing_')) {
+                const imageId = index.replace('existing_', '');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'deleted_images[]',
+                    value: imageId
+                }).appendTo('form');
+            } else {
+                // Remove from uploadedImages array for new images
+                uploadedImages = uploadedImages.filter(img => img.index !== index);
+            }
+
+            imageItem.remove();
+            updateImageDisplay();
+            updateImageOrder();
+        });
+
+        // Update image display state
+        function updateImageDisplay() {
+            const totalImages = $('#sortable .image-item').length;
+            if (totalImages > 0) {
+                $('#no-images-message').hide();
+                $('#sortable').show();
+            } else {
+                $('#no-images-message').show();
+                $('#sortable').hide();
+            }
+        }
+
+        // Update image order after sorting
+        function updateImageOrder() {
+            $('#sortable .image-item').each(function(index) {
+                $(this).find('.image-order').val(index);
+            });
+        }
     });
 </script>
 

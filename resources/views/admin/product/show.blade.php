@@ -59,6 +59,10 @@
                                                     <td>{{ $product->title }}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td width="150"><strong>Sku</strong></td>
+                                                    <td>{{ $product->slug }}</td>
+                                                </tr>
+                                                <tr>
                                                     <td><strong>Category</strong></td>
                                                     <td>{{ $product->category ? $product->category->name : 'N/A' }}</td>
                                                 </tr>
@@ -67,9 +71,19 @@
                                                     <td>{{ $product->subcategory ? $product->subcategory->name : 'N/A' }}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td><strong>Brand</strong></td>
+                                                    <td>{{ $product->brand ? $product->brand->name : 'N/A' }}</td>
+                                                </tr>
+                                                <tr>
                                                     <td><strong>Price</strong></td>
                                                     <td>${{ number_format($product->price, 2) }}</td>
                                                 </tr>
+                                                @if($product->old_price && $product->old_price > $product->price)
+                                                <tr>
+                                                    <td><strong>Old Price</strong></td>
+                                                    <td>${{ number_format($product->old_price, 2) }}</td>
+                                                </tr>
+                                                @endif
                                                 <tr>
                                                     <td><strong>Status</strong></td>
                                                     <td>
@@ -88,16 +102,150 @@
                                                     <td><strong>Created At</strong></td>
                                                     <td>{{ $product->created_at }}</td>
                                                 </tr>
-                                                <tr>
-                                                    <td><strong>Updated At</strong></td>
-                                                    <td>{{ $product->updated_at }}</td>
-                                                </tr>
+
                                             </table>
                                         </div>
                                     </div>
 
-                                    <!-- Detailed Information -->
+                                    <!-- Product Images -->
+                                    <div class="card card-outline card-success">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-images"></i> Product Images
+                                            </h3>
+                                        </div>
+                                        <div class="card-body">
+                                            @if($product->productImages->count() > 0)
+                                                <div class="row">
+                                                    @foreach($product->productImages as $image)
+                                                        <div class="col-md-4 col-sm-6 mb-3">
+                                                            <div class="card">
+                                                                <img src="{{ $image->image_src }}"
+                                                                     class="card-img-top"
+                                                                     alt="{{ $image->original_name }}"
+                                                                     style="height: 150px; object-fit: cover; cursor: pointer;"
+                                                                     data-toggle="modal"
+                                                                     data-target="#imageModal{{ $image->id }}">
+                                                                <div class="card-body p-2">
+                                                                    <small class="text-muted">{{ $image->original_name }}</small>
+                                                                    <br>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="text-center text-muted py-4">
+                                                    <i class="fas fa-image fa-3x mb-3"></i>
+                                                    <p>No images available for this product</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Product Colors -->
+                                    <div class="card card-outline card-warning">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-palette"></i> Available Colors
+                                            </h3>
+                                        </div>
+                                        <div class="card-body">
+                                            @if($product->colors->count() > 0)
+                                                <div class="row">
+                                                    @foreach($product->colors as $color)
+                                                        <div class="col-md-6 col-sm-12 mb-2">
+                                                            <div class="d-flex align-items-center p-2 border rounded">
+                                                                <div class="color-swatch rounded-circle mr-3"
+                                                                     style="width: 30px; height: 30px; background-color: {{ $color->color_code }}; border: 2px solid #ddd;"></div>
+                                                                <div>
+                                                                    <strong>{{ $color->name }}</strong>
+                                                                    <br>
+                                                                    <small class="text-muted">{{ $color->color_code }}</small>
+                                                                    @if($color->status)
+                                                                        <span class="badge badge-success badge-sm ml-2">Active</span>
+                                                                    @else
+                                                                        <span class="badge badge-secondary badge-sm ml-2">Inactive</span>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="text-center text-muted py-4">
+                                                    <i class="fas fa-palette fa-3x mb-3"></i>
+                                                    <p>No colors assigned to this product</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Product Sizes -->
                                     <div class="card card-outline card-info">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-ruler"></i> Available Sizes
+                                            </h3>
+                                        </div>
+                                        <div class="card-body">
+                                            @if($product->productSizes->count() > 0)
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover">
+                                                        <thead class="thead-light">
+                                                            <tr>
+                                                                <th>Size Name</th>
+                                                                <th>Size Value</th>
+                                                                <th>Additional Price</th>
+                                                                <th>Quantity</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($product->productSizes as $size)
+                                                                <tr>
+                                                                    <td><strong>{{ $size->size_name }}</strong></td>
+                                                                    <td>{{ $size->size_value }}</td>
+                                                                    <td>
+                                                                        @if($size->additional_price > 0)
+                                                                            <span class="text-success">+${{ number_format($size->additional_price, 2) }}</span>
+                                                                        @elseif($size->additional_price < 0)
+                                                                            <span class="text-danger">${{ number_format($size->additional_price, 2) }}</span>
+                                                                        @else
+                                                                            <span class="text-muted">$0.00</span>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($size->quantity > 0)
+                                                                            <span class="badge badge-success">{{ $size->quantity }} in stock</span>
+                                                                        @else
+                                                                            <span class="badge badge-danger">Out of stock</span>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($size->quantity > 0)
+                                                                            <i class="fas fa-check-circle text-success"></i>
+                                                                        @else
+                                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <div class="text-center text-muted py-4">
+                                                    <i class="fas fa-ruler fa-3x mb-3"></i>
+                                                    <p>No sizes defined for this product</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Detailed Information -->
+                                    <div class="card card-outline card-secondary">
                                         <div class="card-header">
                                             <h3 class="card-title">
                                                 <i class="fas fa-edit"></i> Detailed Information
@@ -140,7 +288,7 @@
                                                 <!-- Toggle Status Button -->
                                                 <button type="button" class="btn btn-block {{ $product->status ? 'btn-secondary' : 'btn-success' }}"
                                                     data-toggle="modal" data-target="#statusModal">
-                                                    <i class="fas fa-{{ $product->status ? 'ban' : 'check' }}"></i> 
+                                                    <i class="fas fa-{{ $product->status ? 'ban' : 'check' }}"></i>
                                                     {{ $product->status ? 'Deactivate' : 'Activate' }} Product
                                                 </button>
 
@@ -181,6 +329,74 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Product Overview -->
+                                    <div class="card card-outline card-info">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-clipboard-list"></i> Overview
+                                            </h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="description-block border-right">
+                                                        <span class="description-percentage text-success">
+                                                            <i class="fas fa-images"></i>
+                                                        </span>
+                                                        <h5 class="description-header">{{ $product->productImages->count() }}</h5>
+                                                        <span class="description-text">IMAGES</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="description-block">
+                                                        <span class="description-percentage text-warning">
+                                                            <i class="fas fa-palette"></i>
+                                                        </span>
+                                                        <h5 class="description-header">{{ $product->colors->count() }}</h5>
+                                                        <span class="description-text">COLORS</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-6">
+                                                    <div class="description-block border-right">
+                                                        <span class="description-percentage text-info">
+                                                            <i class="fas fa-ruler"></i>
+                                                        </span>
+                                                        <h5 class="description-header">{{ $product->productSizes->count() }}</h5>
+                                                        <span class="description-text">SIZES</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="description-block">
+                                                        <span class="description-percentage text-{{ $product->productSizes->sum('quantity') > 0 ? 'success' : 'danger' }}">
+                                                            <i class="fas fa-boxes"></i>
+                                                        </span>
+                                                        <h5 class="description-header">{{ $product->productSizes->sum('quantity') }}</h5>
+                                                        <span class="description-text">TOTAL STOCK</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if($product->hasDiscount())
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <div class="description-block text-center">
+                                                        <span class="description-percentage text-success">
+                                                            <i class="fas fa-percentage"></i>
+                                                        </span>
+                                                        <h5 class="description-header text-success">{{ $product->discount_percentage }}%</h5>
+                                                        <span class="description-text">DISCOUNT</span>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            Save ${{ number_format($product->old_price - $product->price, 2) }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +435,7 @@
                 <form action="{{ route('admin.product.toggle.status', $product) }}" method="POST" style="display: inline-block;">
                     @csrf
                     <button type="submit" class="btn {{ $product->status ? 'btn-warning' : 'btn-success' }}">
-                        <i class="fas fa-{{ $product->status ? 'ban' : 'check' }}"></i> 
+                        <i class="fas fa-{{ $product->status ? 'ban' : 'check' }}"></i>
                         {{ $product->status ? 'Deactivate' : 'Activate' }} Product
                     </button>
                 </form>
@@ -263,6 +479,42 @@
         </div>
     </div>
 </div>
+
+<!-- Image Modals -->
+@foreach($product->productImages as $image)
+<div class="modal fade" id="imageModal{{ $image->id }}" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel{{ $image->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel{{ $image->id }}">
+                    <i class="fas fa-image"></i> {{ $image->original_name }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="{{ $image->image_src }}"
+                     class="img-fluid"
+                     alt="{{ $image->original_name }}"
+                     style="max-height: 70vh; object-fit: contain;">
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>File:</strong> {{ $image->original_name }}<br>
+                        <strong>Type:</strong> {{ $image->mime_type }}<br>
+                        <strong>Order:</strong> {{ $image->order }}
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection
 
 

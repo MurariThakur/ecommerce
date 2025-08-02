@@ -7,6 +7,7 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
+                @include('admin.layouts.message')
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1 class="m-0">Add New Product</h1>
@@ -186,6 +187,29 @@
                                         </div>
                                     </div>
 
+                                    <!-- Product Images Section -->
+                                    <div class="form-group">
+                                        <label>Product Images</label>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="card-title mb-0">Image Gallery</h6>
+                                                <button type="button" class="btn btn-primary btn-sm float-right" id="add-image">Add Images</button>
+                                            </div>
+                                            <div class="card-body">
+                                                <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                                                <div id="images-container">
+                                                    <div class="text-center p-4" id="no-images-message">
+                                                        <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                                                        <p class="text-muted">No images uploaded yet. Click "Add Images" to start.</p>
+                                                    </div>
+                                                </div>
+                                                <div id="sortable" class="row" style="display: none;">
+                                                    <!-- Sortable images will be displayed here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
                                         <label for="short_description">Short Description</label>
                                         <textarea class="form-control @error('short_description') is-invalid @enderror" id="short_description"
@@ -261,6 +285,7 @@
 
 @push('scripts')
 <script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
+<script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Initialize Summernote editor
@@ -364,6 +389,211 @@
             $(document).on('click', '.remove-size', function() {
                 $(this).closest('.size-row').remove();
             });
+
+            // Image Upload Management
+            let imageIndex = 0;
+            let uploadedImages = [];
+
+            // Initialize sortable for images
+            $("#sortable").sortable({
+                update: function(event, ui) {
+                    updateImageOrder();
+                }
+            });
+
+            // Add image button click
+            $('#add-image').on('click', function() {
+                $('#image-input').click();
+            });
+
+            // Handle file selection
+            $('#image-input').on('change', function() {
+                const files = this.files;
+                if (files.length > 0) {
+                    // Check if adding these files would exceed the limit
+                    if (uploadedImages.length + files.length > 10) {
+                        showImageError('You can upload a maximum of 10 images. Please remove some images before adding new ones.');
+                        this.value = ''; // Reset input
+                        return;
+                    }
+
+                    for (let i = 0; i < files.length; i++) {
+                        if (validateImageFile(files[i])) {
+                            processImage(files[i], imageIndex);
+                            imageIndex++;
+                        }
+                    }
+                }
+                this.value = ''; // Reset input
+            });
+
+            // Validate image file before processing
+            function validateImageFile(file) {
+                // Check file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    showImageError(`Invalid file type: ${file.name}. Only JPEG, PNG, GIF, and WebP images are allowed.`);
+                    return false;
+                }
+
+                // Check file size (5MB limit)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    showImageError(`File too large: ${file.name}. Maximum size is 5MB.`);
+                    return false;
+                }
+
+                // Check minimum file size (1KB)
+                const minSize = 1024; // 1KB
+                if (file.size < minSize) {
+                    showImageError(`File too small: ${file.name}. Minimum size is 1KB.`);
+                    return false;
+                }
+
+                // Check filename length
+                if (file.name.length > 255) {
+                    showImageError(`Filename too long: ${file.name}. Maximum length is 255 characters.`);
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Show image error message
+            function showImageError(message) {
+                // Remove any existing error messages
+                $('.image-error-alert').remove();
+
+                // Create error alert
+                const errorAlert = `
+                    <div class="alert alert-danger alert-dismissible image-error-alert" role="alert">
+                        <strong>Image Upload Error:</strong> ${message}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `;
+
+                // Insert error message before the images container
+                $('#images-container').before(errorAlert);
+
+                // Auto remove after 10 seconds
+                setTimeout(function() {
+                    $('.image-error-alert').fadeOut(500, function() {
+                        $(this).remove();
+                    });
+                }, 10000);
+            }
+
+            // Validate image dimensions after loading
+            function validateImageDimensions(imageData, fileName, callback) {
+                const img = new Image();
+                img.onload = function() {
+                    const width = this.width;
+                    const height = this.height;
+
+                    // Check minimum dimensions (50x50)
+                    if (width < 50 || height < 50) {
+                        showImageError(`Image dimensions too small: ${fileName}. Minimum size is 50x50 pixels. Current size: ${width}x${height}`);
+                        callback(false);
+                        return;
+                    }
+
+                    // Check maximum dimensions (4000x4000)
+                    if (width > 4000 || height > 4000) {
+                        showImageError(`Image dimensions too large: ${fileName}. Maximum size is 4000x4000 pixels. Current size: ${width}x${height}`);
+                        callback(false);
+                        return;
+                    }
+
+                    callback(true);
+                };
+                img.onerror = function() {
+                    showImageError(`Unable to read image dimensions: ${fileName}. The file may be corrupted.`);
+                    callback(false);
+                };
+                img.src = imageData;
+            }
+
+            // Process and display image
+            function processImage(file, index) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+
+                    // Validate image dimensions before processing
+                    validateImageDimensions(imageData, file.name, function(isValid) {
+                        if (!isValid) {
+                            return; // Stop processing if dimensions are invalid
+                        }
+
+                        const imageCard = `
+                        <div class="col-md-3 mb-3 image-item" data-index="${index}">
+                            <div class="card">
+                                <img src="${imageData}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                <div class="card-body p-2">
+                                    <input type="hidden" name="images[${index}][image_data]" value="${imageData}">
+                                    <input type="hidden" name="images[${index}][mime_type]" value="${file.type}">
+                                    <input type="hidden" name="images[${index}][original_name]" value="${file.name}">
+                                    <input type="hidden" name="images[${index}][order]" value="${index}" class="image-order">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">${file.name}</small>
+                                        <button type="button" class="btn btn-danger btn-sm remove-image">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                        uploadedImages.push({
+                            index: index,
+                            data: imageData,
+                            type: file.type,
+                            name: file.name
+                        });
+
+                        $('#sortable').append(imageCard);
+                        updateImageDisplay();
+                    });
+                };
+                reader.onerror = function() {
+                    showImageError(`Failed to read file: ${file.name}. The file may be corrupted.`);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Remove image
+            $(document).on('click', '.remove-image', function() {
+                const imageItem = $(this).closest('.image-item');
+                const index = imageItem.data('index');
+
+                // Remove from uploadedImages array
+                uploadedImages = uploadedImages.filter(img => img.index !== index);
+
+                imageItem.remove();
+                updateImageDisplay();
+                updateImageOrder();
+            });
+
+            // Update image display state
+            function updateImageDisplay() {
+                if (uploadedImages.length > 0) {
+                    $('#no-images-message').hide();
+                    $('#sortable').show();
+                } else {
+                    $('#no-images-message').show();
+                    $('#sortable').hide();
+                }
+            }
+
+            // Update image order after sorting
+            function updateImageOrder() {
+                $('#sortable .image-item').each(function(index) {
+                    $(this).find('.image-order').val(index);
+                });
+            }
         });
     </script>
 @endpush
