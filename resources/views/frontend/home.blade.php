@@ -3,6 +3,7 @@
 
 
 <!-- molla/index-2.html  22 Nov 2019 09:55:32 GMT -->
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -65,10 +66,12 @@
                                 <a href="#">Links</a>
                                 <ul>
                                     <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
-                                    <li><a href="wishlist.html"><i class="icon-heart-o"></i>My Wishlist <span>(3)</span></a></li>
+                                    <li><a href="wishlist.html"><i class="icon-heart-o"></i>My Wishlist
+                                            <span>(3)</span></a></li>
                                     <li><a href="about.html">About Us</a></li>
                                     <li><a href="contact.html">Contact Us</a></li>
-                                    <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
+                                    <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul><!-- End .top-menu -->
@@ -100,168 +103,194 @@
                                             <div class="demo-list">
                                                 <div class="demo-item">
                                                     <a href="index-1.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/1.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/1.jpg);"></span>
                                                         <span class="demo-title">01 - furniture store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-2.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/2.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/2.jpg);"></span>
                                                         <span class="demo-title">02 - furniture store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-3.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/3.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/3.jpg);"></span>
                                                         <span class="demo-title">03 - electronic store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-4.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/4.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/4.jpg);"></span>
                                                         <span class="demo-title">04 - electronic store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-5.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/5.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/5.jpg);"></span>
                                                         <span class="demo-title">05 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-6.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/6.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/6.jpg);"></span>
                                                         <span class="demo-title">06 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-7.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/7.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/7.jpg);"></span>
                                                         <span class="demo-title">07 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-8.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/8.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/8.jpg);"></span>
                                                         <span class="demo-title">08 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-9.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/9.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/9.jpg);"></span>
                                                         <span class="demo-title">09 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item">
                                                     <a href="index-10.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/10.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/10.jpg);"></span>
                                                         <span class="demo-title">10 - shoes store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-11.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/11.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/11.jpg);"></span>
                                                         <span class="demo-title">11 - furniture simple store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-12.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/12.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/12.jpg);"></span>
                                                         <span class="demo-title">12 - fashion simple store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-13.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/13.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/13.jpg);"></span>
                                                         <span class="demo-title">13 - market</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-14.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/14.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/14.jpg);"></span>
                                                         <span class="demo-title">14 - market fullwidth</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-15.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/15.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/15.jpg);"></span>
                                                         <span class="demo-title">15 - lookbook 1</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-16.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/16.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/16.jpg);"></span>
                                                         <span class="demo-title">16 - lookbook 2</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-17.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/17.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/17.jpg);"></span>
                                                         <span class="demo-title">17 - fashion store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-18.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/18.jpg);"></span>
-                                                        <span class="demo-title">18 - fashion store (with sidebar)</span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/18.jpg);"></span>
+                                                        <span class="demo-title">18 - fashion store (with
+                                                            sidebar)</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-19.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/19.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/19.jpg);"></span>
                                                         <span class="demo-title">19 - games store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-20.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/20.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/20.jpg);"></span>
                                                         <span class="demo-title">20 - book store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-21.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/21.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/21.jpg);"></span>
                                                         <span class="demo-title">21 - sport store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-22.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/22.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/22.jpg);"></span>
                                                         <span class="demo-title">22 - tools store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-23.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/23.jpg);"></span>
-                                                        <span class="demo-title">23 - fashion left navigation store</span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/23.jpg);"></span>
+                                                        <span class="demo-title">23 - fashion left navigation
+                                                            store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
 
                                                 <div class="demo-item hidden">
                                                     <a href="index-24.html">
-                                                        <span class="demo-bg" style="background-image: url(frontend/assets/images/menu/demos/24.jpg);"></span>
+                                                        <span class="demo-bg"
+                                                            style="background-image: url(frontend/assets/images/menu/demos/24.jpg);"></span>
                                                         <span class="demo-title">24 - extreme sport store</span>
                                                     </a>
                                                 </div><!-- End .demo-item -->
@@ -269,7 +298,9 @@
                                             </div><!-- End .demo-list -->
 
                                             <div class="megamenu-action text-center">
-                                                <a href="#" class="btn btn-outline-primary-2 view-all-demos"><span>View All Demos</span><i class="icon-long-arrow-right"></i></a>
+                                                <a href="#"
+                                                    class="btn btn-outline-primary-2 view-all-demos"><span>View All
+                                                        Demos</span><i class="icon-long-arrow-right"></i></a>
                                             </div><!-- End .text-center -->
                                         </div><!-- End .menu-col -->
                                     </div><!-- End .megamenu -->
@@ -283,29 +314,47 @@
                                                 <div class="menu-col">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <div class="menu-title">Shop with sidebar</div><!-- End .menu-title -->
+                                                            <div class="menu-title">Shop with sidebar</div>
+                                                            <!-- End .menu-title -->
                                                             <ul>
                                                                 <li><a href="category-list.html">Shop List</a></li>
-                                                                <li><a href="category-2cols.html">Shop Grid 2 Columns</a></li>
-                                                                <li><a href="category.html">Shop Grid 3 Columns</a></li>
-                                                                <li><a href="category-4cols.html">Shop Grid 4 Columns</a></li>
-                                                                <li><a href="category-market.html"><span>Shop Market<span class="tip tip-new">New</span></span></a></li>
+                                                                <li><a href="category-2cols.html">Shop Grid 2
+                                                                        Columns</a></li>
+                                                                <li><a href="category.html">Shop Grid 3 Columns</a>
+                                                                </li>
+                                                                <li><a href="category-4cols.html">Shop Grid 4
+                                                                        Columns</a></li>
+                                                                <li><a href="category-market.html"><span>Shop
+                                                                            Market<span
+                                                                                class="tip tip-new">New</span></span></a>
+                                                                </li>
                                                             </ul>
 
-                                                            <div class="menu-title">Shop no sidebar</div><!-- End .menu-title -->
+                                                            <div class="menu-title">Shop no sidebar</div>
+                                                            <!-- End .menu-title -->
                                                             <ul>
-                                                                <li><a href="category-boxed.html"><span>Shop Boxed No Sidebar<span class="tip tip-hot">Hot</span></span></a></li>
-                                                                <li><a href="category-fullwidth.html">Shop Fullwidth No Sidebar</a></li>
+                                                                <li><a href="category-boxed.html"><span>Shop Boxed No
+                                                                            Sidebar<span
+                                                                                class="tip tip-hot">Hot</span></span></a>
+                                                                </li>
+                                                                <li><a href="category-fullwidth.html">Shop Fullwidth No
+                                                                        Sidebar</a></li>
                                                             </ul>
                                                         </div><!-- End .col-md-6 -->
 
                                                         <div class="col-md-6">
-                                                            <div class="menu-title">Product Category</div><!-- End .menu-title -->
+                                                            <div class="menu-title">Product Category</div>
+                                                            <!-- End .menu-title -->
                                                             <ul>
-                                                                <li><a href="product-category-boxed.html">Product Category Boxed</a></li>
-                                                                <li><a href="product-category-fullwidth.html"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
+                                                                <li><a href="product-category-boxed.html">Product
+                                                                        Category Boxed</a></li>
+                                                                <li><a href="product-category-fullwidth.html"><span>Product
+                                                                            Category Fullwidth<span
+                                                                                class="tip tip-new">New</span></span></a>
+                                                                </li>
                                                             </ul>
-                                                            <div class="menu-title">Shop Pages</div><!-- End .menu-title -->
+                                                            <div class="menu-title">Shop Pages</div>
+                                                            <!-- End .menu-title -->
                                                             <ul>
                                                                 <li><a href="cart.html">Cart</a></li>
                                                                 <li><a href="checkout.html">Checkout</a></li>
@@ -321,10 +370,13 @@
                                             <div class="col-md-4">
                                                 <div class="banner banner-overlay">
                                                     <a href="category.html" class="banner banner-menu">
-                                                        <img src="frontend/assets/images/menu/banner-1.jpg" alt="Banner">
+                                                        <img src="frontend/assets/images/menu/banner-1.jpg"
+                                                            alt="Banner">
 
                                                         <div class="banner-content banner-content-top">
-                                                            <div class="banner-title text-white">Last <br>Chance<br><span><strong>Sale</strong></span></div><!-- End .banner-title -->
+                                                            <div class="banner-title text-white">Last
+                                                                <br>Chance<br><span><strong>Sale</strong></span></div>
+                                                            <!-- End .banner-title -->
                                                         </div><!-- End .banner-content -->
                                                     </a>
                                                 </div><!-- End .banner banner-overlay -->
@@ -339,11 +391,13 @@
                                         <div class="row no-gutters">
                                             <div class="col-md-6">
                                                 <div class="menu-col">
-                                                    <div class="menu-title">Product Details</div><!-- End .menu-title -->
+                                                    <div class="menu-title">Product Details</div>
+                                                    <!-- End .menu-title -->
                                                     <ul>
                                                         <li><a href="product.html">Default</a></li>
                                                         <li><a href="product-centered.html">Centered</a></li>
-                                                        <li><a href="product-extended.html"><span>Extended Info<span class="tip tip-new">New</span></span></a></li>
+                                                        <li><a href="product-extended.html"><span>Extended Info<span
+                                                                        class="tip tip-new">New</span></span></a></li>
                                                         <li><a href="product-gallery.html">Gallery</a></li>
                                                         <li><a href="product-sticky.html">Sticky Info</a></li>
                                                         <li><a href="product-sidebar.html">Boxed With Sidebar</a></li>
@@ -356,10 +410,13 @@
                                             <div class="col-md-6">
                                                 <div class="banner banner-overlay">
                                                     <a href="category.html">
-                                                        <img src="frontend/assets/images/menu/banner-2.jpg" alt="Banner">
+                                                        <img src="frontend/assets/images/menu/banner-2.jpg"
+                                                            alt="Banner">
 
                                                         <div class="banner-content banner-content-bottom">
-                                                            <div class="banner-title text-white">New Trends<br><span><strong>spring 2019</strong></span></div><!-- End .banner-title -->
+                                                            <div class="banner-title text-white">New
+                                                                Trends<br><span><strong>spring 2019</strong></span>
+                                                            </div><!-- End .banner-title -->
                                                         </div><!-- End .banner-content -->
                                                     </a>
                                                 </div><!-- End .banner -->
@@ -429,7 +486,8 @@
                                             <ul>
                                                 <li><a href="single.html">Default with sidebar</a></li>
                                                 <li><a href="single-fullwidth.html">Fullwidth no sidebar</a></li>
-                                                <li><a href="single-fullwidth-sidebar.html">Fullwidth with sidebar</a></li>
+                                                <li><a href="single-fullwidth-sidebar.html">Fullwidth with sidebar</a>
+                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -460,17 +518,20 @@
 
                     <div class="header-right">
                         <div class="header-search">
-                            <a href="#" class="search-toggle" role="button" title="Search"><i class="icon-search"></i></a>
+                            <a href="#" class="search-toggle" role="button" title="Search"><i
+                                    class="icon-search"></i></a>
                             <form action="#" method="get">
                                 <div class="header-search-wrapper">
                                     <label for="q" class="sr-only">Search</label>
-                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
+                                    <input type="search" class="form-control" name="q" id="q"
+                                        placeholder="Search in..." required>
                                 </div><!-- End .header-search-wrapper -->
                             </form>
                         </div><!-- End .header-search -->
 
                         <div class="dropdown cart-dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <i class="icon-shopping-cart"></i>
                                 <span class="cart-count">2</span>
                             </a>
@@ -491,10 +552,12 @@
 
                                         <figure class="product-image-container">
                                             <a href="product.html" class="product-image">
-                                                <img src="frontend/assets/images/products/cart/product-1.jpg" alt="product">
+                                                <img src="frontend/assets/images/products/cart/product-1.jpg"
+                                                    alt="product">
                                             </a>
                                         </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                        <a href="#" class="btn-remove" title="Remove Product"><i
+                                                class="icon-close"></i></a>
                                     </div><!-- End .product -->
 
                                     <div class="product">
@@ -511,10 +574,12 @@
 
                                         <figure class="product-image-container">
                                             <a href="product.html" class="product-image">
-                                                <img src="frontend/assets/images/products/cart/product-2.jpg" alt="product">
+                                                <img src="frontend/assets/images/products/cart/product-2.jpg"
+                                                    alt="product">
                                             </a>
                                         </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                        <a href="#" class="btn-remove" title="Remove Product"><i
+                                                class="icon-close"></i></a>
                                     </div><!-- End .product -->
                                 </div><!-- End .cart-product -->
 
@@ -526,7 +591,8 @@
 
                                 <div class="dropdown-cart-action">
                                     <a href="cart.html" class="btn btn-primary">View Cart</a>
-                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                                            class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->
                         </div><!-- End .cart-dropdown -->
@@ -541,7 +607,9 @@
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="intro-slider-container slider-container-ratio slider-container-1 mb-2 mb-lg-0">
-                                <div class="intro-slider intro-slider-1 owl-carousel owl-simple owl-light owl-nav-inside" data-toggle="owl" data-owl-options='{
+                                <div class="intro-slider intro-slider-1 owl-carousel owl-simple owl-light owl-nav-inside"
+                                    data-toggle="owl"
+                                    data-owl-options='{
                                         "nav": false, 
                                         "responsive": {
                                             "768": {
@@ -552,14 +620,17 @@
                                     <div class="intro-slide">
                                         <figure class="slide-image">
                                             <picture>
-                                                <source media="(max-width: 480px)" srcset="frontend/assets/images/slider/slide-1-480w.jpg">
+                                                <source media="(max-width: 480px)"
+                                                    srcset="frontend/assets/images/slider/slide-1-480w.jpg">
                                                 <img src="frontend/assets/images/slider/slide-1.jpg" alt="Image Desc">
                                             </picture>
                                         </figure><!-- End .slide-image -->
 
                                         <div class="intro-content">
-                                            <h3 class="intro-subtitle">Topsale Collection</h3><!-- End .h3 intro-subtitle -->
-                                            <h1 class="intro-title">Living Room<br>Furniture</h1><!-- End .intro-title -->
+                                            <h3 class="intro-subtitle">Topsale Collection</h3>
+                                            <!-- End .h3 intro-subtitle -->
+                                            <h1 class="intro-title">Living Room<br>Furniture</h1>
+                                            <!-- End .intro-title -->
 
                                             <a href="category.html" class="btn btn-outline-white">
                                                 <span>SHOP NOW</span>
@@ -571,13 +642,15 @@
                                     <div class="intro-slide">
                                         <figure class="slide-image">
                                             <picture>
-                                                <source media="(max-width: 480px)" srcset="frontend/assets/images/slider/slide-2-480w.jpg">
+                                                <source media="(max-width: 480px)"
+                                                    srcset="frontend/assets/images/slider/slide-2-480w.jpg">
                                                 <img src="frontend/assets/images/slider/slide-2.jpg" alt="Image Desc">
                                             </picture>
                                         </figure><!-- End .slide-image -->
 
                                         <div class="intro-content">
-                                            <h3 class="intro-subtitle">News and Inspiration</h3><!-- End .h3 intro-subtitle -->
+                                            <h3 class="intro-subtitle">News and Inspiration</h3>
+                                            <!-- End .h3 intro-subtitle -->
                                             <h1 class="intro-title">New Arrivals</h1><!-- End .intro-title -->
 
                                             <a href="category.html" class="btn btn-outline-white">
@@ -590,14 +663,17 @@
                                     <div class="intro-slide">
                                         <figure class="slide-image">
                                             <picture>
-                                                <source media="(max-width: 480px)" srcset="frontend/assets/images/slider/slide-3-480w.jpg">
+                                                <source media="(max-width: 480px)"
+                                                    srcset="frontend/assets/images/slider/slide-3-480w.jpg">
                                                 <img src="frontend/assets/images/slider/slide-3.jpg" alt="Image Desc">
                                             </picture>
                                         </figure><!-- End .slide-image -->
 
                                         <div class="intro-content">
-                                            <h3 class="intro-subtitle">Outdoor Furniture</h3><!-- End .h3 intro-subtitle -->
-                                            <h1 class="intro-title">Outdoor Dining <br>Furniture</h1><!-- End .intro-title -->
+                                            <h3 class="intro-subtitle">Outdoor Furniture</h3>
+                                            <!-- End .h3 intro-subtitle -->
+                                            <h1 class="intro-title">Outdoor Dining <br>Furniture</h1>
+                                            <!-- End .intro-title -->
 
                                             <a href="category.html" class="btn btn-outline-white">
                                                 <span>SHOP NOW</span>
@@ -606,7 +682,7 @@
                                         </div><!-- End .intro-content -->
                                     </div><!-- End .intro-slide -->
                                 </div><!-- End .intro-slider owl-carousel owl-simple -->
-                                
+
                                 <span class="slider-loader"></span><!-- End .slider-loader -->
                             </div><!-- End .intro-slider-container -->
                         </div><!-- End .col-lg-8 -->
@@ -616,13 +692,17 @@
                                     <div class="col-md-6 col-lg-12">
                                         <div class="banner banner-display">
                                             <a href="#">
-                                                <img src="frontend/assets/images/banners/home/intro/banner-1.jpg" alt="Banner">
+                                                <img src="frontend/assets/images/banners/home/intro/banner-1.jpg"
+                                                    alt="Banner">
                                             </a>
 
                                             <div class="banner-content">
-                                                <h4 class="banner-subtitle text-darkwhite"><a href="#">Clearence</a></h4><!-- End .banner-subtitle -->
-                                                <h3 class="banner-title text-white"><a href="#">Chairs & Chaises <br>Up to 40% off</a></h3><!-- End .banner-title -->
-                                                <a href="#" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
+                                                <h4 class="banner-subtitle text-darkwhite"><a
+                                                        href="#">Clearence</a></h4><!-- End .banner-subtitle -->
+                                                <h3 class="banner-title text-white"><a href="#">Chairs & Chaises
+                                                        <br>Up to 40% off</a></h3><!-- End .banner-title -->
+                                                <a href="#" class="btn btn-outline-white banner-link">Shop Now<i
+                                                        class="icon-long-arrow-right"></i></a>
                                             </div><!-- End .banner-content -->
                                         </div><!-- End .banner -->
                                     </div><!-- End .col-md-6 col-lg-12 -->
@@ -630,13 +710,17 @@
                                     <div class="col-md-6 col-lg-12">
                                         <div class="banner banner-display mb-0">
                                             <a href="#">
-                                                <img src="frontend/assets/images/banners/home/intro/banner-2.jpg" alt="Banner">
+                                                <img src="frontend/assets/images/banners/home/intro/banner-2.jpg"
+                                                    alt="Banner">
                                             </a>
 
                                             <div class="banner-content">
-                                                <h4 class="banner-subtitle text-darkwhite"><a href="#">New in</a></h4><!-- End .banner-subtitle -->
-                                                <h3 class="banner-title text-white"><a href="#">Best Lighting <br>Collection</a></h3><!-- End .banner-title -->
-                                                <a href="#" class="btn btn-outline-white banner-link">Discover Now<i class="icon-long-arrow-right"></i></a>
+                                                <h4 class="banner-subtitle text-darkwhite"><a href="#">New
+                                                        in</a></h4><!-- End .banner-subtitle -->
+                                                <h3 class="banner-title text-white"><a href="#">Best Lighting
+                                                        <br>Collection</a></h3><!-- End .banner-title -->
+                                                <a href="#" class="btn btn-outline-white banner-link">Discover
+                                                    Now<i class="icon-long-arrow-right"></i></a>
                                             </div><!-- End .banner-content -->
                                         </div><!-- End .banner -->
                                     </div><!-- End .col-md-6 col-lg-12 -->
@@ -647,7 +731,7 @@
 
                     <div class="mb-6"></div><!-- End .mb-6 -->
 
-                    <div class="owl-carousel owl-simple" data-toggle="owl" 
+                    <div class="owl-carousel owl-simple" data-toggle="owl"
                         data-owl-options='{
                             "nav": false, 
                             "dots": false,
@@ -706,23 +790,29 @@
 
                     <ul class="nav nav-pills justify-content-center" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="trendy-all-link" data-toggle="tab" href="#trendy-all-tab" role="tab" aria-controls="trendy-all-tab" aria-selected="true">All</a>
+                            <a class="nav-link active" id="trendy-all-link" data-toggle="tab" href="#trendy-all-tab"
+                                role="tab" aria-controls="trendy-all-tab" aria-selected="true">All</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="trendy-fur-link" data-toggle="tab" href="#trendy-fur-tab" role="tab" aria-controls="trendy-fur-tab" aria-selected="false">Furniture</a>
+                            <a class="nav-link" id="trendy-fur-link" data-toggle="tab" href="#trendy-fur-tab"
+                                role="tab" aria-controls="trendy-fur-tab" aria-selected="false">Furniture</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="trendy-decor-link" data-toggle="tab" href="#trendy-decor-tab" role="tab" aria-controls="trendy-decor-tab" aria-selected="false">Decor</a>
+                            <a class="nav-link" id="trendy-decor-link" data-toggle="tab" href="#trendy-decor-tab"
+                                role="tab" aria-controls="trendy-decor-tab" aria-selected="false">Decor</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="trendy-light-link" data-toggle="tab" href="#trendy-light-tab" role="tab" aria-controls="trendy-light-tab" aria-selected="false">Lighting</a>
+                            <a class="nav-link" id="trendy-light-link" data-toggle="tab" href="#trendy-light-tab"
+                                role="tab" aria-controls="trendy-light-tab" aria-selected="false">Lighting</a>
                         </li>
                     </ul>
                 </div><!-- End .heading -->
 
                 <div class="tab-content tab-content-carousel">
-                    <div class="tab-pane p-0 fade show active" id="trendy-all-tab" role="tabpanel" aria-labelledby="trendy-all-link">
-                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                    <div class="tab-pane p-0 fade show active" id="trendy-all-tab" role="tabpanel"
+                        aria-labelledby="trendy-all-link">
+                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                            data-toggle="owl"
                             data-owl-options='{
                                 "nav": false, 
                                 "dots": true,
@@ -751,17 +841,21 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $251,00
                                     </div><!-- End .product-price -->
@@ -774,24 +868,30 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Octo 4240</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Octo 4240</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $746,00
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #1f1e18;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #1f1e18;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -803,18 +903,22 @@
                                 <figure class="product-media">
                                     <span class="product-label label-new">NEW</span>
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $970,00
                                     </div><!-- End .product-price -->
@@ -828,26 +932,32 @@
                                 <figure class="product-media">
                                     <span class="product-label label-sale">30% OFF</span>
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Roots Sofa Bed</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Roots Sofa Bed</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         <span class="new-price">$337,00</span>
                                         <span class="old-price">Was $449,00</span>
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #878883;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #dfd5c2;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #878883;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #dfd5c2;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -858,25 +968,31 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Petite Table Lamp</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Petite Table Lamp</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $675,00
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #74543e;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #74543e;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -887,18 +1003,22 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Elephant Armchair</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Elephant Armchair</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $457,00
                                     </div><!-- End .product-price -->
@@ -911,18 +1031,22 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $251,00
                                     </div><!-- End .product-price -->
@@ -933,8 +1057,10 @@
                             </div><!-- End .product -->
                         </div><!-- End .owl-carousel -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="trendy-fur-tab" role="tabpanel" aria-labelledby="trendy-fur-link">
-                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                    <div class="tab-pane p-0 fade" id="trendy-fur-tab" role="tabpanel"
+                        aria-labelledby="trendy-fur-link">
+                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                            data-toggle="owl"
                             data-owl-options='{
                                 "nav": false, 
                                 "dots": true,
@@ -964,18 +1090,22 @@
                                 <figure class="product-media">
                                     <span class="product-label label-new">NEW</span>
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-3-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $970,00
                                     </div><!-- End .product-price -->
@@ -989,26 +1119,32 @@
                                 <figure class="product-media">
                                     <span class="product-label label-sale">30% OFF</span>
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-4-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Roots Sofa Bed</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Roots Sofa Bed</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         <span class="new-price">$337,00</span>
                                         <span class="old-price">Was $449,00</span>
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #878883;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #dfd5c2;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #878883;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #dfd5c2;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -1017,8 +1153,10 @@
                             </div><!-- End .product -->
                         </div><!-- End .owl-carousel -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="trendy-decor-tab" role="tabpanel" aria-labelledby="trendy-decor-link">
-                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                    <div class="tab-pane p-0 fade" id="trendy-decor-tab" role="tabpanel"
+                        aria-labelledby="trendy-decor-link">
+                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                            data-toggle="owl"
                             data-owl-options='{
                                 "nav": false, 
                                 "dots": true,
@@ -1047,17 +1185,21 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-1-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Butler Stool Ladder</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $251,00
                                     </div><!-- End .product-price -->
@@ -1069,18 +1211,22 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-6-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Elephant Armchair</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Elephant Armchair</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $457,00
                                     </div><!-- End .product-price -->
@@ -1091,8 +1237,10 @@
                             </div><!-- End .product -->
                         </div><!-- End .owl-carousel -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="trendy-light-tab" role="tabpanel" aria-labelledby="trendy-light-link">
-                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                    <div class="tab-pane p-0 fade" id="trendy-light-tab" role="tabpanel"
+                        aria-labelledby="trendy-light-link">
+                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                            data-toggle="owl"
                             data-owl-options='{
                                 "nav": false, 
                                 "dots": true,
@@ -1121,24 +1269,30 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-2-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Octo 4240</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Octo 4240</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $746,00
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #1f1e18;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #1f1e18;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -1148,25 +1302,31 @@
                             <div class="product product-11 text-center">
                                 <figure class="product-media">
                                     <a href="product.html">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-1.jpg" alt="Product image" class="product-image">
-                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-2.jpg" alt="Product image" class="product-image-hover">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-1.jpg"
+                                            alt="Product image" class="product-image">
+                                        <img src="frontend/assets/images/demos/demo-2/products/product-5-2.jpg"
+                                            alt="Product image" class="product-image-hover">
                                     </a>
 
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist"><span>add to
+                                                wishlist</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
-                                    <h3 class="product-title"><a href="product.html">Petite Table Lamp</a></h3><!-- End .product-title -->
+                                    <h3 class="product-title"><a href="product.html">Petite Table Lamp</a></h3>
+                                    <!-- End .product-title -->
                                     <div class="product-price">
                                         $675,00
                                     </div><!-- End .product-price -->
 
                                     <div class="product-nav product-nav-dots">
-                                        <a href="#" class="active" style="background: #74543e;"><span class="sr-only">Color name</span></a>
-                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                        <a href="#" class="active" style="background: #74543e;"><span
+                                                class="sr-only">Color name</span></a>
+                                        <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color
+                                                name</span></a>
                                     </div><!-- End .product-nav -->
                                 </div><!-- End .product-body -->
                                 <div class="product-action">
@@ -1178,115 +1338,135 @@
                 </div><!-- End .tab-content -->
             </div><!-- End .container -->
 
-    		<div class="container categories pt-6">
-        		<h2 class="title-lg text-center mb-4">Shop by Categories</h2><!-- End .title-lg text-center -->
+            <div class="container categories pt-6">
+                <h2 class="title-lg text-center mb-4">Shop by Categories</h2><!-- End .title-lg text-center -->
 
-        		<div class="row">
-        			<div class="col-6 col-lg-4">
-        				<div class="banner banner-display banner-link-anim">
-                			<a href="#">
-                				<img src="frontend/assets/images/banners/home/banner-1.jpg" alt="Banner">
-                			</a>
+                <div class="row">
+                    <div class="col-6 col-lg-4">
+                        <div class="banner banner-display banner-link-anim">
+                            <a href="#">
+                                <img src="frontend/assets/images/banners/home/banner-1.jpg" alt="Banner">
+                            </a>
 
-                			<div class="banner-content banner-content-center">
-                				<h3 class="banner-title text-white"><a href="#">Outdoor</a></h3><!-- End .banner-title -->
-                				<a href="#" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
-                			</div><!-- End .banner-content -->
-            			</div><!-- End .banner -->
-        			</div><!-- End .col-sm-6 col-lg-3 -->
-        			<div class="col-6 col-lg-4 order-lg-last">
-        				<div class="banner banner-display banner-link-anim">
-                			<a href="#">
-                				<img src="frontend/assets/images/banners/home/banner-4.jpg" alt="Banner">
-                			</a>
+                            <div class="banner-content banner-content-center">
+                                <h3 class="banner-title text-white"><a href="#">Outdoor</a></h3>
+                                <!-- End .banner-title -->
+                                <a href="#" class="btn btn-outline-white banner-link">Shop Now<i
+                                        class="icon-long-arrow-right"></i></a>
+                            </div><!-- End .banner-content -->
+                        </div><!-- End .banner -->
+                    </div><!-- End .col-sm-6 col-lg-3 -->
+                    <div class="col-6 col-lg-4 order-lg-last">
+                        <div class="banner banner-display banner-link-anim">
+                            <a href="#">
+                                <img src="frontend/assets/images/banners/home/banner-4.jpg" alt="Banner">
+                            </a>
 
-                			<div class="banner-content banner-content-center">
-                				<h3 class="banner-title text-white"><a href="#">Lighting</a></h3><!-- End .banner-title -->
-                				<a href="#" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
-                			</div><!-- End .banner-content -->
-            			</div><!-- End .banner -->
-        			</div><!-- End .col-sm-6 col-lg-3 -->
-        			<div class="col-sm-12 col-lg-4 banners-sm">
+                            <div class="banner-content banner-content-center">
+                                <h3 class="banner-title text-white"><a href="#">Lighting</a></h3>
+                                <!-- End .banner-title -->
+                                <a href="#" class="btn btn-outline-white banner-link">Shop Now<i
+                                        class="icon-long-arrow-right"></i></a>
+                            </div><!-- End .banner-content -->
+                        </div><!-- End .banner -->
+                    </div><!-- End .col-sm-6 col-lg-3 -->
+                    <div class="col-sm-12 col-lg-4 banners-sm">
                         <div class="row">
-            				<div class="banner banner-display banner-link-anim col-lg-12 col-6">
-                    			<a href="#">
-                    				<img src="frontend/assets/images/banners/home/banner-2.jpg" alt="Banner">
-                    			</a>
+                            <div class="banner banner-display banner-link-anim col-lg-12 col-6">
+                                <a href="#">
+                                    <img src="frontend/assets/images/banners/home/banner-2.jpg" alt="Banner">
+                                </a>
 
-                    			<div class="banner-content banner-content-center">
-                    				<h3 class="banner-title text-white"><a href="#">Furniture and Design</a></h3><!-- End .banner-title -->
-                    				<a href="#" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
-                    			</div><!-- End .banner-content -->
-                			</div><!-- End .banner -->
+                                <div class="banner-content banner-content-center">
+                                    <h3 class="banner-title text-white"><a href="#">Furniture and Design</a>
+                                    </h3><!-- End .banner-title -->
+                                    <a href="#" class="btn btn-outline-white banner-link">Shop Now<i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
 
-                			<div class="banner banner-display banner-link-anim col-lg-12 col-6">
-                    			<a href="#">
-                    				<img src="frontend/assets/images/banners/home/banner-3.jpg" alt="Banner">
-                    			</a>
+                            <div class="banner banner-display banner-link-anim col-lg-12 col-6">
+                                <a href="#">
+                                    <img src="frontend/assets/images/banners/home/banner-3.jpg" alt="Banner">
+                                </a>
 
-                    			<div class="banner-content banner-content-center">
-                    				<h3 class="banner-title text-white"><a href="#">Kitchen & Utensil</a></h3><!-- End .banner-title -->
-                    				<a href="#" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
-                    			</div><!-- End .banner-content -->
-                			</div><!-- End .banner -->
+                                <div class="banner-content banner-content-center">
+                                    <h3 class="banner-title text-white"><a href="#">Kitchen & Utensil</a></h3>
+                                    <!-- End .banner-title -->
+                                    <a href="#" class="btn btn-outline-white banner-link">Shop Now<i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
                         </div>
-        			</div><!-- End .col-sm-6 col-lg-3 -->
-        		</div><!-- End .row -->
-    		</div><!-- End .container -->
+                    </div><!-- End .col-sm-6 col-lg-3 -->
+                </div><!-- End .row -->
+            </div><!-- End .container -->
 
             <div class="mb-5"></div><!-- End .mb-6 -->
 
-            
+
             <div class="container">
                 <div class="heading heading-center mb-6">
                     <h2 class="title">Recent Arrivals</h2><!-- End .title -->
 
                     <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab" role="tab" aria-controls="top-all-tab" aria-selected="true">All</a>
+                            <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab"
+                                role="tab" aria-controls="top-all-tab" aria-selected="true">All</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="top-fur-link" data-toggle="tab" href="#top-fur-tab" role="tab" aria-controls="top-fur-tab" aria-selected="false">Furniture</a>
+                            <a class="nav-link" id="top-fur-link" data-toggle="tab" href="#top-fur-tab"
+                                role="tab" aria-controls="top-fur-tab" aria-selected="false">Furniture</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="top-decor-link" data-toggle="tab" href="#top-decor-tab" role="tab" aria-controls="top-decor-tab" aria-selected="false">Decor</a>
+                            <a class="nav-link" id="top-decor-link" data-toggle="tab" href="#top-decor-tab"
+                                role="tab" aria-controls="top-decor-tab" aria-selected="false">Decor</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="top-light-link" data-toggle="tab" href="#top-light-tab" role="tab" aria-controls="top-light-tab" aria-selected="false">Lighting</a>
+                            <a class="nav-link" id="top-light-link" data-toggle="tab" href="#top-light-tab"
+                                role="tab" aria-controls="top-light-tab" aria-selected="false">Lighting</a>
                         </li>
                     </ul>
                 </div><!-- End .heading -->
 
                 <div class="tab-content">
-                    <div class="tab-pane p-0 fade show active" id="top-all-tab" role="tabpanel" aria-labelledby="top-all-link">
+                    <div class="tab-pane p-0 fade show active" id="top-all-tab" role="tabpanel"
+                        aria-labelledby="top-all-link">
                         <div class="products">
                             <div class="row justify-content-center">
                                 <div class="col-6 col-md-4 col-lg-3">
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to
+                                                        wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Block Side Table/Trolley</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Block Side
+                                                    Table/Trolley</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $229,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active" style="background: #333333;"><span
+                                                        class="sr-only">Color name</span></a>
+                                                <a href="#" style="background: #e8e8e8;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1295,29 +1475,37 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Carronade Suspension Lamp</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Carronade Suspension
+                                                    Lamp</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $892,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #e8e8e8;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #333333;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
 
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1327,23 +1515,28 @@
                                         <figure class="product-media">
                                             <span class="product-label label-new">NEW</span>
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Garden Armchair</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Garden Armchair</a>
+                                            </h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $94,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1352,29 +1545,37 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Madra Log Holder</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Madra Log Holder</a>
+                                            </h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $104,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #927764;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #333333;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #927764;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
 
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1383,23 +1584,28 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Original Outdoor Beanbag</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Original Outdoor
+                                                    Beanbag</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $259,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1408,23 +1614,28 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">2-Seater</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">2-Seater</a></h3>
+                                            <!-- End .product-title -->
                                             <div class="product-price">
                                                 $3.107,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1433,28 +1644,36 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Wingback Chair</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Wingback Chair</a></h3>
+                                            <!-- End .product-title -->
                                             <div class="product-price">
                                                 $2.486,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #999999;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #cc9999;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #999999;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #cc9999;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1464,12 +1683,15 @@
                                         <figure class="product-media">
                                             <span class="product-label label-new">NEW</span>
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
@@ -1477,20 +1699,23 @@
                                             <div class="product-cat">
                                                 <a href="#">Decor</a>
                                             </div><!-- End .product-cat -->
-                                            <h3 class="product-title"><a href="product.html">Cushion Set 3 Pieces</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Cushion Set 3
+                                                    Pieces</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $199,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                             </div><!-- End .row -->
                         </div><!-- End .products -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="top-fur-tab" role="tabpanel" aria-labelledby="top-fur-link">
+                    <div class="tab-pane p-0 fade" id="top-fur-tab" role="tabpanel"
+                        aria-labelledby="top-fur-link">
                         <div class="products">
                             <div class="row justify-content-center">
                                 <div class="col-6 col-md-4 col-lg-3">
@@ -1498,23 +1723,28 @@
                                         <figure class="product-media">
                                             <span class="product-label label-new">NEW</span>
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-9-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Garden Armchair</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Garden Armchair</a>
+                                            </h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $94,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1523,89 +1753,111 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-12-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Block Side Table/Trolley</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Block Side
+                                                    Table/Trolley</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $229,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #333333;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #e8e8e8;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
-                                
+
                                 <div class="col-6 col-md-4 col-lg-3">
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-13-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">2-Seater</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">2-Seater</a></h3>
+                                            <!-- End .product-title -->
                                             <div class="product-price">
                                                 $3.107,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                             </div><!-- End .row -->
                         </div><!-- End .products -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="top-decor-tab" role="tabpanel" aria-labelledby="top-decor-link">
+                    <div class="tab-pane p-0 fade" id="top-decor-tab" role="tabpanel"
+                        aria-labelledby="top-decor-link">
                         <div class="products">
                             <div class="row justify-content-center">
                                 <div class="col-6 col-md-4 col-lg-3">
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-8-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Madra Log Holder</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Madra Log Holder</a>
+                                            </h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $104,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #927764;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #333333;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #927764;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
 
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1614,23 +1866,28 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-11-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Original Outdoor Beanbag</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Original Outdoor
+                                                    Beanbag</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $259,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1639,64 +1896,81 @@
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-14-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Wingback Chair</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Wingback Chair</a></h3>
+                                            <!-- End .product-title -->
                                             <div class="product-price">
                                                 $2.486,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #999999;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #cc9999;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #999999;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #cc9999;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                             </div><!-- End .row -->
                         </div><!-- End .products -->
                     </div><!-- .End .tab-pane -->
-                    <div class="tab-pane p-0 fade" id="top-light-tab" role="tabpanel" aria-labelledby="top-light-link">
+                    <div class="tab-pane p-0 fade" id="top-light-tab" role="tabpanel"
+                        aria-labelledby="top-light-link">
                         <div class="products">
                             <div class="row justify-content-center">
                                 <div class="col-6 col-md-4 col-lg-3">
                                     <div class="product product-11 mt-v3 text-center">
                                         <figure class="product-media">
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-10-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
                                         <div class="product-body">
-                                            <h3 class="product-title"><a href="product.html">Carronade Suspension Lamp</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Carronade Suspension
+                                                    Lamp</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $892,00
                                             </div><!-- End .product-price -->
 
                                             <div class="product-nav product-nav-dots">
-                                                <a href="#" class="active" style="background: #e8e8e8;"><span class="sr-only">Color name</span></a>
-                                                <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
+                                                <a href="#" class="active"
+                                                    style="background: #e8e8e8;"><span class="sr-only">Color
+                                                        name</span></a>
+                                                <a href="#" style="background: #333333;"><span
+                                                        class="sr-only">Color name</span></a>
                                             </div><!-- End .product-nav -->
 
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1706,12 +1980,15 @@
                                         <figure class="product-media">
                                             <span class="product-label label-new">NEW</span>
                                             <a href="product.html">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-1.jpg" alt="Product image" class="product-image">
-                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-2.jpg" alt="Product image" class="product-image-hover">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-1.jpg"
+                                                    alt="Product image" class="product-image">
+                                                <img src="frontend/assets/images/demos/demo-2/products/product-16-2.jpg"
+                                                    alt="Product image" class="product-image-hover">
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to wishlist</span></a>
+                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add
+                                                        to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
@@ -1719,13 +1996,15 @@
                                             <div class="product-cat">
                                                 <a href="#">Decor</a>
                                             </div><!-- End .product-cat -->
-                                            <h3 class="product-title"><a href="product.html">Cushion Set 3 Pieces</a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="product.html">Cushion Set 3
+                                                    Pieces</a></h3><!-- End .product-title -->
                                             <div class="product-price">
                                                 $199,00
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" class="btn-product btn-cart"><span>add to
+                                                    cart</span></a>
                                         </div><!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
@@ -1734,13 +2013,14 @@
                     </div><!-- .End .tab-pane -->
                 </div><!-- End .tab-content -->
                 <div class="more-container text-center">
-                    <a href="#" class="btn btn-outline-darker btn-more"><span>Load more products</span><i class="icon-long-arrow-down"></i></a>
+                    <a href="#" class="btn btn-outline-darker btn-more"><span>Load more products</span><i
+                            class="icon-long-arrow-down"></i></a>
                 </div><!-- End .more-container -->
             </div><!-- End .container -->
 
             <div class="container">
                 <hr>
-            	<div class="row justify-content-center">
+                <div class="row justify-content-center">
                     <div class="col-lg-4 col-sm-6">
                         <div class="icon-box icon-box-card text-center">
                             <span class="icon-box-icon">
@@ -1782,9 +2062,9 @@
             </div><!-- End .container -->
             <div class="blog-posts pt-7 pb-7" style="background-color: #fafafa;">
                 <div class="container">
-                   <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
+                    <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
 
-                    <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl" 
+                    <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
                         data-owl-options='{
                             "nav": false, 
                             "dots": true,
@@ -1820,7 +2100,8 @@
                                 </h3><!-- End .entry-title -->
 
                                 <div class="entry-content">
-                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus hendrerit.<br>Pelletesque aliquet nibh necurna. </p>
+                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus
+                                        hendrerit.<br>Pelletesque aliquet nibh necurna. </p>
                                     <a href="single.html" class="read-more">Read More</a>
                                 </div><!-- End .entry-content -->
                             </div><!-- End .entry-body -->
@@ -1843,7 +2124,8 @@
                                 </h3><!-- End .entry-title -->
 
                                 <div class="entry-content">
-                                    <p>Sed pretium, ligula sollicitudin laoreet<br>viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Nullam mollis justo. </p>
+                                    <p>Sed pretium, ligula sollicitudin laoreet<br>viverra, tortor libero sodales leo,
+                                        eget blandit nunc tortor eu nibh. Nullam mollis justo. </p>
                                     <a href="single.html" class="read-more">Read More</a>
                                 </div><!-- End .entry-content -->
                             </div><!-- End .entry-body -->
@@ -1866,7 +2148,8 @@
                                 </h3><!-- End .entry-title -->
 
                                 <div class="entry-content">
-                                    <p>Suspendisse potenti. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. </p>
+                                    <p>Suspendisse potenti. Sed egestas, ante et vulputate volutpat, eros pede semper
+                                        est, vitae luctus metus libero eu augue. </p>
                                     <a href="single.html" class="read-more">Read More</a>
                                 </div><!-- End .entry-content -->
                             </div><!-- End .entry-body -->
@@ -1875,21 +2158,25 @@
                 </div><!-- container -->
 
                 <div class="more-container text-center mb-0 mt-3">
-                    <a href="blog.html" class="btn btn-outline-darker btn-more"><span>View more articles</span><i class="icon-long-arrow-right"></i></a>
+                    <a href="blog.html" class="btn btn-outline-darker btn-more"><span>View more articles</span><i
+                            class="icon-long-arrow-right"></i></a>
                 </div><!-- End .more-container -->
             </div>
-            <div class="cta cta-display bg-image pt-4 pb-4" style="background-image: url(frontend/assets/images/backgrounds/cta/bg-6.jpg);">
+            <div class="cta cta-display bg-image pt-4 pb-4"
+                style="background-image: url(frontend/assets/images/backgrounds/cta/bg-6.jpg);">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-md-10 col-lg-9 col-xl-8">
                             <div class="row no-gutters flex-column flex-sm-row align-items-sm-center">
                                 <div class="col">
                                     <h3 class="cta-title text-white">Sign Up & Get 10% Off</h3><!-- End .cta-title -->
-                                    <p class="cta-desc text-white">Molla presents the best in interior design</p><!-- End .cta-desc -->
+                                    <p class="cta-desc text-white">Molla presents the best in interior design</p>
+                                    <!-- End .cta-desc -->
                                 </div><!-- End .col -->
 
                                 <div class="col-auto">
-                                    <a href="login.html" class="btn btn-outline-white"><span>SIGN UP</span><i class="icon-long-arrow-right"></i></a>
+                                    <a href="login.html" class="btn btn-outline-white"><span>SIGN UP</span><i
+                                            class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .col-auto -->
                             </div><!-- End .row no-gutters -->
                         </div><!-- End .col-md-10 col-lg-9 -->
@@ -1899,78 +2186,87 @@
         </main><!-- End .main -->
 
         <footer class="footer footer-dark">
-        	<div class="footer-middle">
-	            <div class="container">
-	            	<div class="row">
-	            		<div class="col-sm-6 col-lg-3">
-	            			<div class="widget widget-about">
-	            				<img src="frontend/assets/images/logo-footer.png" class="footer-logo" alt="Footer Logo" width="105" height="25">
-	            				<p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. </p>
+            <div class="footer-middle">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget widget-about">
+                                <img src="frontend/assets/images/logo-footer.png" class="footer-logo"
+                                    alt="Footer Logo" width="105" height="25">
+                                <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate
+                                    magna eros eu erat. </p>
 
-	            				<div class="social-icons">
-	            					<a href="#" class="social-icon" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
-	            					<a href="#" class="social-icon" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
-	            					<a href="#" class="social-icon" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
-	            					<a href="#" class="social-icon" title="Youtube" target="_blank"><i class="icon-youtube"></i></a>
-	            					<a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
-	            				</div><!-- End .soial-icons -->
-	            			</div><!-- End .widget about-widget -->
-	            		</div><!-- End .col-sm-6 col-lg-3 -->
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon" title="Facebook" target="_blank"><i
+                                            class="icon-facebook-f"></i></a>
+                                    <a href="#" class="social-icon" title="Twitter" target="_blank"><i
+                                            class="icon-twitter"></i></a>
+                                    <a href="#" class="social-icon" title="Instagram" target="_blank"><i
+                                            class="icon-instagram"></i></a>
+                                    <a href="#" class="social-icon" title="Youtube" target="_blank"><i
+                                            class="icon-youtube"></i></a>
+                                    <a href="#" class="social-icon" title="Pinterest" target="_blank"><i
+                                            class="icon-pinterest"></i></a>
+                                </div><!-- End .soial-icons -->
+                            </div><!-- End .widget about-widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
 
-	            		<div class="col-sm-6 col-lg-3">
-	            			<div class="widget">
-	            				<h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
 
-	            				<ul class="widget-list">
-	            					<li><a href="about.html">About Molla</a></li>
-	            					<li><a href="#">How to shop on Molla</a></li>
-	            					<li><a href="#">FAQ</a></li>
-	            					<li><a href="contact.html">Contact us</a></li>
-	            					<li><a href="login.html">Log in</a></li>
-	            				</ul><!-- End .widget-list -->
-	            			</div><!-- End .widget -->
-	            		</div><!-- End .col-sm-6 col-lg-3 -->
+                                <ul class="widget-list">
+                                    <li><a href="about.html">About Molla</a></li>
+                                    <li><a href="#">How to shop on Molla</a></li>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="contact.html">Contact us</a></li>
+                                    <li><a href="login.html">Log in</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
 
-	            		<div class="col-sm-6 col-lg-3">
-	            			<div class="widget">
-	            				<h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
 
-	            				<ul class="widget-list">
-	            					<li><a href="#">Payment Methods</a></li>
-	            					<li><a href="#">Money-back guarantee!</a></li>
-	            					<li><a href="#">Returns</a></li>
-	            					<li><a href="#">Shipping</a></li>
-	            					<li><a href="#">Terms and conditions</a></li>
-	            					<li><a href="#">Privacy Policy</a></li>
-	            				</ul><!-- End .widget-list -->
-	            			</div><!-- End .widget -->
-	            		</div><!-- End .col-sm-6 col-lg-3 -->
+                                <ul class="widget-list">
+                                    <li><a href="#">Payment Methods</a></li>
+                                    <li><a href="#">Money-back guarantee!</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                    <li><a href="#">Shipping</a></li>
+                                    <li><a href="#">Terms and conditions</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
 
-	            		<div class="col-sm-6 col-lg-3">
-	            			<div class="widget">
-	            				<h4 class="widget-title">My Account</h4><!-- End .widget-title -->
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
 
-	            				<ul class="widget-list">
-	            					<li><a href="#">Sign In</a></li>
-	            					<li><a href="cart.html">View Cart</a></li>
-	            					<li><a href="#">My Wishlist</a></li>
-	            					<li><a href="#">Track My Order</a></li>
-	            					<li><a href="#">Help</a></li>
-	            				</ul><!-- End .widget-list -->
-	            			</div><!-- End .widget -->
-	            		</div><!-- End .col-sm-6 col-lg-3 -->
-	            	</div><!-- End .row -->
-	            </div><!-- End .container -->
-	        </div><!-- End .footer-middle -->
+                                <ul class="widget-list">
+                                    <li><a href="#">Sign In</a></li>
+                                    <li><a href="cart.html">View Cart</a></li>
+                                    <li><a href="#">My Wishlist</a></li>
+                                    <li><a href="#">Track My Order</a></li>
+                                    <li><a href="#">Help</a></li>
+                                </ul><!-- End .widget-list -->
+                            </div><!-- End .widget -->
+                        </div><!-- End .col-sm-6 col-lg-3 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .footer-middle -->
 
-	        <div class="footer-bottom">
-	        	<div class="container">
-	        		<p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p><!-- End .footer-copyright -->
-	        		<figure class="footer-payments">
-	        			<img src="frontend/assets/images/payments.png" alt="Payment methods" width="272" height="20">
-	        		</figure><!-- End .footer-payments -->
-	        	</div><!-- End .container -->
-	        </div><!-- End .footer-bottom -->
+            <div class="footer-bottom">
+                <div class="container">
+                    <p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p>
+                    <!-- End .footer-copyright -->
+                    <figure class="footer-payments">
+                        <img src="frontend/assets/images/payments.png" alt="Payment methods" width="272"
+                            height="20">
+                    </figure><!-- End .footer-payments -->
+                </div><!-- End .container -->
+            </div><!-- End .footer-bottom -->
         </footer><!-- End .footer -->
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
@@ -1984,10 +2280,11 @@
 
             <form action="#" method="get" class="mobile-search">
                 <label for="mobile-search" class="sr-only">Search</label>
-                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
+                <input type="search" class="form-control" name="mobile-search" id="mobile-search"
+                    placeholder="Search in..." required>
                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
             </form>
-            
+
             <nav class="mobile-nav">
                 <ul class="mobile-menu">
                     <li class="active">
@@ -2027,10 +2324,12 @@
                             <li><a href="category-2cols.html">Shop Grid 2 Columns</a></li>
                             <li><a href="category.html">Shop Grid 3 Columns</a></li>
                             <li><a href="category-4cols.html">Shop Grid 4 Columns</a></li>
-                            <li><a href="category-boxed.html"><span>Shop Boxed No Sidebar<span class="tip tip-hot">Hot</span></span></a></li>
+                            <li><a href="category-boxed.html"><span>Shop Boxed No Sidebar<span
+                                            class="tip tip-hot">Hot</span></span></a></li>
                             <li><a href="category-fullwidth.html">Shop Fullwidth No Sidebar</a></li>
                             <li><a href="product-category-boxed.html">Product Category Boxed</a></li>
-                            <li><a href="product-category-fullwidth.html"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
+                            <li><a href="product-category-fullwidth.html"><span>Product Category Fullwidth<span
+                                            class="tip tip-new">New</span></span></a></li>
                             <li><a href="cart.html">Cart</a></li>
                             <li><a href="checkout.html">Checkout</a></li>
                             <li><a href="wishlist.html">Wishlist</a></li>
@@ -2042,7 +2341,8 @@
                         <ul>
                             <li><a href="product.html">Default</a></li>
                             <li><a href="product-centered.html">Centered</a></li>
-                            <li><a href="product-extended.html"><span>Extended Info<span class="tip tip-new">New</span></span></a></li>
+                            <li><a href="product-extended.html"><span>Extended Info<span
+                                            class="tip tip-new">New</span></span></a></li>
                             <li><a href="product-gallery.html">Gallery</a></li>
                             <li><a href="product-sticky.html">Sticky Info</a></li>
                             <li><a href="product-sidebar.html">Boxed With Sidebar</a></li>
@@ -2139,10 +2439,14 @@
             </nav><!-- End .mobile-nav -->
 
             <div class="social-icons">
-                <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
-                <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
-                <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
-                <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Facebook"><i
+                        class="icon-facebook-f"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Twitter"><i
+                        class="icon-twitter"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Instagram"><i
+                        class="icon-instagram"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Youtube"><i
+                        class="icon-youtube"></i></a>
             </div><!-- End .social-icons -->
         </div><!-- End .mobile-menu-wrapper -->
     </div><!-- End .mobile-menu-container -->
@@ -2160,23 +2464,28 @@
                         <div class="form-tab">
                             <ul class="nav nav-pills nav-fill" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="signin-tab" data-toggle="tab" href="#signin" role="tab" aria-controls="signin" aria-selected="true">Sign In</a>
+                                    <a class="nav-link active" id="signin-tab" data-toggle="tab" href="#signin"
+                                        role="tab" aria-controls="signin" aria-selected="true">Sign In</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Register</a>
+                                    <a class="nav-link" id="register-tab" data-toggle="tab" href="#register"
+                                        role="tab" aria-controls="register" aria-selected="false">Register</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="tab-content-5">
-                                <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+                                <div class="tab-pane fade show active" id="signin" role="tabpanel"
+                                    aria-labelledby="signin-tab">
                                     <form action="#">
                                         <div class="form-group">
                                             <label for="singin-email">Username or email address *</label>
-                                            <input type="text" class="form-control" id="singin-email" name="singin-email" required>
+                                            <input type="text" class="form-control" id="singin-email"
+                                                name="singin-email" required>
                                         </div><!-- End .form-group -->
 
                                         <div class="form-group">
                                             <label for="singin-password">Password *</label>
-                                            <input type="password" class="form-control" id="singin-password" name="singin-password" required>
+                                            <input type="password" class="form-control" id="singin-password"
+                                                name="singin-password" required>
                                         </div><!-- End .form-group -->
 
                                         <div class="form-footer">
@@ -2186,8 +2495,10 @@
                                             </button>
 
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="signin-remember">
-                                                <label class="custom-control-label" for="signin-remember">Remember Me</label>
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="signin-remember">
+                                                <label class="custom-control-label" for="signin-remember">Remember
+                                                    Me</label>
                                             </div><!-- End .custom-checkbox -->
 
                                             <a href="#" class="forgot-link">Forgot Your Password?</a>
@@ -2211,16 +2522,19 @@
                                         </div><!-- End .row -->
                                     </div><!-- End .form-choice -->
                                 </div><!-- .End .tab-pane -->
-                                <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                                <div class="tab-pane fade" id="register" role="tabpanel"
+                                    aria-labelledby="register-tab">
                                     <form action="#">
                                         <div class="form-group">
                                             <label for="register-email">Your email address *</label>
-                                            <input type="email" class="form-control" id="register-email" name="register-email" required>
+                                            <input type="email" class="form-control" id="register-email"
+                                                name="register-email" required>
                                         </div><!-- End .form-group -->
 
                                         <div class="form-group">
                                             <label for="register-password">Password *</label>
-                                            <input type="password" class="form-control" id="register-password" name="register-password" required>
+                                            <input type="password" class="form-control" id="register-password"
+                                                name="register-password" required>
                                         </div><!-- End .form-group -->
 
                                         <div class="form-footer">
@@ -2230,8 +2544,10 @@
                                             </button>
 
                                             <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="register-policy" required>
-                                                <label class="custom-control-label" for="register-policy">I agree to the <a href="#">privacy policy</a> *</label>
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="register-policy" required>
+                                                <label class="custom-control-label" for="register-policy">I agree to
+                                                    the <a href="#">privacy policy</a> *</label>
                                             </div><!-- End .custom-checkbox -->
                                         </div><!-- End .form-footer -->
                                     </form>
@@ -2267,25 +2583,31 @@
                 <div class="row no-gutters bg-white newsletter-popup-content">
                     <div class="col-xl-3-5col col-lg-7 banner-content-wrap">
                         <div class="banner-content text-center">
-                            <img src="frontend/assets/images/popup/newsletter/logo.png" class="logo" alt="logo" width="60" height="15">
+                            <img src="frontend/assets/images/popup/newsletter/logo.png" class="logo"
+                                alt="logo" width="60" height="15">
                             <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
-                            <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite products.</p>
+                            <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite
+                                products.</p>
                             <form action="#">
                                 <div class="input-group input-group-round">
-                                    <input type="email" class="form-control form-control-white" placeholder="Your Email Address" aria-label="Email Adress" required>
+                                    <input type="email" class="form-control form-control-white"
+                                        placeholder="Your Email Address" aria-label="Email Adress" required>
                                     <div class="input-group-append">
                                         <button class="btn" type="submit"><span>go</span></button>
                                     </div><!-- .End .input-group-append -->
                                 </div><!-- .End .input-group -->
                             </form>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
-                                <label class="custom-control-label" for="register-policy-2">Do not show this popup again</label>
+                                <input type="checkbox" class="custom-control-input" id="register-policy-2"
+                                    required>
+                                <label class="custom-control-label" for="register-policy-2">Do not show this popup
+                                    again</label>
                             </div><!-- End .custom-checkbox -->
                         </div>
                     </div>
                     <div class="col-xl-2-5col col-lg-5 ">
-                        <img src="frontend/assets/images/popup/newsletter/img-1.jpg" class="newsletter-img" alt="newsletter">
+                        <img src="frontend/assets/images/popup/newsletter/img-1.jpg" class="newsletter-img"
+                            alt="newsletter">
                     </div>
                 </div>
             </div>
@@ -2305,4 +2627,5 @@
 
 
 <!-- molla/index-2.html  22 Nov 2019 09:55:42 GMT -->
+
 </html>
