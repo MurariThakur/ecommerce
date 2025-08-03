@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Frontend\HomeController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -89,9 +90,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 });
 
-// Redirect root to login
-Route::get('/', function () {
-    return redirect('/admin/login');
-});
+// Frontend Routes (no authentication required)
+Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 
+// Redirect root to frontend home
+// Route::get('/', function () {
+//     return redirect()->route('frontend.home');
+// });
 
