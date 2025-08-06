@@ -24,18 +24,9 @@ class SubcategorySeeder extends Seeder
             3 => ['Furniture', 'Home Decor', 'Kitchen', 'Garden Tools', 'Bedding'],
             // Sports & Outdoors (category_id: 4)
             4 => ['Fitness Equipment', 'Outdoor Gear', 'Sports Apparel', 'Team Sports', 'Water Sports'],
-            // Health & Beauty (category_id: 5)
-            5 => ['Skincare', 'Makeup', 'Hair Care', 'Vitamins', 'Personal Care'],
             // Books (category_id: 6)
-            6 => ['Fiction', 'Non-Fiction', 'Educational', 'Children\'s Books', 'Comics'],
+            5 => ['Fiction', 'Non-Fiction', 'Educational', 'Children\'s Books', 'Comics'],
             // Toys & Games (category_id: 7)
-            7 => ['Action Figures', 'Board Games', 'Educational Toys', 'Video Games', 'Puzzles'],
-            // Jewelry (category_id: 8)
-            8 => ['Rings', 'Necklaces', 'Earrings', 'Bracelets', 'Watches'],
-            // Automotive (category_id: 9)
-            9 => ['Car Parts', 'Tools', 'Accessories', 'Tires', 'Electronics'],
-            // Food & Beverages (category_id: 10)
-            10 => ['Snacks', 'Beverages', 'Organic Food', 'Frozen Food', 'Condiments']
         ];
 
         foreach ($subcategories as $categoryId => $subs) {
@@ -43,13 +34,13 @@ class SubcategorySeeder extends Seeder
                 $slug = Str::slug($subName);
                 $counter = 1;
                 $originalSlug = $slug;
-                
+
                 // Ensure unique slug
                 while (Subcategory::where('slug', $slug)->exists()) {
                     $slug = $originalSlug . '-' . $counter;
                     $counter++;
                 }
-                
+
                 Subcategory::create([
                     'name' => $subName,
                     'slug' => $slug,

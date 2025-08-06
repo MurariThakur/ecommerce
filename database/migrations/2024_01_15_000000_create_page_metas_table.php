@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('page_metas', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->string('meta_title')->nullable();
+            $table->string('page_name')->unique(); // e.g., 'home', 'about', 'contact', etc.
+            $table->string('route_name')->nullable(); // Laravel route name
+            $table->string('meta_title');
             $table->text('meta_description')->nullable();
-            $table->text('meta_keyword')->nullable();
+            $table->text('meta_keywords')->nullable();
             $table->boolean('status')->default(true);
-            $table->boolean('isdelete')->default(false);
             $table->timestamps();
-
-            $table->index(['slug', 'status', 'isdelete']); // For categories
+            
+            $table->index('page_name');
+            $table->index('route_name');
+            $table->index('status');
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('page_metas');
     }
 };

@@ -20,21 +20,6 @@ class BrandSeeder extends Seeder
             'Nike',
             'Adidas',
             'Sony',
-            'LG',
-            'Dell',
-            'HP',
-            'Canon',
-            'Nikon',
-            'Zara',
-            'H&M',
-            'IKEA',
-            'Toyota',
-            'Honda',
-            'Rolex',
-            'Casio',
-            'Levi\'s',
-            'Puma',
-            'Under Armour'
         ];
 
         foreach ($brands as $brandName) {
