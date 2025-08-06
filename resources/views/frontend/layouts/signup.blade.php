@@ -93,7 +93,7 @@
                                                 <input type="checkbox" class="custom-control-input"
                                                     id="register-policy" required>
                                                 <label class="custom-control-label" for="register-policy">I agree to
-                                                    the <a href="#">privacy policy</a> *</label>
+                                                    the <a href="{{ asset('privacy-policy.html') }}">privacy policy</a> *</label>
                                             </div><!-- End .custom-checkbox -->
                                         </div><!-- End .form-footer -->
                                     </form>

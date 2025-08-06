@@ -29,10 +29,10 @@
                          <a href="#">Links</a>
                          <ul>
                              <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
-                             <li><a href="wishlist.html"><i class="icon-heart-o"></i>My Wishlist
+                             <li><a href="{{ asset('wishlist.html') }}"><i class="icon-heart-o"></i>My Wishlist
                                      <span>(3)</span></a></li>
-                             <li><a href="about.html">About Us</a></li>
-                             <li><a href="contact.html">Contact Us</a></li>
+                             <li><a href="{{ asset('about.html') }}">About Us</a></li>
+                             <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
                              <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a>
                              </li>
                          </ul>
@@ -50,53 +50,66 @@
                      <i class="icon-bars"></i>
                  </button>
 
-                 <a href="{{ url('') }}" class="logo">
-                     <img src="frontend/assets/images/logo.png" alt="Molla Logo" width="105" height="25">
-                 </a>
+                <a href="{{ url('') }}" class="logo">
+                    <img src="{{ asset('frontend/assets/images/logo.png') }}" alt="Molla Logo" width="105" height="25">
+                </a>
 
                  <nav class="main-nav">
                      <ul class="menu sf-arrows">
                          <li class="active">
                              <a href="{{url('/')}}" >Home</a>
                          </li>
-                         <li>
-                             <a href="category.html" class="sf-with-ul">Shop</a>
+                        <li>
+                            <a href="#" class="sf-with-ul">Shop</a>
 
-                             <div class="megamenu megamenu-md">
-                                 <div class="row no-gutters">
-                                     <div class="col-md-12">
-                                         <div class="menu-col">
-                                             <div class="row">
-                                                @for (($i = 1); $i <= 4; $i++)
+                            @php
+                                $categories = App\Models\Category::getMenuCategories();
+                            @endphp
 
-
-                                                 <div class="col-md-4" style="margin-bottom: 20px;">
-                                                     <a href="" class="menu-title">Shop with sidebar</a>
-                                                     <!-- End .menu-title -->
-                                                     <ul>
-                                                         <li><a href="category-list.html">Shop List</a></li>
-                                                         <li><a href="category-2cols.html">Shop Grid 2
-                                                                 Columns</a></li>
-                                                         <li><a href="category.html">Shop Grid 3 Columns</a>
-                                                         </li>
-                                                         <li><a href="category-4cols.html">Shop Grid 4
-                                                                 Columns</a></li>
-                                                         <li><a href="category-market.html"><span>Shop
-                                                                     Market<span
-                                                                         class="tip tip-new">New</span></span></a>
-                                                         </li>
-                                                     </ul>
-                                                 </div><!-- End .col-md-6 -->
-     @endfor
-
-                                             </div><!-- End .row -->
-                                         </div><!-- End .menu-col -->
-                                     </div><!-- End .col-md-8 -->
-
-
-                                 </div><!-- End .row -->
-                             </div><!-- End .megamenu megamenu-md -->
-                         </li>
+                            @if($categories->count() > 0)
+                            <div class="megamenu megamenu-md">
+                                <div class="row no-gutters">
+                                    <div class="col-md-12">
+                                        <div class="menu-col">
+                                            <div class="row">
+                                                @foreach($categories as $category)
+                                                    <div class="col-md-4" style="margin-bottom: 20px;">
+                                                        <a href="{{ url($category->slug) }}" class="menu-title">{{ $category->name }}</a>
+                                                        <!-- End .menu-title -->
+                                                        @if($category->activeSubcategories->count() > 0)
+                                                        <ul>
+                                                            @foreach($category->activeSubcategories as $subcategory)
+                                                                <li><a href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a></li>
+                                                            @endforeach
+                                                        </ul>
+                                                        @else
+                                                        <ul>
+                                                            <li><a href="{{ url($category->slug) }}">View All {{ $category->name }}</a></li>
+                                                        </ul>
+                                                        @endif
+                                                    </div><!-- End .col-md-4 -->
+                                                @endforeach
+                                            </div><!-- End .row -->
+                                        </div><!-- End .menu-col -->
+                                    </div><!-- End .col-md-12 -->
+                                </div><!-- End .row -->
+                            </div><!-- End .megamenu megamenu-md -->
+                            @else
+                            <div class="megamenu megamenu-md">
+                                <div class="row no-gutters">
+                                    <div class="col-md-12">
+                                        <div class="menu-col">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center" style="padding: 20px;">
+                                                    <p>No categories available</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        </li>
 
 
                      </ul><!-- End .menu -->
@@ -128,7 +141,7 @@
                              <div class="product">
                                  <div class="product-cart-details">
                                      <h4 class="product-title">
-                                         <a href="product.html">Beige knitted elastic runner shoes</a>
+                                     <a href="{{ asset('product.html') }}">Beige knitted elastic runner shoes</a>
                                      </h4>
 
                                      <span class="cart-product-info">
@@ -138,8 +151,8 @@
                                  </div><!-- End .product-cart-details -->
 
                                  <figure class="product-image-container">
-                                     <a href="product.html" class="product-image">
-                                         <img src="frontend/assets/images/products/cart/product-1.jpg" alt="product">
+                                     <a href="{{ asset('product.html') }}" class="product-image">
+                                         <img src="{{ asset('frontend/assets/images/products/cart/product-1.jpg') }}" alt="product">
                                      </a>
                                  </figure>
                                  <a href="#" class="btn-remove" title="Remove Product"><i
@@ -149,7 +162,7 @@
                              <div class="product">
                                  <div class="product-cart-details">
                                      <h4 class="product-title">
-                                         <a href="product.html">Blue utility pinafore denim dress</a>
+                                     <a href="{{ asset('product.html') }}">Blue utility pinafore denim dress</a>
                                      </h4>
 
                                      <span class="cart-product-info">
@@ -159,8 +172,8 @@
                                  </div><!-- End .product-cart-details -->
 
                                  <figure class="product-image-container">
-                                     <a href="product.html" class="product-image">
-                                         <img src="frontend/assets/images/products/cart/product-2.jpg" alt="product">
+                                     <a href="{{ asset('product.html') }}" class="product-image">
+                                         <img src="{{ asset('frontend/assets/images/products/cart/product-2.jpg') }}" alt="product">
                                      </a>
                                  </figure>
                                  <a href="#" class="btn-remove" title="Remove Product"><i
@@ -175,8 +188,8 @@
                          </div><!-- End .dropdown-cart-total -->
 
                          <div class="dropdown-cart-action">
-                             <a href="cart.html" class="btn btn-primary">View Cart</a>
-                             <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                             <a href="{{ asset('cart.html') }}" class="btn btn-primary">View Cart</a>
+                             <a href="{{ asset('checkout.html') }}" class="btn btn-outline-primary-2"><span>Checkout</span><i
                                      class="icon-long-arrow-right"></i></a>
                          </div><!-- End .dropdown-cart-total -->
                      </div><!-- End .dropdown-menu -->

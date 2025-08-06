@@ -14,14 +14,14 @@
     <meta name="author" content="">
     <!-- Favicon -->
 
-    <link rel="shortcut icon" href="frontend/assets/images/icons/favicon.ico">
+    <link rel="shortcut icon" href="{{ asset('frontend/assets/images/icons/favicon.ico') }}">
 
     <!-- Plugins CSS File -->
-    <link rel="stylesheet" href="frontend/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="frontend/assets/css/plugins/owl-carousel/owl.carousel.css">
-    <link rel="stylesheet" href="frontend/assets/css/plugins/magnific-popup/magnific-popup.css">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/owl-carousel/owl.carousel.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/magnific-popup/magnific-popup.css') }}">
     <!-- Main CSS File -->
-    <link rel="stylesheet" href="frontend/assets/css/style.css">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
 </head>
 
 <body>
@@ -47,7 +47,7 @@
                 <div class="row no-gutters bg-white newsletter-popup-content">
                     <div class="col-xl-3-5col col-lg-7 banner-content-wrap">
                         <div class="banner-content text-center">
-                            <img src="frontend/assets/images/popup/newsletter/logo.png" class="logo" alt="logo"
+                            <img src="{{ asset('frontend/assets/images/popup/newsletter/logo.png') }}" class="logo" alt="logo"
                                 width="60" height="15">
                             <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
                             <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div class="col-xl-2-5col col-lg-5 ">
-                        <img src="frontend/assets/images/popup/newsletter/img-1.jpg" class="newsletter-img"
+                        <img src="{{ asset('frontend/assets/images/popup/newsletter/img-1.jpg') }}" class="newsletter-img"
                             alt="newsletter">
                     </div>
                 </div>
@@ -78,15 +78,15 @@
     </div> --}}
 
     <!-- Plugins JS File -->
-    <script src="frontend/assets/js/jquery.min.js"></script>
-    <script src="frontend/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="frontend/assets/js/jquery.hoverIntent.min.js"></script>
-    <script src="frontend/assets/js/jquery.waypoints.min.js"></script>
-    <script src="frontend/assets/js/superfish.min.js"></script>
-    <script src="frontend/assets/js/owl.carousel.min.js"></script>
-    <script src="frontend/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="{{ asset('frontend/assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/jquery.hoverIntent.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/superfish.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/jquery.magnific-popup.min.js') }}"></script>
     <!-- Main JS File -->
-    <script src="frontend/assets/js/main.js"></script>
+    <script src="{{ asset('frontend/assets/js/main.js') }}"></script>
 
 </body>
 

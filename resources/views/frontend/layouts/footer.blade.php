@@ -4,7 +4,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-lg-3">
                             <div class="widget widget-about">
-                                <img src="frontend/assets/images/logo-footer.png" class="footer-logo"
+                                <img src="{{ asset('frontend/assets/images/logo-footer.png') }}" class="footer-logo"
                                     alt="Footer Logo" width="105" height="25">
                                 <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate
                                     magna eros eu erat. </p>
@@ -29,10 +29,10 @@
                                 <h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
 
                                 <ul class="widget-list">
-                                    <li><a href="about.html">About Molla</a></li>
+                                    <li><a href="{{ asset('about.html') }}">About Molla</a></li>
                                     <li><a href="#">How to shop on Molla</a></li>
                                     <li><a href="#">FAQ</a></li>
-                                    <li><a href="contact.html">Contact us</a></li>
+                                    <li><a href="{{ asset('contact.html') }}">Contact us</a></li>
                                     <li><a href="#signin-modal" data-toggle="modal">Log in</a></li>
                                 </ul><!-- End .widget-list -->
                             </div><!-- End .widget -->
@@ -59,7 +59,7 @@
 
                                 <ul class="widget-list">
                                     <li><a href="#">Sign In</a></li>
-                                    <li><a href="cart.html">View Cart</a></li>
+                                    <li><a href="{{ asset('cart.html') }}">View Cart</a></li>
                                     <li><a href="#">My Wishlist</a></li>
                                     <li><a href="#">Track My Order</a></li>
                                     <li><a href="#">Help</a></li>
@@ -75,7 +75,7 @@
                     <p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p>
                     <!-- End .footer-copyright -->
                     <figure class="footer-payments">
-                        <img src="frontend/assets/images/payments.png" alt="Payment methods" width="272"
+                        <img src="{{ asset('frontend/assets/images/payments.png') }}" alt="Payment methods" width="272"
                             height="20">
                     </figure><!-- End .footer-payments -->
                 </div><!-- End .container -->

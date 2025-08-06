@@ -22,7 +22,7 @@
                                         <picture>
                                             <source media="(max-width: 480px)"
                                                 srcset="frontend/assets/images/slider/slide-1-480w.jpg">
-                                            <img src="frontend/assets/images/slider/slide-1.jpg" alt="Image Desc">
+                                            <img src="{{ asset('frontend/assets/images/slider/slide-1.jpg') }}" alt="Image Desc">
                                         </picture>
                                     </figure><!-- End .slide-image -->
 
@@ -32,7 +32,7 @@
                                         <h1 class="intro-title">Living Room<br>Furniture</h1>
                                         <!-- End .intro-title -->
 
-                                        <a href="category.html" class="btn btn-outline-white">
+                                        <a href="{{ asset('category.html') }}" class="btn btn-outline-white">
                                             <span>SHOP NOW</span>
                                             <i class="icon-long-arrow-right"></i>
                                         </a>
@@ -44,7 +44,7 @@
                                         <picture>
                                             <source media="(max-width: 480px)"
                                                 srcset="frontend/assets/images/slider/slide-2-480w.jpg">
-                                            <img src="frontend/assets/images/slider/slide-2.jpg" alt="Image Desc">
+                                            <img src="{{ asset('frontend/assets/images/slider/slide-2.jpg') }}" alt="Image Desc">
                                         </picture>
                                     </figure><!-- End .slide-image -->
 
@@ -53,7 +53,7 @@
                                         <!-- End .h3 intro-subtitle -->
                                         <h1 class="intro-title">New Arrivals</h1><!-- End .intro-title -->
 
-                                        <a href="category.html" class="btn btn-outline-white">
+                                        <a href="{{ asset('category.html') }}" class="btn btn-outline-white">
                                             <span>SHOP NOW</span>
                                             <i class="icon-long-arrow-right"></i>
                                         </a>
@@ -65,7 +65,7 @@
                                         <picture>
                                             <source media="(max-width: 480px)"
                                                 srcset="frontend/assets/images/slider/slide-3-480w.jpg">
-                                            <img src="frontend/assets/images/slider/slide-3.jpg" alt="Image Desc">
+                                            <img src="{{ asset('frontend/assets/images/slider/slide-3.jpg') }}" alt="Image Desc">
                                         </picture>
                                     </figure><!-- End .slide-image -->
 
@@ -75,7 +75,7 @@
                                         <h1 class="intro-title">Outdoor Dining <br>Furniture</h1>
                                         <!-- End .intro-title -->
 
-                                        <a href="category.html" class="btn btn-outline-white">
+                                        <a href="{{ asset('category.html') }}" class="btn btn-outline-white">
                                             <span>SHOP NOW</span>
                                             <i class="icon-long-arrow-right"></i>
                                         </a>
@@ -92,7 +92,7 @@
                                 <div class="col-md-6 col-lg-12">
                                     <div class="banner banner-display">
                                         <a href="#">
-                                            <img src="frontend/assets/images/banners/home/intro/banner-1.jpg"
+                                            <img src="{{ asset('frontend/assets/images/banners/home/intro/banner-1.jpg') }}"
                                                 alt="Banner">
                                         </a>
 
@@ -110,7 +110,7 @@
                                 <div class="col-md-6 col-lg-12">
                                     <div class="banner banner-display mb-0">
                                         <a href="#">
-                                            <img src="frontend/assets/images/banners/home/intro/banner-2.jpg"
+                                            <img src="{{ asset('frontend/assets/images/banners/home/intro/banner-2.jpg') }}"
                                                 alt="Banner">
                                         </a>
 
@@ -156,27 +156,27 @@
                             }
                         }'>
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/1.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/1.png') }}" alt="Brand Name">
                     </a>
 
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/2.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/2.png') }}" alt="Brand Name">
                     </a>
 
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/3.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/3.png') }}" alt="Brand Name">
                     </a>
 
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/4.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/4.png') }}" alt="Brand Name">
                     </a>
 
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/5.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/5.png') }}" alt="Brand Name">
                     </a>
 
                     <a href="#" class="brand">
-                        <img src="frontend/assets/images/brands/6.png" alt="Brand Name">
+                        <img src="{{ asset('frontend/assets/images/brands/6.png') }}" alt="Brand Name">
                     </a>
                 </div><!-- End .owl-carousel -->
             </div><!-- End .container -->
@@ -740,7 +740,7 @@
                 <div class="col-6 col-lg-4">
                     <div class="banner banner-display banner-link-anim">
                         <a href="#">
-                            <img src="frontend/assets/images/banners/home/banner-1.jpg" alt="Banner">
+                            <img src="{{ asset('frontend/assets/images/banners/home/banner-1.jpg') }}" alt="Banner">
                         </a>
 
                         <div class="banner-content banner-content-center">
@@ -754,7 +754,7 @@
                 <div class="col-6 col-lg-4 order-lg-last">
                     <div class="banner banner-display banner-link-anim">
                         <a href="#">
-                            <img src="frontend/assets/images/banners/home/banner-4.jpg" alt="Banner">
+                            <img src="{{ asset('frontend/assets/images/banners/home/banner-4.jpg') }}" alt="Banner">
                         </a>
 
                         <div class="banner-content banner-content-center">
@@ -769,7 +769,7 @@
                     <div class="row">
                         <div class="banner banner-display banner-link-anim col-lg-12 col-6">
                             <a href="#">
-                                <img src="frontend/assets/images/banners/home/banner-2.jpg" alt="Banner">
+                                <img src="{{ asset('frontend/assets/images/banners/home/banner-2.jpg') }}" alt="Banner">
                             </a>
 
                             <div class="banner-content banner-content-center">
@@ -782,7 +782,7 @@
 
                         <div class="banner banner-display banner-link-anim col-lg-12 col-6">
                             <a href="#">
-                                <img src="frontend/assets/images/banners/home/banner-3.jpg" alt="Banner">
+                                <img src="{{ asset('frontend/assets/images/banners/home/banner-3.jpg') }}" alt="Banner">
                             </a>
 
                             <div class="banner-content banner-content-center">
@@ -1478,7 +1478,7 @@
                     <article class="entry entry-display">
                         <figure class="entry-media">
                             <a href="single.html">
-                                <img src="frontend/assets/images/blog/home/post-1.jpg" alt="image desc">
+                                <img src="{{ asset('frontend/assets/images/blog/home/post-1.jpg') }}" alt="image desc">
                             </a>
                         </figure><!-- End .entry-media -->
 
@@ -1502,7 +1502,7 @@
                     <article class="entry entry-display">
                         <figure class="entry-media">
                             <a href="single.html">
-                                <img src="frontend/assets/images/blog/home/post-2.jpg" alt="image desc">
+                                <img src="{{ asset('frontend/assets/images/blog/home/post-2.jpg') }}" alt="image desc">
                             </a>
                         </figure><!-- End .entry-media -->
 
@@ -1526,7 +1526,7 @@
                     <article class="entry entry-display">
                         <figure class="entry-media">
                             <a href="single.html">
-                                <img src="frontend/assets/images/blog/home/post-3.jpg" alt="image desc">
+                                <img src="{{ asset('frontend/assets/images/blog/home/post-3.jpg') }}" alt="image desc">
                             </a>
                         </figure><!-- End .entry-media -->
 
@@ -1550,12 +1550,12 @@
             </div><!-- container -->
 
             <div class="more-container text-center mb-0 mt-3">
-                <a href="blog.html" class="btn btn-outline-darker btn-more"><span>View more articles</span><i
+                <a href="{{ asset('blog.html') }}" class="btn btn-outline-darker btn-more"><span>View more articles</span><i
                         class="icon-long-arrow-right"></i></a>
             </div><!-- End .more-container -->
         </div>
         <div class="cta cta-display bg-image pt-4 pb-4"
-            style="background-image: url(frontend/assets/images/backgrounds/cta/bg-6.jpg);">
+            style="background-image: url({{ asset('frontend/assets/images/backgrounds/cta/bg-6.jpg') }});">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-9 col-xl-8">
@@ -1567,7 +1567,7 @@
                             </div><!-- End .col -->
 
                             <div class="col-auto">
-                                <a href="login.html" class="btn btn-outline-white"><span>SIGN UP</span><i
+                                <a href="{{ asset('login.html') }}" class="btn btn-outline-white"><span>SIGN UP</span><i
                                         class="icon-long-arrow-right"></i></a>
                             </div><!-- End .col-auto -->
                         </div><!-- End .row no-gutters -->
