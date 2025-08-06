@@ -121,4 +121,17 @@ class Category extends Model
     {
         return $this->hasMany(Product::class)->active();
     }
+
+    /**
+     * Get active categories with subcategories for menu
+     */
+    public static function getMenuCategories()
+    {
+        return self::active()
+            ->with(['activeSubcategories' => function($query) {
+                $query->orderBy('name');
+            }])
+            ->orderBy('name')
+            ->get();
+    }
 }
