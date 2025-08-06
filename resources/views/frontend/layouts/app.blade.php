@@ -8,9 +8,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Ecommerce</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
+    <title>{{ $meta_title ?? 'Ecommerce' }}</title>
+    <meta name="keywords" content="{{ $meta_keyword ?? '' }}">
+    <meta name="description" content="{{ $meta_description ?? '' }}">
     <meta name="author" content="">
     <!-- Favicon -->
 

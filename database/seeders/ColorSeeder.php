@@ -21,10 +21,6 @@ class ColorSeeder extends Seeder
             ['name' => 'Yellow', 'color_code' => '#FFFF00'],
             ['name' => 'Black', 'color_code' => '#000000'],
             ['name' => 'White', 'color_code' => '#FFFFFF'],
-            ['name' => 'Purple', 'color_code' => '#800080'],
-            ['name' => 'Orange', 'color_code' => '#FFA500'],
-            ['name' => 'Pink', 'color_code' => '#FFC0CB'],
-            ['name' => 'Brown', 'color_code' => '#A52A2A']
         ];
 
         foreach ($colors as $color) {

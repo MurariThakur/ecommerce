@@ -88,7 +88,7 @@ class Product extends Model
     }
 
     /**
-     * Direct relationship with ProductImage 
+     * Direct relationship with ProductImage
      */
     public function productImages()
     {

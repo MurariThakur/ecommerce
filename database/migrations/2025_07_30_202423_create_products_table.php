@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->boolean('isdelete')->default(false);
             $table->timestamps();
-            
+
             $table->index(['category_id', 'subcategory_id', 'brand_id']);
             $table->index(['status', 'isdelete']);
         });

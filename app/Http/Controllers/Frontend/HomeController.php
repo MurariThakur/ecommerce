@@ -12,6 +12,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('frontend.home');
+        // Set default meta data for home page
+        $meta_title = 'Ecommerce - Home';
+        $meta_description = 'Welcome to our ecommerce store. Find the best products at great prices.';
+        $meta_keyword = 'ecommerce, online shopping, products';
+        
+        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword'));
     }
 }
