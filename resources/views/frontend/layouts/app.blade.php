@@ -20,8 +20,11 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/owl-carousel/owl.carousel.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/magnific-popup/magnific-popup.css') }}">
+    <link rel="mask-icon" href="{{ asset('frontend/assets/images/icons/safari-pinned-tab.svg') }}" color="#666666">
     <!-- Main CSS File -->
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
+
+    @yield('styles')
 </head>
 
 <body>
@@ -38,7 +41,7 @@
 
     @include('frontend.layouts.mobile_menu')
     <!-- Sign in / Register Modal -->
-@include('frontend.layouts.signup')
+    @include('frontend.layouts.signup')
 
 
     {{-- <div class="container newsletter-popup-container mfp-hide" id="newsletter-popup-form">
@@ -88,6 +91,7 @@
     <!-- Main JS File -->
     <script src="{{ asset('frontend/assets/js/main.js') }}"></script>
 
+    @yield('scripts')
 </body>
 
 </html>
