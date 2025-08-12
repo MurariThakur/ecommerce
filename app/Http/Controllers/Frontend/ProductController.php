@@ -7,18 +7,26 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\ProductSize;
+use App\Models\Color;
+use App\Models\Brand;
 
 class ProductController extends Controller
 {
-    public function getCategory($slug, $subslug = '')
+    public function getCategory($slug, $subslug = '', Request $request = null)
     {
-        // Load category with relationships if needed
+        // Handle null request
+        if (!$request) {
+            $request = request();
+        }
+
         $category = Category::where('slug', $slug)->active()->first();
         if (!$category) {
             abort(404, 'Category not found');
         }
 
-        // Get all subcategories for this category (used in both cases)
+        // Get all subcategories for this category
         $subcategories = Subcategory::where('category_id', $category->id)
             ->active()
             ->orderBy('name')
@@ -27,7 +35,6 @@ class ProductController extends Controller
         $subcategory = null;
 
         if (!empty($subslug)) {
-            // Handle subcategory page
             $subcategory = Subcategory::where('slug', $subslug)
                 ->where('category_id', $category->id)
                 ->active()
@@ -36,47 +43,192 @@ class ProductController extends Controller
             if (!$subcategory) {
                 abort(404, 'Subcategory not found');
             }
+        }
 
-            // Get products by subcategory with images
-            $products = Product::where('subcategory_id', $subcategory->id)
-                ->where('status', true)
-                ->where('isdelete', false)
-                ->with(['category', 'subcategory', 'productImages' => function($query) {
-                    $query->orderBy('order');
-                }])
-                ->latest()
-                ->paginate(9);
+        // Build the base query
+        $query = Product::where('status', true)->where('isdelete', false);
 
-            // Meta tags for subcategory page
+        // Base category/subcategory filter - more flexible approach
+        if (!empty($subcategory)) {
+            // If we're on a specific subcategory page, start with that subcategory
+            $baseSubcategoryIds = [$subcategory->id];
+            $baseCategoryIds = [$category->id];
+        } else {
+            // If we're on a category page, get all subcategories for this category
+            $baseSubcategoryIds = $subcategories->pluck('id')->toArray();
+            $baseCategoryIds = [$category->id];
+        }
+
+        // Apply category/subcategory filters - allow cross-category selection
+        if ($request->filled('subcategories')) {
+            // Allow selection of subcategories from any category for multi-category filtering
+            $selectedSubcategories = array_filter($request->subcategories, 'is_numeric');
+            if (!empty($selectedSubcategories)) {
+                $query->whereIn('subcategory_id', $selectedSubcategories);
+            } else {
+                // If no valid subcategories selected, use base filter
+                $query->whereIn('subcategory_id', $baseSubcategoryIds);
+            }
+        } elseif ($request->filled('categories')) {
+            // Allow selection of multiple categories
+            $selectedCategories = array_filter($request->categories, 'is_numeric');
+            if (!empty($selectedCategories)) {
+                $query->whereIn('category_id', $selectedCategories);
+            } else {
+                // Use base category filter
+                $query->whereIn('category_id', $baseCategoryIds);
+            }
+        } else {
+            // No category/subcategory filter applied, use base filter
+            if (!empty($subcategory)) {
+                $query->where('subcategory_id', $subcategory->id);
+            } else {
+                $query->where('category_id', $category->id);
+            }
+        }
+
+        // Apply size filter
+        if ($request->filled('sizes') && is_array($request->sizes)) {
+            $query->whereHas('productSizes', function ($q) use ($request) {
+                $q->whereIn('size_name', $request->sizes);
+            });
+        }
+
+        // Apply color filter
+        if ($request->filled('colors') && is_array($request->colors)) {
+            $colorIds = array_filter($request->colors, 'is_numeric');
+            if (!empty($colorIds)) {
+                $query->whereHas('colors', function ($q) use ($colorIds) {
+                    $q->whereIn('colors.id', $colorIds);
+                });
+            }
+        }
+
+        // Apply brand filter
+        if ($request->filled('brands') && is_array($request->brands)) {
+            $brandIds = array_filter($request->brands, 'is_numeric');
+            if (!empty($brandIds)) {
+                $query->whereIn('brand_id', $brandIds);
+            }
+        }
+
+        // Apply price filter with validation
+        $priceMin = $request->filled('price_min') ? max(0, (float) $request->price_min) : null;
+        $priceMax = $request->filled('price_max') ? max(0, (float) $request->price_max) : null;
+
+        if ($priceMin !== null && $priceMax !== null) {
+            // Ensure min is not greater than max
+            if ($priceMin > $priceMax) {
+                $temp = $priceMin;
+                $priceMin = $priceMax;
+                $priceMax = $temp;
+            }
+            $query->whereBetween('price', [$priceMin, $priceMax]);
+        } elseif ($priceMin !== null) {
+            $query->where('price', '>=', $priceMin);
+        } elseif ($priceMax !== null) {
+            $query->where('price', '<=', $priceMax);
+        }
+
+        // Apply sorting
+        $sortBy = $request->get('sortby', 'latest');
+        switch ($sortBy) {
+            case 'popularity':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'rating':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'price_low_high':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high_low':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        // Get products with pagination
+        $products = $query->with([
+            'category',
+            'subcategory',
+            'brand',
+            'productImages' => function ($query) {
+                $query->orderBy('order');
+            }
+        ])->paginate(9)->appends($request->query());
+
+        // Get dynamic filter data - show all available options for better filtering
+        $filterBaseQuery = function ($q) {
+            $q->where('status', true)->where('isdelete', false);
+        };
+
+        // Get all available sizes (not limited to current category)
+        $availableSizes = ProductSize::whereHas('product', $filterBaseQuery)
+            ->select('size_name')
+            ->distinct()
+            ->orderBy('size_name')
+            ->pluck('size_name');
+
+        // Get all available colors (not limited to current category)
+        $availableColors = Color::whereHas('products', $filterBaseQuery)
+            ->active()
+            ->get();
+
+        // Get all available brands (not limited to current category)
+        $availableBrands = Brand::whereHas('products', $filterBaseQuery)
+            ->active()
+            ->get();
+
+        // Get all categories for cross-category filtering
+        $allCategories = Category::active()->get();
+
+        // Get price range from all products
+        $priceQuery = Product::where('status', true)->where('isdelete', false);
+        $priceRange = $priceQuery->selectRaw('MIN(price) as min_price, MAX(price) as max_price')->first();
+
+        // Ensure price range has valid values
+        if (!$priceRange || $priceRange->min_price === null) {
+            $priceRange = (object) [
+                'min_price' => 0,
+                'max_price' => 1000
+            ];
+        }
+
+        // Meta tags
+        if (!empty($subcategory)) {
             $meta_title = $subcategory->name . ' - ' . $category->name;
             $meta_description = 'Browse products in ' . $subcategory->name . ' under ' . $category->name . ' category.';
             $meta_keyword = $subcategory->name . ', ' . $category->name . ', products';
-
         } else {
-            // Handle category page
-            $products = Product::where('category_id', $category->id)
-                ->where('status', true)
-                ->where('isdelete', false)
-                ->with(['category', 'subcategory', 'productImages' => function($query) {
-                    $query->orderBy('order');
-                }])
-                ->latest()
-                ->paginate(9);
-
-            // Meta tags for category page
             $meta_title = $category->name;
             $meta_description = 'Browse products in the ' . $category->name . ' category.';
             $meta_keyword = $category->name . ', products';
         }
+
+        // Clean URL for "Clean All" button - removes all query parameters
+        $cleanAllUrl = $subcategory
+            ? url($category->slug . '/' . $subcategory->slug)
+            : url($category->slug);
 
         return view('frontend.product.list', compact(
             'category',
             'subcategory',
             'products',
             'subcategories',
+            'allCategories',
             'meta_title',
             'meta_description',
-            'meta_keyword'
+            'meta_keyword',
+            'availableColors',
+            'availableBrands',
+            'availableSizes',
+            'priceRange',
+            'cleanAllUrl'
         ));
     }
 }
+
