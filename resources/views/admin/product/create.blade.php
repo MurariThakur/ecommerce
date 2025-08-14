@@ -1,7 +1,9 @@
 @extends('admin.layouts.app')
 @push('styles')
-<link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-lite.min.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-lite.min.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/sortable/jquery-ui.css') }}">
 @endpush
+
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -28,7 +30,7 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                 @include('admin.layouts.message')
+                @include('admin.layouts.message')
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -36,7 +38,7 @@
                                 <h3 class="card-title">Create Product</h3>
                             </div>
                             <!-- /.card-header -->
-                            <form action="{{ route('admin.product.store') }}" method="POST">
+                            <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">
@@ -110,9 +112,12 @@
                                                         @foreach ($colors as $key => $value)
                                                             <div class="col-md-6 col-lg-4">
                                                                 <div class="form-check mb-2">
-                                                                    <input class="form-check-input" type="checkbox" name="colors[]" value="{{ $key }}"
-                                                                        id="color_{{ $key }}" {{ in_array($key, old('colors', [])) ? 'checked' : '' }}>
-                                                                    <label class="form-check-label" for="color_{{ $key }}">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        name="colors[]" value="{{ $key }}"
+                                                                        id="color_{{ $key }}"
+                                                                        {{ in_array($key, old('colors', [])) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="color_{{ $key }}">
                                                                         {{ $value }}
                                                                     </label>
                                                                 </div>
@@ -150,7 +155,8 @@
                                     <div class="form-group">
                                         <label for="old_price">Old Price</label>
                                         <input type="number" class="form-control @error('old_price') is-invalid @enderror"
-                                            id="old_price" name="old_price" value="{{ old('old_price') }}" step="0.01">
+                                            id="old_price" name="old_price" value="{{ old('old_price') }}"
+                                            step="0.01">
                                         @error('old_price')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -193,14 +199,17 @@
                                         <div class="card">
                                             <div class="card-header">
                                                 <h6 class="card-title mb-0">Image Gallery</h6>
-                                                <button type="button" class="btn btn-primary btn-sm float-right" id="add-image">Add Images</button>
+                                                <button type="button" class="btn btn-primary btn-sm float-right"
+                                                    id="add-image">Add Images</button>
                                             </div>
                                             <div class="card-body">
-                                                <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                                                <input type="file" id="image-input" name="images[]" accept="image/*"
+                                                    multiple style="display: none;">
                                                 <div id="images-container">
                                                     <div class="text-center p-4" id="no-images-message">
                                                         <i class="fas fa-image fa-3x text-muted mb-3"></i>
-                                                        <p class="text-muted">No images uploaded yet. Click "Add Images" to start.</p>
+                                                        <p class="text-muted">No images uploaded yet. Click "Add Images" to
+                                                            start.</p>
                                                     </div>
                                                 </div>
                                                 <div id="sortable" class="row" style="display: none;">
@@ -223,7 +232,8 @@
 
                                     <div class="form-group">
                                         <label for="description">Description</label>
-                                        <textarea class="form-control summernote @error('description') is-invalid @enderror" id="description" name="description" rows="5">{{ old('description') }}</textarea>
+                                        <textarea class="form-control summernote @error('description') is-invalid @enderror" id="description"
+                                            name="description" rows="5">{{ old('description') }}</textarea>
                                         @error('description')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -233,8 +243,8 @@
 
                                     <div class="form-group">
                                         <label for="additional_information">Additional Information</label>
-                                        <textarea class="form-control summernote @error('additional_information') is-invalid @enderror" id="additional_information"
-                                            name="additional_information" rows="3">{{ old('additional_information') }}</textarea>
+                                        <textarea class="form-control summernote @error('additional_information') is-invalid @enderror"
+                                            id="additional_information" name="additional_information" rows="3">{{ old('additional_information') }}</textarea>
                                         @error('additional_information')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -244,7 +254,8 @@
 
                                     <div class="form-group">
                                         <label for="shipping_return">Shipping & Return</label>
-                                        <textarea class="form-control summernote @error('shipping_return') is-invalid @enderror" id="shipping_return" name="shipping_return" rows="3">{{ old('shipping_return') }}</textarea>
+                                        <textarea class="form-control summernote @error('shipping_return') is-invalid @enderror" id="shipping_return"
+                                            name="shipping_return" rows="3">{{ old('shipping_return') }}</textarea>
                                         @error('shipping_return')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -283,15 +294,15 @@
     </div>
 @endsection
 
+
 @push('scripts')
-<script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
-<script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
+    <script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
+    <script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Initialize Summernote editor
             $('.summernote').summernote();
-        });
-        $(document).ready(function() {
+
             // Setup CSRF token for AJAX requests
             $.ajaxSetup({
                 headers: {
@@ -302,7 +313,7 @@
             // Auto-generate slug from title
             $('#title').on('input', function() {
                 var title = $(this).val();
-                var slug = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                var slug = title.toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9-]/g, '');
                 $('#slug').val(slug);
             });
 
@@ -354,33 +365,33 @@
             // Add size variation
             $('#add-size').on('click', function() {
                 let sizeRow = `
-                <div class="size-row border p-3 mb-3 rounded" data-index="${sizeIndex}">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Size Name <span class="text-danger">*</span></label>
-                            <input type="text" name="sizes[${sizeIndex}][size_name]" class="form-control" placeholder="e.g., Small, Medium, Large" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Size Value</label>
-                            <input type="text" name="sizes[${sizeIndex}][size_value]" class="form-control" placeholder="e.g., 28 inches">
-                        </div>
-                        <div class="col-md-2">
-                            <label>Additional Price</label>
-                            <input type="number" name="sizes[${sizeIndex}][additional_price]" class="form-control" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-2">
-                            <label>Stock Quantity</label>
-                            <input type="number" name="sizes[${sizeIndex}][stock_quantity]" class="form-control" value="0" min="0">
-                        </div>
-                        <div class="col-md-2">
-                            <label>&nbsp;</label>
-                            <div>
-                                <button type="button" class="btn btn-danger btn-sm remove-size">Remove</button>
-                            </div>
+            <div class="size-row border p-3 mb-3 rounded" data-index="${sizeIndex}">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Size Name <span class="text-danger">*</span></label>
+                        <input type="text" name="sizes[${sizeIndex}][size_name]" class="form-control" placeholder="e.g., Small, Medium, Large" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Size Value</label>
+                        <input type="text" name="sizes[${sizeIndex}][size_value]" class="form-control" placeholder="e.g., 28 inches">
+                    </div>
+                    <div class="col-md-2">
+                        <label>Additional Price</label>
+                        <input type="number" name="sizes[${sizeIndex}][additional_price]" class="form-control" step="0.01" value="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label>Stock Quantity</label>
+                        <input type="number" name="sizes[${sizeIndex}][stock_quantity]" class="form-control" value="0" min="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="button" class="btn btn-danger btn-sm remove-size">Remove</button>
                         </div>
                     </div>
                 </div>
-            `;
+            </div>
+        `;
                 $('#sizes-container').append(sizeRow);
                 sizeIndex++;
             });
@@ -390,9 +401,8 @@
                 $(this).closest('.size-row').remove();
             });
 
-            // Image Upload Management
-            let imageIndex = 0;
-            let uploadedImages = [];
+            // ====== FIXED IMAGE UPLOAD SECTION ======
+            let uploadedFiles = []; // Track selected files for validation
 
             // Initialize sortable for images
             $("#sortable").sortable({
@@ -406,25 +416,27 @@
                 $('#image-input').click();
             });
 
-            // Handle file selection
+            // Handle file selection - Fixed for proper file upload
             $('#image-input').on('change', function() {
                 const files = this.files;
                 if (files.length > 0) {
                     // Check if adding these files would exceed the limit
-                    if (uploadedImages.length + files.length > 10) {
-                        showImageError('You can upload a maximum of 10 images. Please remove some images before adding new ones.');
+                    if (uploadedFiles.length + files.length > 10) {
+                        showImageError(
+                            'You can upload a maximum of 10 images. Please remove some images before adding new ones.'
+                            );
                         this.value = ''; // Reset input
                         return;
                     }
 
                     for (let i = 0; i < files.length; i++) {
                         if (validateImageFile(files[i])) {
-                            processImage(files[i], imageIndex);
-                            imageIndex++;
+                            processImage(files[i], i);
+                            uploadedFiles.push(files[i]); // Track the file for validation
                         }
                     }
                 }
-                this.value = ''; // Reset input
+                // Don't reset input value to maintain files for form submission
             });
 
             // Validate image file before processing
@@ -432,7 +444,8 @@
                 // Check file type
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
                 if (!allowedTypes.includes(file.type)) {
-                    showImageError(`Invalid file type: ${file.name}. Only JPEG, PNG, GIF, and WebP images are allowed.`);
+                    showImageError(
+                        `Invalid file type: ${file.name}. Only JPEG, PNG, GIF, and WebP images are allowed.`);
                     return false;
                 }
 
@@ -466,13 +479,13 @@
 
                 // Create error alert
                 const errorAlert = `
-                    <div class="alert alert-danger alert-dismissible image-error-alert" role="alert">
-                        <strong>Image Upload Error:</strong> ${message}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                `;
+            <div class="alert alert-danger alert-dismissible image-error-alert" role="alert">
+                <strong>Image Upload Error:</strong> ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
 
                 // Insert error message before the images container
                 $('#images-container').before(errorAlert);
@@ -494,14 +507,18 @@
 
                     // Check minimum dimensions (50x50)
                     if (width < 50 || height < 50) {
-                        showImageError(`Image dimensions too small: ${fileName}. Minimum size is 50x50 pixels. Current size: ${width}x${height}`);
+                        showImageError(
+                            `Image dimensions too small: ${fileName}. Minimum size is 50x50 pixels. Current size: ${width}x${height}`
+                            );
                         callback(false);
                         return;
                     }
 
                     // Check maximum dimensions (4000x4000)
                     if (width > 4000 || height > 4000) {
-                        showImageError(`Image dimensions too large: ${fileName}. Maximum size is 4000x4000 pixels. Current size: ${width}x${height}`);
+                        showImageError(
+                            `Image dimensions too large: ${fileName}. Maximum size is 4000x4000 pixels. Current size: ${width}x${height}`
+                            );
                         callback(false);
                         return;
                     }
@@ -515,7 +532,7 @@
                 img.src = imageData;
             }
 
-            // Process and display image
+            // Process and display image - Modified for file upload approach
             function processImage(file, index) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -524,35 +541,26 @@
                     // Validate image dimensions before processing
                     validateImageDimensions(imageData, file.name, function(isValid) {
                         if (!isValid) {
+                            // Remove file from tracking if invalid
+                            uploadedFiles = uploadedFiles.filter(f => f !== file);
                             return; // Stop processing if dimensions are invalid
                         }
 
                         const imageCard = `
-                        <div class="col-md-3 mb-3 image-item" data-index="${index}">
-                            <div class="card">
-                                <img src="${imageData}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                <div class="card-body p-2">
-                                    <input type="hidden" name="images[${index}][image_data]" value="${imageData}">
-                                    <input type="hidden" name="images[${index}][mime_type]" value="${file.type}">
-                                    <input type="hidden" name="images[${index}][original_name]" value="${file.name}">
-                                    <input type="hidden" name="images[${index}][order]" value="${index}" class="image-order">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">${file.name}</small>
-                                        <button type="button" class="btn btn-danger btn-sm remove-image">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                    <div class="col-md-3 mb-3 image-item" data-index="${Date.now() + index}" data-filename="${file.name}">
+                        <div class="card">
+                            <img src="${imageData}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${file.name}</small>
+                                    <button type="button" class="btn btn-danger btn-sm remove-image">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    `;
-
-                        uploadedImages.push({
-                            index: index,
-                            data: imageData,
-                            type: file.type,
-                            name: file.name
-                        });
+                    </div>
+                `;
 
                         $('#sortable').append(imageCard);
                         updateImageDisplay();
@@ -560,17 +568,22 @@
                 };
                 reader.onerror = function() {
                     showImageError(`Failed to read file: ${file.name}. The file may be corrupted.`);
+                    // Remove file from tracking if error
+                    uploadedFiles = uploadedFiles.filter(f => f !== file);
                 };
                 reader.readAsDataURL(file);
             }
 
-            // Remove image
+            // Remove image - Fixed for file upload approach
             $(document).on('click', '.remove-image', function() {
                 const imageItem = $(this).closest('.image-item');
-                const index = imageItem.data('index');
+                const filename = imageItem.data('filename');
 
-                // Remove from uploadedImages array
-                uploadedImages = uploadedImages.filter(img => img.index !== index);
+                // Remove from uploaded files tracking
+                uploadedFiles = uploadedFiles.filter(file => file.name !== filename);
+
+                // Clear the file input and rebuild it to reflect current files
+                $('#image-input').val('');
 
                 imageItem.remove();
                 updateImageDisplay();
@@ -579,7 +592,8 @@
 
             // Update image display state
             function updateImageDisplay() {
-                if (uploadedImages.length > 0) {
+                const totalImages = $('#sortable .image-item').length;
+                if (totalImages > 0) {
                     $('#no-images-message').hide();
                     $('#sortable').show();
                 } else {
@@ -588,12 +602,16 @@
                 }
             }
 
-            // Update image order after sorting
+            // Update image order after sorting - Simplified for file upload
             function updateImageOrder() {
                 $('#sortable .image-item').each(function(index) {
-                    $(this).find('.image-order').val(index);
+                    // For file uploads, order is maintained by the file input array
+                    // No need to update hidden order fields since we're using real file uploads
                 });
             }
+
+            // Initial update for image display state
+            updateImageDisplay();
         });
     </script>
 @endpush

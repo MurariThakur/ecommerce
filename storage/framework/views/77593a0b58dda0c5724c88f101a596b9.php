@@ -1,22 +1,21 @@
-@extends('frontend.layouts.app')
-@section('styles')
-    <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
-@endsection
+<?php $__env->startSection('styles'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('frontend/assets/css/plugins/nouislider/nouislider.css')); ?>">
+<?php $__env->stopSection(); ?>
 
-@section('title', $meta_title)
-@section('meta_description', $meta_description)
-@section('meta_keywords', $meta_keyword)
+<?php $__env->startSection('title', $meta_title); ?>
+<?php $__env->startSection('meta_description', $meta_description); ?>
+<?php $__env->startSection('meta_keywords', $meta_keyword); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <main class="main">
         <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
             <div class="container d-flex align-items-center">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url($category->slug) }}">{{ $category->name }}</a></li>
+                    <li class="breadcrumb-item"><a href="<?php echo e(url('/')); ?>">Home</a></li>
+                    <li class="breadcrumb-item"><a href="<?php echo e(url($category->slug)); ?>"><?php echo e($category->name); ?></a></li>
                     <li class="breadcrumb-item"><a
-                            href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $product->title }}</li>
+                            href="<?php echo e(url($category->slug . '/' . $subcategory->slug)); ?>"><?php echo e($subcategory->name); ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?php echo e($product->title); ?></li>
                 </ol>
 
                 <nav class="product-pager ml-auto" aria-label="Product">
@@ -40,37 +39,37 @@
                         <div class="col-md-6">
                             <div class="product-gallery">
                                 <figure class="product-main-image">
-                                    @php
+                                    <?php
                                         // dd($product->productImages->first()->image_src);
-                                    @endphp
-                                    <img id="product-zoom" src="{{ $product->productImages->first()->image_src }}"
-                                        data-zoom-image="{{ $product->productImages->first()->image_src }}"
+                                    ?>
+                                    <img id="product-zoom" src="<?php echo e($product->productImages->first()->image_src); ?>"
+                                        data-zoom-image="<?php echo e($product->productImages->first()->image_src); ?>"
                                         alt="product image">
-<img id="product-zoom" src="/storage/product_images/{{$product->productImages }}"
-         data-zoom-image="/storage/product_images/{{ $product->productImages }}"
+<img id="product-zoom" src="/storage/product_images/<?php echo e($product->productImages); ?>"
+         data-zoom-image="/storage/product_images/<?php echo e($product->productImages); ?>"
          class="product-zoom-image"
          alt="cvc">
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                         <i class="icon-arrows"></i>
                                     </a>
                                 </figure><!-- End .product-main-image -->
-                                @if ($product->productImages->count() > 1)
+                                <?php if($product->productImages->count() > 1): ?>
                                     <div id="product-zoom-gallery" class="product-image-gallery">
-                                        @foreach ($product->productImages as $index => $image)
-                                            <a class="product-gallery-item {{ $index == 0 ? 'active' : '' }}"
-                                                href="#" data-image="{{ $image->image_src }}"
-                                                data-zoom-image="{{ $image->image_src }}">
-                                                <img src="{{ $image->image_src }}" alt="{{ $product->title }}">
+                                        <?php $__currentLoopData = $product->productImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <a class="product-gallery-item <?php echo e($index == 0 ? 'active' : ''); ?>"
+                                                href="#" data-image="<?php echo e($image->image_src); ?>"
+                                                data-zoom-image="<?php echo e($image->image_src); ?>">
+                                                <img src="<?php echo e($image->image_src); ?>" alt="<?php echo e($product->title); ?>">
                                             </a>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </div><!-- End .product-gallery -->
                         </div><!-- End .col-md-6 -->
 
                         <div class="col-md-6">
                             <div class="product-details">
-                                <h1 class="product-title">{{ $product->title }}</h1><!-- End .product-title -->
+                                <h1 class="product-title"><?php echo e($product->title); ?></h1><!-- End .product-title -->
 
                                 <div class="ratings-container">
                                     <div class="ratings">
@@ -80,51 +79,52 @@
                                 </div><!-- End .rating-container -->
 
                                 <div class="product-price">
-                                    @if ($product->hasDiscount())
-                                        <span class="new-price">${{ number_format($product->price, 2) }}</span>
-                                        <span class="old-price">${{ number_format($product->old_price, 2) }}</span>
-                                    @else
-                                        ${{ number_format($product->price, 2) }}
-                                    @endif
+                                    <?php if($product->hasDiscount()): ?>
+                                        <span class="new-price">$<?php echo e(number_format($product->price, 2)); ?></span>
+                                        <span class="old-price">$<?php echo e(number_format($product->old_price, 2)); ?></span>
+                                    <?php else: ?>
+                                        $<?php echo e(number_format($product->price, 2)); ?>
+
+                                    <?php endif; ?>
                                 </div><!-- End .product-price -->
 
-                                @if ($product->short_description)
+                                <?php if($product->short_description): ?>
                                     <div class="product-content">
-                                        <p>{{ $product->short_description }}</p>
+                                        <p><?php echo e($product->short_description); ?></p>
                                     </div><!-- End .product-content -->
-                                @endif
+                                <?php endif; ?>
 
-                                @if ($product->colors->count() > 0)
+                                <?php if($product->colors->count() > 0): ?>
                                     <div class="details-filter-row details-row-size">
                                         <label>Color:</label>
 
                                         <div class="product-nav product-nav-dots">
-                                            @foreach ($product->colors as $index => $color)
-                                                <a href="#" class="{{ $index == 0 ? 'active' : '' }}"
-                                                    style="background: {{ $color->color_code }};"
-                                                    title="{{ $color->name }}">
-                                                    <span class="sr-only">{{ $color->name }}</span>
+                                            <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <a href="#" class="<?php echo e($index == 0 ? 'active' : ''); ?>"
+                                                    style="background: <?php echo e($color->color_code); ?>;"
+                                                    title="<?php echo e($color->name); ?>">
+                                                    <span class="sr-only"><?php echo e($color->name); ?></span>
                                                 </a>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div><!-- End .product-nav -->
                                     </div><!-- End .details-filter-row -->
-                                @endif
+                                <?php endif; ?>
 
-                                @if ($product->productSizes->count() > 0)
+                                <?php if($product->productSizes->count() > 0): ?>
                                     <div class="details-filter-row details-row-size">
                                         <label for="size">Size:</label>
                                         <div class="select-custom">
                                             <select name="size" id="size" class="form-control">
                                                 <option value="#" selected="selected">Select a size</option>
-                                                @foreach ($product->productSizes as $size)
-                                                    <option value="{{ $size->size_name }}">{{ $size->size_name }}</option>
-                                                @endforeach
+                                                <?php $__currentLoopData = $product->productSizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($size->size_name); ?>"><?php echo e($size->size_name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                         </div><!-- End .select-custom -->
 
                                         <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
                                     </div><!-- End .details-filter-row -->
-                                @endif
+                                <?php endif; ?>
 
                                 <div class="details-filter-row details-row-size">
                                     <label for="qty">Qty:</label>
@@ -148,12 +148,12 @@
                                 <div class="product-details-footer">
                                     <div class="product-cat">
                                         <span>Category:</span>
-                                        <a href="{{ url($category->slug) }}">{{ $category->name }}</a>,
+                                        <a href="<?php echo e(url($category->slug)); ?>"><?php echo e($category->name); ?></a>,
                                         <a
-                                            href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a>
-                                        @if ($product->brand)
-                                            , <a href="#">{{ $product->brand->name }}</a>
-                                        @endif
+                                            href="<?php echo e(url($category->slug . '/' . $subcategory->slug)); ?>"><?php echo e($subcategory->name); ?></a>
+                                        <?php if($product->brand): ?>
+                                            , <a href="#"><?php echo e($product->brand->name); ?></a>
+                                        <?php endif; ?>
                                     </div><!-- End .product-cat -->
 
                                     <div class="social-icons social-icons-sm">
@@ -181,20 +181,20 @@
                             <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab"
                                 role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
                         </li>
-                        @if ($product->additional_information)
+                        <?php if($product->additional_information): ?>
                             <li class="nav-item">
                                 <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab"
                                     role="tab" aria-controls="product-info-tab" aria-selected="false">Additional
                                     information</a>
                             </li>
-                        @endif
-                        @if ($product->shipping_return)
+                        <?php endif; ?>
+                        <?php if($product->shipping_return): ?>
                             <li class="nav-item">
                                 <a class="nav-link" id="product-shipping-link" data-toggle="tab"
                                     href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab"
                                     aria-selected="false">Shipping & Returns</a>
                             </li>
-                        @endif
+                        <?php endif; ?>
                         <li class="nav-item">
                             <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab"
                                 role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (2)</a>
@@ -209,40 +209,43 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        @if ($product->description)
-                                            {!! nl2br(e($product->description)) !!}
-                                        @else
+                                        <?php if($product->description): ?>
+                                            <?php echo nl2br(e($product->description)); ?>
+
+                                        <?php else: ?>
                                             <p>No description available for this product.</p>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
                         </div><!-- End .product-desc-content -->
                     </div><!-- .End .tab-pane -->
 
-                    @if ($product->additional_information)
+                    <?php if($product->additional_information): ?>
                         <div class="tab-pane fade" id="product-info-tab" role="tabpanel"
                             aria-labelledby="product-info-link">
                             <div class="product-desc-content">
                                 <div class="container">
                                     <h3>Additional Information</h3>
-                                    {!! nl2br(e($product->additional_information)) !!}
+                                    <?php echo nl2br(e($product->additional_information)); ?>
+
                                 </div><!-- End .container -->
                             </div><!-- End .product-desc-content -->
                         </div><!-- .End .tab-pane -->
-                    @endif
+                    <?php endif; ?>
 
-                    @if ($product->shipping_return)
+                    <?php if($product->shipping_return): ?>
                         <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel"
                             aria-labelledby="product-shipping-link">
                             <div class="product-desc-content">
                                 <div class="container">
                                     <h3>Shipping & Returns</h3>
-                                    {!! nl2br(e($product->shipping_return)) !!}
+                                    <?php echo nl2br(e($product->shipping_return)); ?>
+
                                 </div><!-- End .container -->
                             </div><!-- End .product-desc-content -->
                         </div><!-- .End .tab-pane -->
-                    @endif
+                    <?php endif; ?>
 
                     <div class="tab-pane fade" id="product-review-tab" role="tabpanel"
                         aria-labelledby="product-review-link">
@@ -283,7 +286,7 @@
                 </div><!-- End .tab-content -->
             </div><!-- End .product-details-tab -->
 
-            @if ($relatedProducts->count() > 0)
+            <?php if($relatedProducts->count() > 0): ?>
                 <div class="container">
                     <h2 class="title text-center mb-4">You May Also Like</h2><!-- End .title text-center -->
                     <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl"
@@ -312,21 +315,21 @@
                         }
                     }
                 }'>
-                        @foreach ($relatedProducts as $relatedProduct)
+                        <?php $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $relatedProduct): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="product product-7">
                                 <figure class="product-media">
-                                    @if ($relatedProduct->hasDiscount())
+                                    <?php if($relatedProduct->hasDiscount()): ?>
                                         <span class="product-label label-sale">Sale</span>
-                                    @endif
+                                    <?php endif; ?>
                                     <a
-                                        href="{{ url($category->slug . '/' . $subcategory->slug . '/' . $relatedProduct->slug) }}">
-                                        @if ($relatedProduct->productImages->count() > 0)
-                                            <img src="{{ $relatedProduct->productImages->first()->image_src }}"
-                                                alt="{{ $relatedProduct->title }}" class="product-image">
-                                        @else
-                                            <img src="{{ asset('assets/images/no-image.jpg') }}"
-                                                alt="{{ $relatedProduct->title }}" class="product-image">
-                                        @endif
+                                        href="<?php echo e(url($category->slug . '/' . $subcategory->slug . '/' . $relatedProduct->slug)); ?>">
+                                        <?php if($relatedProduct->productImages->count() > 0): ?>
+                                            <img src="<?php echo e($relatedProduct->productImages->first()->image_src); ?>"
+                                                alt="<?php echo e($relatedProduct->title); ?>" class="product-image">
+                                        <?php else: ?>
+                                            <img src="<?php echo e(asset('assets/images/no-image.jpg')); ?>"
+                                                alt="<?php echo e($relatedProduct->title); ?>" class="product-image">
+                                        <?php endif; ?>
                                     </a>
 
                                     <div class="product-action-vertical">
@@ -346,22 +349,24 @@
                                 <div class="product-body">
                                     <div class="product-cat">
                                         <a
-                                            href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a>
+                                            href="<?php echo e(url($category->slug . '/' . $subcategory->slug)); ?>"><?php echo e($subcategory->name); ?></a>
                                     </div><!-- End .product-cat -->
                                     <h3 class="product-title">
                                         <a
-                                            href="{{ url($category->slug . '/' . $subcategory->slug . '/' . $relatedProduct->slug) }}">
-                                            {{ Str::limit($relatedProduct->title, 50) }}
+                                            href="<?php echo e(url($category->slug . '/' . $subcategory->slug . '/' . $relatedProduct->slug)); ?>">
+                                            <?php echo e(Str::limit($relatedProduct->title, 50)); ?>
+
                                         </a>
                                     </h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        @if ($relatedProduct->hasDiscount())
-                                            <span class="new-price">${{ number_format($relatedProduct->price, 2) }}</span>
+                                        <?php if($relatedProduct->hasDiscount()): ?>
+                                            <span class="new-price">$<?php echo e(number_format($relatedProduct->price, 2)); ?></span>
                                             <span
-                                                class="old-price">${{ number_format($relatedProduct->old_price, 2) }}</span>
-                                        @else
-                                            ${{ number_format($relatedProduct->price, 2) }}
-                                        @endif
+                                                class="old-price">$<?php echo e(number_format($relatedProduct->old_price, 2)); ?></span>
+                                        <?php else: ?>
+                                            $<?php echo e(number_format($relatedProduct->price, 2)); ?>
+
+                                        <?php endif; ?>
                                     </div><!-- End .product-price -->
                                     <div class="ratings-container">
                                         <div class="ratings">
@@ -370,28 +375,30 @@
                                         <span class="ratings-text">( 2 Reviews )</span>
                                     </div><!-- End .rating-container -->
 
-                                    @if ($relatedProduct->colors->count() > 0)
+                                    <?php if($relatedProduct->colors->count() > 0): ?>
                                         <div class="product-nav product-nav-dots">
-                                            @foreach ($relatedProduct->colors->take(3) as $color)
-                                                <a href="#" style="background: {{ $color->color_code }};"><span
-                                                        class="sr-only">{{ $color->name }}</span></a>
-                                            @endforeach
+                                            <?php $__currentLoopData = $relatedProduct->colors->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <a href="#" style="background: <?php echo e($color->color_code); ?>;"><span
+                                                        class="sr-only"><?php echo e($color->name); ?></span></a>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div><!-- End .product-nav -->
-                                    @endif
+                                    <?php endif; ?>
                                 </div><!-- End .product-body -->
                             </div><!-- End .product -->
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     </div><!-- End .owl-carousel -->
                 </div><!-- End .container -->
-            @endif
+            <?php endif; ?>
         </div><!-- End .page-content -->
     </main><!-- End .main -->
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
-    <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
-    <script src="{{ asset('frontend/assets/js/jquery.elevateZoom.min.js') }}"></script>>
-    <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
-@endsection
+<?php $__env->startSection('scripts'); ?>
+    <script src="<?php echo e(asset('frontend/assets/js/bootstrap-input-spinner.js')); ?>"></script>
+    <script src="<?php echo e(asset('frontend/assets/js/jquery.elevateZoom.min.js')); ?>"></script>>
+    <script src="<?php echo e(asset('frontend/assets/js/bootstrap-input-spinner.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('frontend.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\ecommerce\resources\views/frontend/product/details.blade.php ENDPATH**/ ?>

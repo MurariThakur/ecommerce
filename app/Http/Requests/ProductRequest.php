@@ -47,14 +47,11 @@ class ProductRequest extends FormRequest
             'sizes' => 'nullable|array',
             'sizes.*.size_name' => 'required|string|max:50',
             'sizes.*.size_value' => 'nullable',
-            'sizes.*.additional_price' => 'nullable',
-            'sizes.*.stock_quantity' => 'nullable',
-            // Image validation
-            'images' => 'nullable|array|max:10', // Maximum 10 images
-            'images.*.image_data' => 'required|string', 
-            'images.*.mime_type' => 'required|string|in:image/jpeg,image/jpg,image/png,image/gif,image/webp',
-            'images.*.original_name' => 'required|string|max:255',
-            'images.*.order' => 'nullable|integer|min:0'
+            'sizes.*.additional_price' => 'nullable|numeric|min:0',
+            'sizes.*.stock_quantity' => 'nullable|integer|min:0',
+            // Image file upload validation
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:5120', // max 5MB each
         ];
     }
 
@@ -85,13 +82,9 @@ class ProductRequest extends FormRequest
             'sizes.*.stock_quantity.min' => 'Stock quantity cannot be negative.',
             // Image validation messages
             'images.max' => 'You can upload a maximum of 10 images.',
-            'images.*.image_data.required' => 'Image data is required for each uploaded image.',
-            'images.*.mime_type.required' => 'Image type is required.',
-            'images.*.mime_type.in' => 'Invalid image format. Only JPEG, PNG, GIF, and WebP images are allowed.',
-            'images.*.original_name.required' => 'Image filename is required.',
-            'images.*.original_name.max' => 'Image filename cannot be longer than 255 characters.',
-            'images.*.order.integer' => 'Image order must be a number.',
-            'images.*.order.min' => 'Image order cannot be negative.',
+            'images.*.image' => 'Each file must be a valid image.',
+            'images.*.mimes' => 'Image format must be jpeg, jpg, png, gif, or webp.',
+            'images.*.max' => 'Each image must be no larger than 5MB.',
         ];
     }
 
@@ -104,152 +97,6 @@ class ProductRequest extends FormRequest
             if ($this->old_price && $this->price && $this->old_price <= $this->price) {
                 $validator->errors()->add('old_price', 'Old price must be greater than current price.');
             }
-            
-            // Advanced image validation
-            if ($this->has('images') && is_array($this->images)) {
-                foreach ($this->images as $index => $image) {
-                    if (isset($image['image_data']) && isset($image['mime_type'])) {
-                        $this->validateImageData($validator, $image, $index);
-                    }
-                }
-            }
         });
-    }
-    
-    /**
-     * Validate image data for format, size, and dimensions
-     */
-    private function validateImageData($validator, $image, $index)
-    {
-        $imageData = $image['image_data'];
-        $mimeType = $image['mime_type'];
-        
-        // Check if image data is valid base64
-        if (!$this->isValidBase64Image($imageData)) {
-            $validator->errors()->add("images.{$index}.image_data", "Invalid image format or corrupted image data.");
-            return;
-        }
-        
-        // Remove data URL prefix if present for size calculation
-        $base64Data = preg_replace('/^data:image\/[^;]+;base64,/', '', $imageData);
-        
-        // Check file size (limit to 5MB)
-        $fileSizeBytes = (int) (strlen(rtrim($base64Data, '=')) * 3 / 4);
-        $maxSizeBytes = 5 * 1024 * 1024; // 5MB
-        if ($fileSizeBytes > $maxSizeBytes) {
-            $validator->errors()->add("images.{$index}.image_data", "Image file size must not exceed 5MB.");
-            return;
-        }
-        
-        // Check minimum file size (1KB)
-        $minSizeBytes = 1024; // 1KB
-        if ($fileSizeBytes < $minSizeBytes) {
-            $validator->errors()->add("images.{$index}.image_data", "Image file size must be at least 1KB.");
-            return;
-        }
-        
-        // Validate image dimensions using getimagesizefromstring (if available) or basic validation
-        if (function_exists('getimagesizefromstring')) {
-            try {
-                $imageInfo = getimagesizefromstring(base64_decode($base64Data));
-                if ($imageInfo === false) {
-                    $validator->errors()->add("images.{$index}.image_data", "Invalid or corrupted image file.");
-                    return;
-                }
-                
-                $width = $imageInfo[0];
-                $height = $imageInfo[1];
-                
-                // Check minimum dimensions (50x50)
-                if ($width < 50 || $height < 50) {
-                    $validator->errors()->add("images.{$index}.image_data", "Image dimensions must be at least 50x50 pixels. Current: {$width}x{$height}");
-                    return;
-                }
-                
-                // Check maximum dimensions (4000x4000)
-                if ($width > 4000 || $height > 4000) {
-                    $validator->errors()->add("images.{$index}.image_data", "Image dimensions must not exceed 4000x4000 pixels. Current: {$width}x{$height}");
-                    return;
-                }
-                
-            } catch (\Exception $e) {
-                $validator->errors()->add("images.{$index}.image_data", "Unable to process image. Please ensure it's a valid image file.");
-                return;
-            }
-        }
-        
-        // Validate mime type matches image content
-        if (!$this->validateMimeTypeMatch($base64Data, $mimeType)) {
-            $validator->errors()->add("images.{$index}.mime_type", "Image file type does not match the expected format.");
-        }
-    }
-    
-    /**
-     * Check if the provided string is valid base64 image data
-     */
-    private function isValidBase64Image($imageData)
-    {
-        // Remove data URL prefix if present
-        $base64Data = preg_replace('/^data:image\/[^;]+;base64,/', '', $imageData);
-        
-        // Check if it's valid base64
-        if (!base64_decode($base64Data, true)) {
-            return false;
-        }
-        
-        // Check if we can get image info (this works without GD extension)
-        if (function_exists('getimagesizefromstring')) {
-            try {
-                $imageInfo = getimagesizefromstring(base64_decode($base64Data));
-                return $imageInfo !== false;
-            } catch (\Exception $e) {
-                return false;
-            }
-        }
-        
-        // Fallback: basic validation - check if decoded data starts with common image signatures
-        $decodedData = base64_decode($base64Data);
-        if (strlen($decodedData) < 4) {
-            return false;
-        }
-        
-        // Check for common image file signatures
-        $signatures = [
-            'JPEG' => ['\xFF\xD8\xFF'],
-            'PNG' => ['\x89\x50\x4E\x47'],
-            'GIF' => ['\x47\x49\x46\x38\x37\x61', '\x47\x49\x46\x38\x39\x61'],
-            'WEBP' => ['\x52\x49\x46\x46']
-        ];
-        
-        foreach ($signatures as $format => $sigs) {
-            foreach ($sigs as $sig) {
-                if (substr($decodedData, 0, strlen($sig)) === $sig) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Validate that the mime type matches the actual image content
-     */
-    private function validateMimeTypeMatch($base64Data, $expectedMimeType)
-    {
-        try {
-            $imageData = base64_decode($base64Data);
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $actualMimeType = finfo_buffer($finfo, $imageData);
-            finfo_close($finfo);
-            
-            // Normalize mime types (handle jpg vs jpeg)
-            $normalizedExpected = str_replace('image/jpg', 'image/jpeg', $expectedMimeType);
-            $normalizedActual = str_replace('image/jpg', 'image/jpeg', $actualMimeType);
-            
-            return $normalizedExpected === $normalizedActual;
-        } catch (\Exception $e) {
-            return false;
-        }
     }
 }

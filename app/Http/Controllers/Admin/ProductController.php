@@ -13,6 +13,7 @@ use App\Models\ProductSize;
 use App\Models\ProductImage;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -33,7 +34,6 @@ class ProductController extends Controller
      */
     public function create()
     {
-
         $categories = Category::active()->pluck('name', 'id');
         $brands = Brand::active()->pluck('name', 'id');
         $colors = Color::active()->pluck('name', 'id');
@@ -45,15 +45,13 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        // Create the product
-        // dd($request->all());
         $productData = $request->validated();
-        unset($productData['colors'], $productData['sizes'], $productData['images']); // Remove colors, sizes, and images from product data
+        unset($productData['colors'], $productData['sizes'], $productData['images']);
 
         $product = Product::create($productData);
 
-        // Store colors if provided
-        if ($request->has('colors') && !empty($request->colors)) {
+        // Store colors
+        if (!empty($request->colors)) {
             foreach ($request->colors as $colorId) {
                 ProductColor::create([
                     'product_id' => $product->id,
@@ -62,33 +60,42 @@ class ProductController extends Controller
             }
         }
 
-        // Store sizes if provided
-        if ($request->has('sizes') && !empty($request->sizes)) {
+        // Store sizes
+        if (!empty($request->sizes)) {
             foreach ($request->sizes as $sizeData) {
                 ProductSize::create([
                     'product_id' => $product->id,
                     'size_name' => $sizeData['size_name'],
-                    'size_value' => $sizeData['size_value'] ?? '', // Assuming size_value is the same as size_name
+                    'size_value' => $sizeData['size_value'] ?? '',
                     'additional_price' => $sizeData['additional_price'] ?? 0,
                     'quantity' => $sizeData['stock_quantity'] ?? 0
                 ]);
             }
         }
 
-        // Store images if provided
-        if ($request->has('images') && !empty($request->images)) {
-            foreach ($request->images as $imageData) {
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_data' => $imageData['image_data'],
-                    'mime_type' => $imageData['mime_type'],
-                    'original_name' => $imageData['original_name'],
-                    'order' => $imageData['order'] ?? 0
-                ]);
+        // Store images to public storage
+        if (!empty($request->images)) {
+            foreach ($request->images as $imageFile) {
+                if ($imageFile instanceof \Illuminate\Http\UploadedFile) {
+                    $originalName = $imageFile->getClientOriginalName();
+                    $mimeType = $imageFile->getClientMimeType();
+                    $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
+                    $imageFile->storeAs('product_images', $filename, 'public');
+
+
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $filename,
+                        'mime_type' => $mimeType,
+                        'original_name' => $originalName,
+                        'order' => 0
+                    ]);
+                }
             }
         }
 
-        return redirect()->route('admin.product.index')->with('success', 'Product created successfully.');
+        return redirect()->route('admin.product.index')
+            ->with('success', 'Product created successfully.');
     }
 
     /**
@@ -97,16 +104,16 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load([
-            'category', 
-            'subcategory', 
+            'category',
+            'subcategory',
             'brand',
-            'productImages' => function($query) {
+            'productImages' => function ($query) {
                 $query->orderBy('order');
             },
             'colors',
             'productSizes'
         ]);
-        
+
         return view('admin.product.show', compact('product'));
     }
 
@@ -119,7 +126,6 @@ class ProductController extends Controller
         $brands = Brand::active()->pluck('name', 'id');
         $colors = Color::active()->pluck('name', 'id');
 
-        // Load subcategories for the selected category only
         $subcategories = [];
         if ($product->category_id) {
             $subcategories = Subcategory::where('category_id', $product->category_id)
@@ -127,21 +133,25 @@ class ProductController extends Controller
                 ->pluck('name', 'id');
         }
 
-        // Load current product colors
         $selectedColors = ProductColor::where('product_id', $product->id)
             ->pluck('color_id')
             ->toArray();
 
-        // Load current product sizes with full data
         $selectedSizes = ProductSize::where('product_id', $product->id)
-            ->get(['size_name','size_value', 'additional_price', 'quantity'])
+            ->get(['size_name', 'size_value', 'additional_price', 'quantity'])
             ->toArray();
-            // dd($selectedSizes);
 
-        // Load product with images
         $product->load('productImages');
 
-        return view('admin.product.edit', compact('product', 'categories', 'subcategories', 'brands', 'colors', 'selectedColors', 'selectedSizes'));
+        return view('admin.product.edit', compact(
+            'product',
+            'categories',
+            'subcategories',
+            'brands',
+            'colors',
+            'selectedColors',
+            'selectedSizes'
+        ));
     }
 
     /**
@@ -149,17 +159,14 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
-        // Update the product
         $productData = $request->validated();
-        unset($productData['colors'], $productData['sizes'], $productData['images'], $productData['existing_images'], $productData['deleted_images']); // Remove colors, sizes, and images from product data
+        unset($productData['colors'], $productData['sizes'], $productData['images'], $productData['existing_images'], $productData['deleted_images']);
 
         $product->update($productData);
 
-        // Update colors - first remove previous data, then add new data
+        // Update colors
         ProductColor::where('product_id', $product->id)->delete();
-
-        // Add new colors if provided
-        if ($request->has('colors') && !empty($request->colors)) {
+        if (!empty($request->colors)) {
             foreach ($request->colors as $colorId) {
                 ProductColor::create([
                     'product_id' => $product->id,
@@ -168,11 +175,9 @@ class ProductController extends Controller
             }
         }
 
-        // Update sizes - first remove previous data, then add new data
+        // Update sizes
         ProductSize::where('product_id', $product->id)->delete();
-
-        // Add new sizes if provided
-        if ($request->has('sizes') && !empty($request->sizes)) {
+        if (!empty($request->sizes)) {
             foreach ($request->sizes as $sizeData) {
                 ProductSize::create([
                     'product_id' => $product->id,
@@ -195,17 +200,20 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete all associated product images when soft deleting the product
+        // Delete files from storage
+        foreach ($product->productImages as $img) {
+            Storage::disk('public')->delete('product_images/' . $img->image_path);
+        }
+
         ProductImage::where('product_id', $product->id)->delete();
-        
-        // Soft delete the product
+
         $product->softDelete();
-        
+
         return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully.');
     }
 
     /**
-     * Toggle the status of the specified resource.
+     * Toggle Product Status
      */
     public function toggleStatus(Product $product)
     {
@@ -214,7 +222,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Get subcategories by category (AJAX)
+     * Get subcategories by category
      */
     public function getSubcategories(Request $request)
     {
@@ -229,15 +237,20 @@ class ProductController extends Controller
      */
     private function handleImageUpdates(Request $request, Product $product)
     {
-        // Handle deleted images
-        if ($request->has('deleted_images') && !empty($request->deleted_images)) {
-            ProductImage::whereIn('id', $request->deleted_images)
+        // Delete images
+        if (!empty($request->deleted_images)) {
+            $images = ProductImage::whereIn('id', $request->deleted_images)
                 ->where('product_id', $product->id)
-                ->delete();
+                ->get();
+
+            foreach ($images as $img) {
+                Storage::disk('public')->delete('product_images/' . $img->image_path);
+                $img->delete();
+            }
         }
 
-        // Update existing images order only (don't recreate them)
-        if ($request->has('existing_images') && !empty($request->existing_images)) {
+        // Update orders for existing images
+        if (!empty($request->existing_images)) {
             foreach ($request->existing_images as $imageId => $imageData) {
                 ProductImage::where('id', $imageId)
                     ->where('product_id', $product->id)
@@ -247,17 +260,22 @@ class ProductController extends Controller
             }
         }
 
-        // Add only genuinely new images (those with image_data)
-        if ($request->has('images') && !empty($request->images)) {
-            foreach ($request->images as $imageData) {
-                // Only create if it has image_data (new images)
-                if (isset($imageData['image_data']) && !empty($imageData['image_data'])) {
+        // New images
+        if (!empty($request->images)) {
+
+            foreach ($request->images as $imageFile) {
+                if ($imageFile instanceof \Illuminate\Http\UploadedFile) {
+                    $originalName = $imageFile->getClientOriginalName();
+                    $mimeType = $imageFile->getClientMimeType();
+                    $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
+                     $imageFile->storeAs('product_images', $filename, 'public');
+
                     ProductImage::create([
                         'product_id' => $product->id,
-                        'image_data' => $imageData['image_data'],
-                        'mime_type' => $imageData['mime_type'],
-                        'original_name' => $imageData['original_name'],
-                        'order' => $imageData['order'] ?? 0
+                        'image_path' => $filename,
+                        'mime_type' => $mimeType,
+                        'original_name' => $originalName,
+                        'order' => 0
                     ]);
                 }
             }
