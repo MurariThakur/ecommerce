@@ -40,10 +40,16 @@
                         <div class="col-md-6">
                             <div class="product-gallery">
                                 <figure class="product-main-image">
-                                    <img id="product-zoom" src="{{ $product->productImages->first()->image_src }}"
-                                        data-zoom-image="{{ $product->productImages->first()->image_src }}"
-                                        alt="product image">
 
+                                    @if ($product->productImages->count() > 0)
+                                        <img id="product-zoom" src="{{ $product->productImages->first()->image_src }}"
+                                            data-zoom-image="{{ $product->productImages->first()->image_src }}"
+                                            alt="product image">
+                                    @else
+                                        <img src="{{ asset('frontend/assets/images/no-image.jpg') }}"
+                                            alt="{{ $product->productImages->first()->original_name }}"
+                                            class="product-image">
+                                    @endif
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                         <i class="icon-arrows"></i>
                                     </a>
@@ -134,8 +140,6 @@
                                     <div class="details-action-wrapper">
                                         <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to
                                                 Wishlist</span></a>
-                                        <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to
-                                                Compare</span></a>
                                     </div><!-- End .details-action-wrapper -->
                                 </div><!-- End .product-details-action -->
 
@@ -328,8 +332,6 @@
                                                 to wishlist</span></a>
                                         <a href="#" class="btn-product-icon btn-quickview"
                                             title="Quick view"><span>Quick view</span></a>
-                                        <a href="#" class="btn-product-icon btn-compare"
-                                            title="Compare"><span>Compare</span></a>
                                     </div><!-- End .product-action-vertical -->
 
                                     <div class="product-action">

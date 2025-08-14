@@ -232,101 +232,101 @@ class ProductController extends Controller
     }
 
     /**
- * Display single product details page
- */
-public function getProductDetails($category_slug, $subcategory_slug, $product_slug)
-{
-    try {
-        // Find the category
-        $category = Category::where('slug', $category_slug)->active()->first();
-        if (!$category) {
-            abort(404, 'Category not found');
-        }
+     * Display single product details page
+     */
+    public function getProductDetails($category_slug, $subcategory_slug, $product_slug)
+    {
+        try {
+            // Find the category
+            $category = Category::where('slug', $category_slug)->active()->first();
+            if (!$category) {
+                abort(404, 'Category not found');
+            }
 
-        // Find the subcategory
-        $subcategory = Subcategory::where('slug', $subcategory_slug)
-            ->where('category_id', $category->id)
-            ->active()
-            ->first();
-        if (!$subcategory) {
-            abort(404, 'Subcategory not found');
-        }
+            // Find the subcategory
+            $subcategory = Subcategory::where('slug', $subcategory_slug)
+                ->where('category_id', $category->id)
+                ->active()
+                ->first();
+            if (!$subcategory) {
+                abort(404, 'Subcategory not found');
+            }
 
-        // Find the product with all necessary relationships
-        $product = Product::where('slug', $product_slug)
-            ->where('category_id', $category->id)
-            ->where('subcategory_id', $subcategory->id)
-            ->where('status', true)
-            ->where('isdelete', false)
-            ->with([
+            // Find the product with all necessary relationships
+            $product = Product::where('slug', $product_slug)
+                ->where('category_id', $category->id)
+                ->where('subcategory_id', $subcategory->id)
+                ->where('status', true)
+                ->where('isdelete', false)
+                ->with([
+                    'category',
+                    'subcategory',
+                    'brand',
+                    'productImages' => function ($query) {
+                        $query->orderBy('order', 'asc');
+                    },
+                    'colors' => function ($query) {
+                        $query->where('status', true); // assuming colors table has status
+                    },
+                    'productSizes' => function ($query) {
+                        $query->orderBy('size_name', 'asc');
+                    }
+                ])
+                ->first();
+
+            if (!$product) {
+                abort(404, 'Product not found');
+            }
+
+            // Debug: Check what data is loaded
+            // dd([
+            //     'product' => $product->toArray(),
+            //     'images_count' => $product->productImages->count(),
+            //     'colors_count' => $product->colors->count(),
+            //     'sizes_count' => $product->productSizes->count(),
+            //     'brand' => $product->brand ? $product->brand->name : 'No brand'
+            // ]);
+
+            // Get related products from same subcategory
+            $relatedProducts = Product::where('subcategory_id', $subcategory->id)
+                ->where('id', '!=', $product->id)
+                ->where('status', true)
+                ->where('isdelete', false)
+                ->with([
+                    'productImages' => function ($query) {
+                        $query->orderBy('order', 'asc')->limit(1);
+                    },
+                    'brand'
+                ])
+                ->limit(10)
+                ->get();
+
+            // Meta tags for SEO
+            $meta_title = $product->title . ' - ' . $subcategory->name . ' - ' . $category->name;
+            $meta_description = $product->short_description ?: 'Buy ' . $product->title . ' online';
+            $meta_keyword = $product->title . ', ' . $subcategory->name . ', ' . $category->name;
+
+            return view('frontend.product.details', compact(
+                'product',
                 'category',
                 'subcategory',
-                'brand',
-                'productImages' => function($query) {
-                    $query->orderBy('order', 'asc');
-                },
-                'colors' => function($query) {
-                    $query->where('status', true); // assuming colors table has status
-                },
-                'productSizes' => function($query) {
-                    $query->orderBy('size_name', 'asc');
-                }
-            ])
-            ->first();
+                'relatedProducts',
+                'meta_title',
+                'meta_description',
+                'meta_keyword'
+            ));
 
-        if (!$product) {
-            abort(404, 'Product not found');
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Product details error: ' . $e->getMessage(), [
+                'category_slug' => $category_slug,
+                'subcategory_slug' => $subcategory_slug,
+                'product_slug' => $product_slug
+            ]);
+
+            abort(500, 'An error occurred while loading the product');
         }
-
-        // Debug: Check what data is loaded
-        // dd([
-        //     'product' => $product->toArray(),
-        //     'images_count' => $product->productImages->count(),
-        //     'colors_count' => $product->colors->count(),
-        //     'sizes_count' => $product->productSizes->count(),
-        //     'brand' => $product->brand ? $product->brand->name : 'No brand'
-        // ]);
-
-        // Get related products from same subcategory
-        $relatedProducts = Product::where('subcategory_id', $subcategory->id)
-            ->where('id', '!=', $product->id)
-            ->where('status', true)
-            ->where('isdelete', false)
-            ->with([
-                'productImages' => function($query) {
-                    $query->orderBy('order', 'asc')->limit(1);
-                },
-                'brand'
-            ])
-            ->limit(4)
-            ->get();
-
-        // Meta tags for SEO
-        $meta_title = $product->title . ' - ' . $subcategory->name . ' - ' . $category->name;
-        $meta_description = $product->short_description ?: 'Buy ' . $product->title . ' online';
-        $meta_keyword = $product->title . ', ' . $subcategory->name . ', ' . $category->name;
-
-        return view('frontend.product.details', compact(
-            'product',
-            'category',
-            'subcategory',
-            'relatedProducts',
-            'meta_title',
-            'meta_description',
-            'meta_keyword'
-        ));
-
-    } catch (\Exception $e) {
-        // Log the error for debugging
-        \Log::error('Product details error: ' . $e->getMessage(), [
-            'category_slug' => $category_slug,
-            'subcategory_slug' => $subcategory_slug,
-            'product_slug' => $product_slug
-        ]);
-
-        abort(500, 'An error occurred while loading the product');
     }
-}
 
 
 }
