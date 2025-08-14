@@ -94,7 +94,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 Route::get('{slug?}/{subslug?}', [FrontendProductController::class,'getCategory']);
-
+Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
 // Redirect root to frontend home
 // Route::get('/', function () {
 //     return redirect()->route('frontend.home');
