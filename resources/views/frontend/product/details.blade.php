@@ -47,7 +47,7 @@
                                             alt="product image">
                                     @else
                                         <img src="{{ asset('frontend/assets/images/no-image.jpg') }}"
-                                            alt="{{ $product->productImages->first()->original_name }}"
+                                            alt="vb"
                                             class="product-image">
                                     @endif
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">

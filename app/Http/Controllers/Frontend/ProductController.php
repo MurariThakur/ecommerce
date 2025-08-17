@@ -14,6 +14,53 @@ use App\Models\Brand;
 
 class ProductController extends Controller
 {
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+
+        if (empty($query)) {
+            return redirect()->route('frontend.home');
+        }
+
+        $products = Product::where('status', true)
+            ->where('isdelete', false)
+            ->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('short_description', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhereHas('category', function($q) use ($query) {
+                      $q->where('name', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('subcategory', function($q) use ($query) {
+                      $q->where('name', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('brand', function($q) use ($query) {
+                      $q->where('name', 'like', "%{$query}%");
+                  });
+            })
+            ->with([
+                'category',
+                'subcategory',
+                'brand',
+                'productImages' => function ($query) {
+                    $query->orderBy('order');
+                }
+            ])
+            ->paginate(12)
+            ->appends($request->query());
+
+        $meta_title = "Search Results for '{$query}'";
+        $meta_description = "Search results for '{$query}' - Browse our products";
+        $meta_keyword = $query;
+
+        return view('frontend.product.list', compact(
+            'products',
+            'query',
+            'meta_title',
+            'meta_description',
+            'meta_keyword'
+        ));
+    }
     public function getCategory($slug, $subslug = '', Request $request = null)
     {
         // Handle null request
@@ -231,9 +278,6 @@ class ProductController extends Controller
         ));
     }
 
-    /**
-     * Display single product details page
-     */
     public function getProductDetails($category_slug, $subcategory_slug, $product_slug)
     {
         try {
@@ -277,15 +321,6 @@ class ProductController extends Controller
             if (!$product) {
                 abort(404, 'Product not found');
             }
-
-            // Debug: Check what data is loaded
-            // dd([
-            //     'product' => $product->toArray(),
-            //     'images_count' => $product->productImages->count(),
-            //     'colors_count' => $product->colors->count(),
-            //     'sizes_count' => $product->productSizes->count(),
-            //     'brand' => $product->brand ? $product->brand->name : 'No brand'
-            // ]);
 
             // Get related products from same subcategory
             $relatedProducts = Product::where('subcategory_id', $subcategory->id)

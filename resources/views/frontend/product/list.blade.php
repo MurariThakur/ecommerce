@@ -1,6 +1,9 @@
 @extends('frontend.layouts.app')
 
 @section('styles')
+@php
+    $isSearch = !isset($category) && !isset($subcategory) && isset($query);
+@endphp
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
     <style>
         .category-link {
@@ -68,10 +71,12 @@
         <div class="page-header text-center"
             style="background-image: url('{{ asset('frontend/assets/images/page-header-bg.jpg') }}')">
             <div class="container">
-                @if (!empty($subcategory))
-                    <h1 class="page-title">{{ $subcategory->name }}</h1>
+                @if($isSearch)
+                    <h1 class="page-title">Search Results<span>"{{ $query }}"</span></h1>
+                @elseif(!empty($subcategory))
+                    <h1 class="page-title">{{ $subcategory->name }}<span>{{ $category->name }}</span></h1>
                 @else
-                    <h1 class="page-title">{{ $category->name }}</h1>
+                    <h1 class="page-title">{{ $category->name }}<span>Shop</span></h1>
                 @endif
             </div>
         </div>
@@ -80,14 +85,19 @@
             <div class="container">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
-                    @if (!empty($subcategory))
-                        <li class="breadcrumb-item">
-                            <a href="{{ url($category->slug) }}">{{ $category->name }}</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $subcategory->name }}</li>
+                    @if($isSearch)
+                        <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Search Results</li>
                     @else
-                        <li class="breadcrumb-item active" aria-current="page">{{ $category->name }}</li>
+                        <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+                        @if(!empty($subcategory))
+                            <li class="breadcrumb-item">
+                                <a href="{{ url($category->slug) }}">{{ $category->name }}</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $subcategory->name }}</li>
+                        @else
+                            <li class="breadcrumb-item active" aria-current="page">{{ $category->name }}</li>
+                        @endif
                     @endif
                 </ol>
             </div>
@@ -690,7 +700,7 @@
 
         // Clean all filters function
         function cleanAllFilters() {
-            window.location.href = '{{ $cleanAllUrl }}';
+            window.location.href = 'cc';
         }
     </script>
 @endsection
