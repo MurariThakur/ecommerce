@@ -623,29 +623,61 @@
                                 @endif
 
                                 <!-- Price Filter -->
-                                @if (isset($priceRange) && $priceRange)
-                                    <div class="widget widget-collapsible">
-                                        <h3 class="widget-title">
-                                            <a data-toggle="collapse" href="#widget-5" role="button"
-                                                aria-expanded="true" aria-controls="widget-5">
-                                                Price
-                                            </a>
-                                        </h3>
+                                <!-- Price Filter - Hide when no search results -->
+                                @if ($isSearch)
+                                    @php
+                                        $hasProducts = $products->total() > 0;
+                                        $noQuery = empty($query);
+                                        $showPriceFilter =
+                                            ($hasProducts || $noQuery) && isset($priceRange) && $priceRange;
+                                    @endphp
 
-                                        <div class="collapse show" id="widget-5">
-                                            <div class="widget-body">
-                                                <div class="filter-price">
-                                                    <div class="filter-price-text">
-                                                        Price Range: <span id="filter-price-range"></span>
+                                    @if ($showPriceFilter)
+                                        <div class="widget widget-collapsible">
+                                            <h3 class="widget-title">
+                                                <a data-toggle="collapse" href="#widget-5" role="button"
+                                                    aria-expanded="true" aria-controls="widget-5">
+                                                    Price
+                                                </a>
+                                            </h3>
+                                            <div class="collapse show" id="widget-5">
+                                                <div class="widget-body">
+                                                    <div class="filter-price">
+                                                        <div class="filter-price-text">
+                                                            Price Range: <span id="filter-price-range"></span>
+                                                        </div>
+                                                        <!-- Only the slider, no input boxes -->
+                                                        <div id="price-slider"></div>
                                                     </div>
-
-                                                    <!-- Only the slider, no input boxes -->
-                                                    <div id="price-slider"></div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endif
+                                @else
+                                    <!-- For non-search pages, show price filter normally -->
+                                    @if (isset($priceRange) && $priceRange)
+                                        <div class="widget widget-collapsible">
+                                            <h3 class="widget-title">
+                                                <a data-toggle="collapse" href="#widget-5" role="button"
+                                                    aria-expanded="true" aria-controls="widget-5">
+                                                    Price
+                                                </a>
+                                            </h3>
+                                            <div class="collapse show" id="widget-5">
+                                                <div class="widget-body">
+                                                    <div class="filter-price">
+                                                        <div class="filter-price-text">
+                                                            Price Range: <span id="filter-price-range"></span>
+                                                        </div>
+                                                        <!-- Only the slider, no input boxes -->
+                                                        <div id="price-slider"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
+
                             </form>
                         </div>
                     </aside>
