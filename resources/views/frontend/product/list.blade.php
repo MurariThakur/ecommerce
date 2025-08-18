@@ -1,9 +1,9 @@
-@extends('frontend.layouts.app')
+\@extends('frontend.layouts.app')
 
 @section('styles')
-@php
-    $isSearch = !isset($category) && !isset($subcategory) && isset($query);
-@endphp
+    @php
+        $isSearch = !isset($category) && !isset($subcategory) && isset($query);
+    @endphp
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
     <style>
         .category-link {
@@ -61,6 +61,19 @@
             font-weight: 500;
         }
 
+        /* Search specific styles */
+        .search-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .search-query {
+            font-weight: 600;
+            color: #bf8040;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {}
     </style>
@@ -71,7 +84,7 @@
         <div class="page-header text-center"
             style="background-image: url('{{ asset('frontend/assets/images/page-header-bg.jpg') }}')">
             <div class="container">
-                @if($isSearch)
+                @if ($isSearch)
                     <h1 class="page-title">Search Results<span>"{{ $query }}"</span></h1>
                 @elseif(!empty($subcategory))
                     <h1 class="page-title">{{ $subcategory->name }}<span>{{ $category->name }}</span></h1>
@@ -85,12 +98,12 @@
             <div class="container">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    @if($isSearch)
+                    @if ($isSearch)
                         <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Search Results</li>
                     @else
                         <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
-                        @if(!empty($subcategory))
+                        @if (!empty($subcategory))
                             <li class="breadcrumb-item">
                                 <a href="{{ url($category->slug) }}">{{ $category->name }}</a>
                             </li>
@@ -105,6 +118,13 @@
 
         <div class="page-content">
             <div class="container">
+                @if ($isSearch)
+                    <div class="search-info">
+                        <p class="mb-0">Search results for: <span class="search-query">"{{ $query }}"</span> -
+                            {{ $products->total() }} products found</p>
+                    </div>
+                @endif
+
                 <div class="row">
                     <div class="col-lg-9">
                         <div class="toolbox">
@@ -228,7 +248,12 @@
                                             <div class="no-products-content">
                                                 <h2 class="no-products-title mb-3">No Products Found</h2>
                                                 <p class="no-products-subtitle text-muted mb-4">
-                                                    We couldn't find any products matching your current filters.
+                                                    @if ($isSearch)
+                                                        We couldn't find any products matching your search for
+                                                        "{{ $query }}".
+                                                    @else
+                                                        We couldn't find any products matching your current filters.
+                                                    @endif
                                                 </p>
 
                                                 <div class="no-products-actions">
@@ -311,111 +336,192 @@
                             <div class="widget widget-clean">
                                 <label>Filters:</label>
                                 <a href="javascript:void(0)" onclick="cleanAllFilters()" class="sidebar-filter-clear"
-                                    id="clean-all-filters">Clean
-                                    All</a>
+                                    id="clean-all-filters">Clean All</a>
                             </div>
 
                             <form id="filter-form" method="GET" action="{{ request()->url() }}">
+                                <!-- Hidden search query input for search pages -->
+                                @if ($isSearch)
+                                    <input type="hidden" name="q" value="{{ $query }}">
+                                @endif
+
                                 <!-- Hidden price inputs -->
                                 <input type="hidden" name="price_min" value="{{ request('price_min', 0) }}">
                                 <input type="hidden" name="price_max"
                                     value="{{ request('price_max', $priceRange->max_price ?? 1000) }}">
 
-                                <!-- Category/Subcategory Filter Logic -->
-                                @if (empty($subcategory))
-                                    <!-- When on category page, show subcategories of that category -->
-                                    @if (isset($subcategories) && $subcategories->count() > 1)
+                                <!-- Filter Logic Based on Page Type -->
+
+
+                                @if ($isSearch)
+                                    <!-- Search Context with Smart Category Detection -->
+
+
+                                    <!-- Smart Subcategory Filter - Only for detected category -->
+                                    @if (isset($detectedCategory) && isset($relevantSubcategories) && $relevantSubcategories->count() > 0)
                                         <div class="widget widget-collapsible">
                                             <h3 class="widget-title">
-                                                <a data-toggle="collapse" href="#widget-1" role="button"
-                                                    aria-expanded="true" aria-controls="widget-1">
-                                                    {{ $category->name }} Categories
+                                                <a data-toggle="collapse" href="#widget-subcategories" role="button"
+                                                    aria-expanded="true" aria-controls="widget-subcategories">
+                                                    <i class="fas fa-tags mr-2"></i>{{ $detectedCategory->name }} Types
                                                 </a>
                                             </h3>
 
-                                            <div class="collapse show" id="widget-1">
+                                            <div class="collapse show" id="widget-subcategories">
                                                 <div class="widget-body">
                                                     <div class="filter-items filter-items-count">
-                                                        @foreach ($subcategories as $subcat)
+                                                        @foreach ($relevantSubcategories as $subcat)
                                                             <div class="filter-item">
                                                                 <div class="custom-control custom-checkbox">
                                                                     <input type="checkbox"
                                                                         class="custom-control-input filter-checkbox"
                                                                         name="subcategories[]"
                                                                         value="{{ $subcat->id }}"
-                                                                        id="subcat-{{ $subcat->id }}"
+                                                                        id="subcat-search-{{ $subcat->id }}"
                                                                         {{ in_array($subcat->id, request('subcategories', [])) ? 'checked' : '' }}>
                                                                     <label class="custom-control-label"
-                                                                        for="subcat-{{ $subcat->id }}">
+                                                                        for="subcat-search-{{ $subcat->id }}">
                                                                         {{ $subcat->name }}
                                                                     </label>
                                                                 </div>
                                                                 <span
-                                                                    class="item-count">{{ $subcat->activeProducts()->count() }}</span>
+                                                                    class="item-count">{{ $subcat->search_result_count }}</span>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    @endif
+
+                                    <!-- Alternative Categories (if user wants to explore other categories) -->
+                                    @if (isset($detectedCategory) && $detectedCategory)
+                                        <div class="collapse" id="widget-explore">
+                                            <div class="widget-body">
+                                                <div class="search-suggestions">
+                                                    <p class="small text-muted mb-2">Search "{{ $query }}" in:
+                                                    </p>
+                                                    @php
+                                                        $otherCategories = \App\Models\Category::where(
+                                                            'id',
+                                                            '!=',
+                                                            $detectedCategory->id,
+                                                        )
+                                                            ->active()
+                                                            ->take(6)
+                                                            ->get();
+                                                    @endphp
+                                                    @foreach ($otherCategories as $cat)
+                                                        <a href="{{ route('frontend.search') }}?q={{ urlencode($query) }}&categories[]={{ $cat->id }}"
+                                                            class="badge badge-light mr-1 mb-1"
+                                                            style="text-decoration: none; padding: 6px 12px;">
+                                                            {{ $cat->name }}
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- </div> --}}
                                     @endif
                                 @else
-                                    <!-- When on subcategory page, show all categories for direct navigation -->
-                                    @if (isset($allCategories) && $allCategories->count() > 1)
-                                        <div class="widget widget-collapsible">
-                                            <h3 class="widget-title">
-                                                <a data-toggle="collapse" href="#widget-1" role="button"
-                                                    aria-expanded="true" aria-controls="widget-1">
-                                                    Categories
-                                                </a>
-                                            </h3>
+                                    <!-- Original category/subcategory logic for non-search pages -->
+                                    @if (empty($subcategory))
+                                        <!-- When on category page, show subcategories of that category -->
+                                        @if (isset($subcategories) && $subcategories->count() > 1)
+                                            <div class="widget widget-collapsible">
+                                                <h3 class="widget-title">
+                                                    <a data-toggle="collapse" href="#widget-1" role="button"
+                                                        aria-expanded="true" aria-controls="widget-1">
+                                                        {{ $category->name }} Categories
+                                                    </a>
+                                                </h3>
 
-                                            <div class="collapse show" id="widget-1">
-                                                <div class="widget-body">
-                                                    <div class="filter-items filter-items-count">
-                                                        @foreach ($allCategories as $cat)
-                                                            <div class="filter-item">
-                                                                <a href="{{ url($cat->slug) }}"
-                                                                    class="category-link d-flex justify-content-between align-items-center text-decoration-none {{ $cat->id == $category->id ? 'active' : '' }}">
-                                                                    <span class="category-name">{{ $cat->name }}</span>
-                                                                    <span
-                                                                        class="item-count">{{ $cat->activeProducts()->count() }}</span>
-                                                                </a>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <!-- Show subcategories when on subcategory page -->
-                                    @if (isset($subcategories) && $subcategories->count() > 1)
-                                        <div class="widget widget-collapsible">
-                                            <h3 class="widget-title">
-                                                <a data-toggle="collapse" href="#widget-1a" role="button"
-                                                    aria-expanded="true" aria-controls="widget-1a">
-                                                    Subcategories
-                                                </a>
-                                            </h3>
-
-                                            <div class="collapse show" id="widget-1a">
-                                                <div class="widget-body">
-                                                    <div class="filter-items filter-items-count">
-                                                        @foreach ($subcategories as $subcat)
-                                                            <div class="filter-item">
-                                                                <a href="{{ url($category->slug . '/' . $subcat->slug) }}"
-                                                                    class="category-link d-flex justify-content-between align-items-center text-decoration-none {{ isset($subcategory) && $subcat->id == $subcategory->id ? 'active' : '' }}">
-                                                                    <span class="category-name">{{ $subcat->name }}</span>
+                                                <div class="collapse show" id="widget-1">
+                                                    <div class="widget-body">
+                                                        <div class="filter-items filter-items-count">
+                                                            @foreach ($subcategories as $subcat)
+                                                                <div class="filter-item">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox"
+                                                                            class="custom-control-input filter-checkbox"
+                                                                            name="subcategories[]"
+                                                                            value="{{ $subcat->id }}"
+                                                                            id="subcat-{{ $subcat->id }}"
+                                                                            {{ in_array($subcat->id, request('subcategories', [])) ? 'checked' : '' }}>
+                                                                        <label class="custom-control-label"
+                                                                            for="subcat-{{ $subcat->id }}">
+                                                                            {{ $subcat->name }}
+                                                                        </label>
+                                                                    </div>
                                                                     <span
                                                                         class="item-count">{{ $subcat->activeProducts()->count() }}</span>
-                                                                </a>
-                                                            </div>
-                                                        @endforeach
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
+                                    @else
+                                        <!-- When on subcategory page, show all categories for direct navigation -->
+                                        @if (isset($allCategories) && $allCategories->count() > 1)
+                                            <div class="widget widget-collapsible">
+                                                <h3 class="widget-title">
+                                                    <a data-toggle="collapse" href="#widget-1" role="button"
+                                                        aria-expanded="true" aria-controls="widget-1">
+                                                        Categories
+                                                    </a>
+                                                </h3>
+
+                                                <div class="collapse show" id="widget-1">
+                                                    <div class="widget-body">
+                                                        <div class="filter-items filter-items-count">
+                                                            @foreach ($allCategories as $cat)
+                                                                <div class="filter-item">
+                                                                    <a href="{{ url($cat->slug) }}"
+                                                                        class="category-link d-flex justify-content-between align-items-center text-decoration-none {{ $cat->id == $category->id ? 'active' : '' }}">
+                                                                        <span
+                                                                            class="category-name">{{ $cat->name }}</span>
+                                                                        <span
+                                                                            class="item-count">{{ $cat->activeProducts()->count() }}</span>
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <!-- Show subcategories when on subcategory page -->
+                                        @if (isset($subcategories) && $subcategories->count() > 1)
+                                            <div class="widget widget-collapsible">
+                                                <h3 class="widget-title">
+                                                    <a data-toggle="collapse" href="#widget-1a" role="button"
+                                                        aria-expanded="true" aria-controls="widget-1a">
+                                                        Subcategories
+                                                    </a>
+                                                </h3>
+
+                                                <div class="collapse show" id="widget-1a">
+                                                    <div class="widget-body">
+                                                        <div class="filter-items filter-items-count">
+                                                            @foreach ($subcategories as $subcat)
+                                                                <div class="filter-item">
+                                                                    <a href="{{ url($category->slug . '/' . $subcat->slug) }}"
+                                                                        class="category-link d-flex justify-content-between align-items-center text-decoration-none {{ isset($subcategory) && $subcat->id == $subcategory->id ? 'active' : '' }}">
+                                                                        <span
+                                                                            class="category-name">{{ $subcat->name }}</span>
+                                                                        <span
+                                                                            class="item-count">{{ $subcat->activeProducts()->count() }}</span>
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
                                 @endif
 
@@ -484,8 +590,6 @@
                                     </div>
                                 @endif
 
-
-
                                 <!-- Brand Filter -->
                                 @if (isset($availableBrands) && $availableBrands->count() > 0)
                                     <div class="widget widget-collapsible">
@@ -518,7 +622,7 @@
                                     </div>
                                 @endif
 
-                                <!-- Fixed Price Filter -->
+                                <!-- Price Filter -->
                                 @if (isset($priceRange) && $priceRange)
                                     <div class="widget widget-collapsible">
                                         <h3 class="widget-title">
@@ -700,7 +804,8 @@
 
         // Clean all filters function
         function cleanAllFilters() {
-            window.location.href = 'cc';
+            window.location.href = '{{ $cleanAllUrl ?? '' }}';
+
         }
     </script>
 @endsection
