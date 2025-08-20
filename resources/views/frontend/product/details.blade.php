@@ -46,8 +46,7 @@
                                             data-zoom-image="{{ $product->productImages->first()->image_src }}"
                                             alt="product image">
                                     @else
-                                        <img src="{{ asset('frontend/assets/images/no-image.jpg') }}"
-                                            alt="{{ $product->productImages->first()->original_name }}"
+                                        <img src="{{ asset('frontend/assets/images/no-image.jpg') }}" alt="vb"
                                             class="product-image">
                                     @endif
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">
@@ -79,7 +78,7 @@
                                     <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
                                 </div><!-- End .rating-container -->
 
-                                <div class="product-price">
+                                <div class="product-price" data-base-price="{{ $product->price }}">
                                     @if ($product->hasDiscount())
                                         <span class="new-price">${{ number_format($product->price, 2) }}</span>
                                         <span class="old-price">${{ number_format($product->old_price, 2) }}</span>
@@ -115,16 +114,24 @@
                                         <label for="size">Size:</label>
                                         <div class="select-custom">
                                             <select name="size" id="size" class="form-control">
-                                                <option value="#" selected="selected">Select a size</option>
+                                                {{-- Default option with a price of 0 --}}
+                                                <option value="" data-price="0" selected="selected">Select a size
+                                                </option>
+
+                                                {{-- Loop through sizes and add data-price attribute --}}
                                                 @foreach ($product->productSizes as $size)
-                                                    <option value="{{ $size->size_name }}">{{ $size->size_name }}</option>
+                                                    <option value="{{ $size->size_name }}"
+                                                        data-price="{{ $size->additional_price }}">
+                                                        {{ $size->size_name }} -
+                                                        (+${{ number_format($size->additional_price, 2) }})
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div><!-- End .select-custom -->
-
                                         <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
                                     </div><!-- End .details-filter-row -->
                                 @endif
+
 
                                 <div class="details-filter-row details-row-size">
                                     <label for="qty">Qty:</label>
@@ -390,4 +397,52 @@
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/jquery.elevateZoom.min.js') }}"></script>>
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Get references to the necessary DOM elements.
+            const sizeSelector = document.getElementById('size');
+            const priceContainer = document.querySelector('.product-price');
+
+            // 2. Exit if the required elements aren't on the page.
+            if (!sizeSelector || !priceContainer) {
+                return;
+            }
+
+            // 3. Get the base price from the data attribute and convert it to a number.
+            const basePrice = parseFloat(priceContainer.getAttribute('data-base-price'));
+
+            // 4. Store the original HTML of the price container to handle resets.
+            const originalPriceHTML = priceContainer.innerHTML;
+
+            // 5. Add an event listener that triggers when the user selects a new size.
+            sizeSelector.addEventListener('change', function() {
+                // Get the selected <option> element.
+                const selectedOption = this.options[this.selectedIndex];
+
+                // Get the additional price from the selected option's `data-price` attribute.
+                const additionalPrice = parseFloat(selectedOption.getAttribute('data-price'));
+
+                // 6. Check if the additional price is a valid number and greater than 0.
+                if (!isNaN(additionalPrice) && additionalPrice >= 0) {
+
+                    // If the user selected the default "Select a size" option (price 0)
+                    if (additionalPrice === 0) {
+                        priceContainer.innerHTML = originalPriceHTML;
+                    } else {
+                        // Calculate the new total price.
+                        const totalPrice = basePrice + additionalPrice;
+
+                        // Create the HTML for the new price, handling potential discounts.
+                        // This example assumes the total price is a new price, but you can adjust logic.
+                        const newPriceHTML = `<span class="new-price">$${totalPrice.toFixed(2)}</span>`;
+
+                        // Update the product price display.
+                        priceContainer.innerHTML = newPriceHTML;
+                    }
+                }
+            });
+        });
+    </script>
+
 @endsection
