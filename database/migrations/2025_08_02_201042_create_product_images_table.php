@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_images', function (Blueprint $table) {
-            $table->id();
+             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->longText('image_data'); // For storing base64 encoded images
-            $table->string('mime_type'); // e.g., 'image/jpeg', 'image/png'
-            $table->string('original_name'); // Original filename
-            $table->integer('order')->default(0); // For sorting images
+            $table->string('image_path');
+            $table->string('mime_type');
+            $table->string('original_name');
+            $table->unsignedBigInteger('file_size')->nullable();
+            $table->integer('order')->default(0); 
             $table->timestamps();
         });
     }

@@ -360,10 +360,6 @@
                             <label>Size Name <span class="text-danger">*</span></label>
                             <input type="text" name="sizes[${sizeIndex}][size_name]" class="form-control" placeholder="e.g., Small, Medium, Large" required>
                         </div>
-                        <div class="col-md-3">
-                            <label>Size Value</label>
-                            <input type="text" name="sizes[${sizeIndex}][size_value]" class="form-control" placeholder="e.g., 28 inches">
-                        </div>
                         <div class="col-md-2">
                             <label>Additional Price</label>
                             <input type="number" name="sizes[${sizeIndex}][additional_price]" class="form-control" step="0.01" value="0">
