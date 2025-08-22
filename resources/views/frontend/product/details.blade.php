@@ -69,14 +69,14 @@
 
                         <div class="col-md-6">
                             <div class="product-details">
-                                <h1 class="product-title">{{ $product->title }}</h1><!-- End .product-title -->
+                                <h1 class="product-title">{{ $product->title }}</h1>
 
                                 <div class="ratings-container">
                                     <div class="ratings">
-                                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                    </div><!-- End .ratings -->
+                                        <div class="ratings-val" style="width: 80%;"></div>
+                                    </div>
                                     <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
-                                </div><!-- End .rating-container -->
+                                </div>
 
                                 <div class="product-price" data-base-price="{{ $product->price }}">
                                     @if ($product->hasDiscount())
@@ -85,70 +85,76 @@
                                     @else
                                         ${{ number_format($product->price, 2) }}
                                     @endif
-                                </div><!-- End .product-price -->
+                                </div>
 
                                 @if ($product->short_description)
                                     <div class="product-content">
                                         <p>{{ $product->short_description }}</p>
-                                    </div><!-- End .product-content -->
+                                    </div>
                                 @endif
 
-                                @if ($product->colors->count() > 0)
-                                    <div class="details-filter-row details-row-size">
-                                        <label>Color:</label>
+                                <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="color" id="selected-color"
+                                        value="{{ $product->colors->first()->name ?? '' }}">
 
-                                        <div class="product-nav product-nav-dots">
-                                            @foreach ($product->colors as $index => $color)
-                                                <a href="#" class="{{ $index == 0 ? 'active' : '' }}"
-                                                    style="background: {{ $color->color_code }};"
-                                                    title="{{ $color->name }}">
-                                                    <span class="sr-only">{{ $color->name }}</span>
-                                                </a>
-                                            @endforeach
-                                        </div><!-- End .product-nav -->
-                                    </div><!-- End .details-filter-row -->
-                                @endif
-
-                                @if ($product->productSizes->count() > 0)
-                                    <div class="details-filter-row details-row-size">
-                                        <label for="size">Size:</label>
-                                        <div class="select-custom">
-                                            <select name="size" id="size" class="form-control">
-                                                {{-- Default option with a price of 0 --}}
-                                                <option value="" data-price="0" selected="selected">Select a size
-                                                </option>
-
-                                                {{-- Loop through sizes and add data-price attribute --}}
-                                                @foreach ($product->productSizes as $size)
-                                                    <option value="{{ $size->size_name }}"
-                                                        data-price="{{ $size->additional_price }}">
-                                                        {{ $size->size_name }} -
-                                                        (+${{ number_format($size->additional_price, 2) }})
-                                                    </option>
+                                    @if ($product->colors->count() > 0)
+                                        <div class="details-filter-row details-row-size">
+                                            <label>Color:</label>
+                                            <div class="product-nav product-nav-dots" id="color-options">
+                                                @foreach ($product->colors as $index => $color)
+                                                    <a href="javascript:void(0)" class="{{ $index == 0 ? 'active' : '' }}"
+                                                        data-color="{{ $color->name }}"
+                                                        style="background: {{ $color->color_code }};"
+                                                        title="{{ $color->name }}">
+                                                        <span class="sr-only">{{ $color->name }}</span>
+                                                    </a>
                                                 @endforeach
-                                            </select>
-                                        </div><!-- End .select-custom -->
-                                        <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
-                                    </div><!-- End .details-filter-row -->
-                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
 
+                                    @if ($product->productSizes->count() > 0)
+                                        <div class="details-filter-row details-row-size">
+                                            <label for="size">Size:</label>
+                                            <div class="select-custom">
+                                                <select name="size" id="size" class="form-control" required>
+                                                    <option value="" data-price="0">Select a size</option>
+                                                    @foreach ($product->productSizes as $size)
+                                                        <option value="{{ $size->size_name }}"
+                                                            data-price="{{ $size->additional_price }}">
+                                                            {{ $size->size_name }}
+                                                            (+${{ number_format($size->additional_price, 2) }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <a href="#" class="size-guide"><i class="icon-th-list"></i> size guide</a>
+                                        </div>
+                                    @endif
 
-                                <div class="details-filter-row details-row-size">
-                                    <label for="qty">Qty:</label>
-                                    <div class="product-details-quantity">
-                                        <input type="number" id="qty" class="form-control" value="1"
-                                            min="1" max="10" step="1" data-decimals="0" required>
-                                    </div><!-- End .product-details-quantity -->
-                                </div><!-- End .details-filter-row -->
+                                    <div class="details-filter-row details-row-size">
+                                        <label for="qty">Qty:</label>
+                                        <div class="product-details-quantity">
+                                            <input type="number" name="qty" id="qty" class="form-control"
+                                                value="1" min="1" max="10" step="1"
+                                                data-decimals="0" required>
+                                        </div>
+                                    </div>
 
-                                <div class="product-details-action">
-                                    <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                    <div class="product-details-action">
+                                        <button type="submit" class="btn-product btn-cart" id="add-to-cart-button">
+                                            <span id="cart-button-text">Add to Cart</span>
+                                        </button>
+                                        <div class="details-action-wrapper">
+                                            <a href="#" class="btn-product btn-wishlist" title="Wishlist">
+                                                <span>Add to Wishlist</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
 
-                                    <div class="details-action-wrapper">
-                                        <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to
-                                                Wishlist</span></a>
-                                    </div><!-- End .details-action-wrapper -->
-                                </div><!-- End .product-details-action -->
 
                                 <div class="product-details-footer">
                                     <div class="product-cat">
@@ -395,54 +401,101 @@
 
 @section('scripts')
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
-    <script src="{{ asset('frontend/assets/js/jquery.elevateZoom.min.js') }}"></script>>
+    <script src="{{ asset('frontend/assets/js/jquery.elevateZoom.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Get references to the necessary DOM elements.
+            // Price update functionality
             const sizeSelector = document.getElementById('size');
             const priceContainer = document.querySelector('.product-price');
 
-            // 2. Exit if the required elements aren't on the page.
-            if (!sizeSelector || !priceContainer) {
-                return;
+            if (sizeSelector && priceContainer) {
+                const basePrice = parseFloat(priceContainer.getAttribute('data-base-price'));
+                const originalPriceHTML = priceContainer.innerHTML;
+
+                sizeSelector.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const additionalPrice = parseFloat(selectedOption.getAttribute('data-price'));
+
+                    if (!isNaN(additionalPrice) && additionalPrice >= 0) {
+                        if (additionalPrice === 0) {
+                            priceContainer.innerHTML = originalPriceHTML;
+                        } else {
+                            const totalPrice = basePrice + additionalPrice;
+                            const newPriceHTML = `<span class="new-price">$${totalPrice.toFixed(2)}</span>`;
+                            priceContainer.innerHTML = newPriceHTML;
+                        }
+                    }
+
+                    // Check cart status when size changes
+                    checkCartStatus();
+                });
             }
 
-            // 3. Get the base price from the data attribute and convert it to a number.
-            const basePrice = parseFloat(priceContainer.getAttribute('data-base-price'));
+            // Color selection
+            const colorOptions = document.querySelectorAll('#color-options a');
+            const selectedColorInput = document.getElementById('selected-color');
 
-            // 4. Store the original HTML of the price container to handle resets.
-            const originalPriceHTML = priceContainer.innerHTML;
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Update active class
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
 
-            // 5. Add an event listener that triggers when the user selects a new size.
-            sizeSelector.addEventListener('change', function() {
-                // Get the selected <option> element.
-                const selectedOption = this.options[this.selectedIndex];
+                    // Update hidden input value
+                    selectedColorInput.value = this.dataset.color;
 
-                // Get the additional price from the selected option's `data-price` attribute.
-                const additionalPrice = parseFloat(selectedOption.getAttribute('data-price'));
-
-                // 6. Check if the additional price is a valid number and greater than 0.
-                if (!isNaN(additionalPrice) && additionalPrice >= 0) {
-
-                    // If the user selected the default "Select a size" option (price 0)
-                    if (additionalPrice === 0) {
-                        priceContainer.innerHTML = originalPriceHTML;
-                    } else {
-                        // Calculate the new total price.
-                        const totalPrice = basePrice + additionalPrice;
-
-                        // Create the HTML for the new price, handling potential discounts.
-                        // This example assumes the total price is a new price, but you can adjust logic.
-                        const newPriceHTML = `<span class="new-price">$${totalPrice.toFixed(2)}</span>`;
-
-                        // Update the product price display.
-                        priceContainer.innerHTML = newPriceHTML;
-                    }
-                }
+                    // Check cart status when color changes
+                    checkCartStatus();
+                });
             });
+
+            // Function to check if current variant is in cart
+            function checkCartStatus() {
+                const color = document.getElementById('selected-color').value;
+                const sizeSelect = document.getElementById('size');
+                const size = sizeSelect ? sizeSelect.value : 'no-size';
+                const productId = {{ $product->id }};
+
+                // If size is required but not selected yet, don't check
+                if (sizeSelect && sizeSelect.required && !size) {
+                    return;
+                }
+
+                // Make AJAX request to check cart status
+                fetch('{{ route('cart.check') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            color: color,
+                            size: size
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const addButton = document.getElementById('add-to-cart-button');
+                        const buttonText = document.getElementById('cart-button-text');
+
+                        if (data.in_cart) {
+                            addButton.classList.add('disabled');
+                            buttonText.textContent = `Already in Cart (${data.quantity})`;
+                        } else {
+                            addButton.classList.remove('disabled');
+                            buttonText.textContent = 'Add to Cart';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking cart status:', error);
+                    });
+            }
+
+            // Initial check on page load
+            setTimeout(checkCartStatus, 500);
         });
     </script>
-
 @endsection

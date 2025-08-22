@@ -15,6 +15,7 @@
     <!-- Favicon -->
 
     <link rel="shortcut icon" href="{{ asset('frontend/assets/images/icons/favicon.ico') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Plugins CSS File -->
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bootstrap.min.css') }}">
@@ -25,6 +26,98 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
 
     @yield('styles')
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-custom {
+            min-width: 280px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s ease;
+        }
+
+        .toast-custom.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-custom .toast-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .toast-custom .close-btn {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Colors */
+        .toast-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+        }
+
+        .toast-error {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .toast-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #333;
+        }
+
+        .toast-info {
+            background: linear-gradient(135deg, #17a2b8, #117a8b);
+        }
+
+        .cart-update-animation {
+            animation: cartPulse 0.5s ease;
+        }
+
+        @keyframes cartPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Prevent dropdown from closing when clicking inside */
+        #cart-dropdown-menu {
+            pointer-events: auto;
+        }
+
+        #cart-dropdown-menu * {
+            pointer-events: auto;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -92,6 +185,374 @@
     <script src="{{ asset('frontend/assets/js/main.js') }}"></script>
 
     @yield('scripts')
+    <div id="toast-container" class="toast-container"></div>
+    <script>
+        // Global CartManager Object
+        window.CartManager = {
+            // Properties
+            routes: {},
+            csrfToken: '',
+
+            // Initialize the cart system
+            init: function() {
+                this.setupRoutes();
+                this.initializeDropdownEvents();
+                this.setupGlobalEventListeners();
+
+                // Initialize cart page if we're on the cart page
+                if (document.querySelector('.cart')) {
+                    this.initializeCartPage();
+                }
+
+                console.log('CartManager initialized');
+            },
+
+            // Setup route URLs
+            setupRoutes: function() {
+                this.routes = {
+                    update: '{{ route('cart.update') }}',
+                    remove: '{{ route('cart.remove') }}',
+                    clear: '{{ route('cart.clear') }}',
+                    dropdown: '{{ route('cart.dropdown') }}'
+                };
+                this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            },
+
+            // Initialize dropdown events using event delegation
+            initializeDropdownEvents: function() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.remove-item-dropdown')) {
+                        e.preventDefault();
+                        const rowId = e.target.closest('.remove-item-dropdown').dataset.rowid;
+                        this.removeItem(rowId, true);
+                    }
+                });
+            },
+
+            // Setup global event listeners
+            setupGlobalEventListeners: function() {
+                // Listen for custom cart update events
+                document.addEventListener('cartUpdated', (e) => {
+                    this.updateHeaderCart(e.detail);
+                });
+            },
+
+            // Initialize cart page functionality
+            initializeCartPage: function() {
+                // Update quantity with debounce
+                let updateTimeout;
+                const debounceTime = 500;
+
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const rowId = e.target.dataset.rowid;
+                        const newQuantity = e.target.value;
+
+                        clearTimeout(updateTimeout);
+                        updateTimeout = setTimeout(() => {
+                            this.updateQuantity(rowId, newQuantity);
+                        }, debounceTime);
+                    });
+                });
+
+                // Remove item from cart page
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const rowId = e.target.closest('.remove-item').dataset.rowid;
+                        this.removeItem(rowId);
+                    });
+                });
+
+                // Clear entire cart
+                document.querySelectorAll('.clear-cart').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.clearCart();
+                    });
+                });
+
+                // Update shipping cost when selection changes
+                document.querySelectorAll('input[name="shipping"]').forEach(input => {
+                    input.addEventListener('change', () => {
+                        this.updateTotals();
+                    });
+                });
+            },
+
+            // Update item quantity
+            updateQuantity: function(rowId, quantity) {
+                fetch(this.routes.update, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            rowId: rowId,
+                            quantity: quantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            // Update individual item total
+                            const itemTotalElement = document.querySelector(`#cart-item-${rowId} .item-total`);
+                            if (itemTotalElement) {
+                                itemTotalElement.textContent = response.itemTotal;
+                            }
+
+                            // Update cart totals
+                            this.updateCartTotals(response.subTotal, response.total);
+
+                            // Trigger custom event to update header
+                            this.triggerCartUpdated(response);
+
+                            this.showToast('Quantity updated successfully', 'success');
+                        } else {
+                            this.showToast(response.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.showToast('Error updating quantity', 'error');
+                    });
+            },
+
+            // Remove item from cart
+            removeItem: function(rowId, fromDropdown = false) {
+
+                fetch(this.routes.remove, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            rowId: rowId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            if (!fromDropdown) {
+                                // Remove item from DOM on cart page
+                                const itemElement = document.querySelector(`#cart-item-${rowId}`);
+                                if (itemElement) {
+                                    itemElement.remove();
+                                }
+
+                                // Update cart totals
+                                this.updateCartTotals(response.subTotal, response.total);
+
+                                // Check if cart is empty
+                                if (response.itemsCount === 0) {
+                                    location.reload();
+                                }
+                            }
+
+                            // Trigger custom event to update header
+                            this.triggerCartUpdated(response);
+
+                            this.showToast('Item removed from cart', 'success');
+                        } else {
+                            this.showToast('Error removing item', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.showToast('Error removing item', 'error');
+                    });
+            },
+
+            // Clear entire cart
+            clearCart: function() {
+                if (!confirm('Are you sure you want to clear your entire cart?')) {
+                    return;
+                }
+
+                fetch(this.routes.clear, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            // Trigger custom event to update header
+                            this.triggerCartUpdated(response);
+
+                            location.reload();
+                        } else {
+                            this.showToast('Error clearing cart', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.showToast('Error clearing cart', 'error');
+                    });
+            },
+
+            // Update cart totals display
+            updateCartTotals: function(subTotal, total) {
+                const subtotalElement = document.querySelector('#cart-subtotal');
+                const totalElement = document.querySelector('#cart-total');
+
+                if (subtotalElement) subtotalElement.textContent = '$' + subTotal;
+                if (totalElement) totalElement.textContent = '$' + total;
+            },
+
+            // Update shipping totals
+            updateTotals: function() {
+                const selectedShipping = document.querySelector('input[name="shipping"]:checked');
+                if (!selectedShipping) return;
+
+                const shippingCost = parseFloat(selectedShipping.parentElement.nextElementSibling.textContent
+                    .replace('$', ''));
+                const subTotal = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
+                const total = subTotal + shippingCost;
+
+                document.querySelector('#cart-total').textContent = '$' + total.toFixed(2);
+            },
+
+            // Update header cart
+            updateHeaderCart: function(response) {
+                // Update cart count with animation
+                const cartCount = document.querySelector('#header-cart-count');
+                if (cartCount) {
+                    cartCount.textContent = response.itemsCount;
+                    cartCount.classList.add('cart-update-animation');
+                    setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
+                }
+
+                // Update cart dropdown content
+                if (response.itemsCount === 0) {
+                    const dropdownMenu = document.querySelector('#cart-dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
+                    }
+                    return;
+                }
+
+                // Refresh dropdown via AJAX
+                this.refreshCartDropdown();
+            },
+
+            // Refresh cart dropdown via AJAX
+            refreshCartDropdown: function() {
+                fetch(this.routes.dropdown)
+                    .then(response => response.text())
+                    .then(data => {
+                        const dropdownMenu = document.querySelector('#cart-dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.innerHTML = data;
+
+                            // Re-attach event listeners to new remove buttons
+                            this.initializeDropdownEvents();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to refresh cart dropdown:', error);
+                    });
+            },
+
+            // Trigger cart updated event
+            triggerCartUpdated: function(response) {
+                const event = new CustomEvent('cartUpdated', {
+                    detail: response
+                });
+                document.dispatchEvent(event);
+            },
+
+            // Show toast notification (using your existing toast system)
+            showToast: function(message, type = "success") {
+                // Create toast element
+                const container = document.getElementById("toast-container");
+                const toast = document.createElement("div");
+                toast.className = `toast-custom toast-${type}`;
+
+                toast.innerHTML = `
+                <div class="toast-message">
+                    ${this.getToastIcon(type)}
+                    <span>${message}</span>
+                </div>
+                <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+            `;
+
+                container.appendChild(toast);
+
+                // Show toast with animation
+                setTimeout(() => toast.classList.add("show"), 50);
+
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 400);
+                }, 3000);
+            },
+
+            // Get icon for toast based on type
+            getToastIcon: function(type) {
+                switch (type) {
+                    case "success":
+                        return `<i class="icon-check-circle"></i>`;
+                    case "error":
+                        return `<i class="icon-times-circle"></i>`;
+                    case "warning":
+                        return `<i class="icon-exclamation-circle"></i>`;
+                    default:
+                        return `<i class="icon-info-circle"></i>`;
+                }
+            }
+        };
+
+        // Initialize CartManager when document is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            CartManager.init();
+
+            // Flash message handler for server-side messages
+            @if (session('success'))
+                CartManager.showToast("{{ session('success') }}", "success");
+            @endif
+
+            @if (session('error'))
+                CartManager.showToast("{{ session('error') }}", "error");
+            @endif
+        });
+
+        // Add CSS for cart animations if not already present
+        const style = document.createElement('style');
+        style.textContent = `
+        .cart-update-animation {
+            animation: cartPulse 0.5s ease;
+        }
+
+        @keyframes cartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Prevent dropdown from closing when clicking inside */
+        #cart-dropdown-menu {
+            pointer-events: auto;
+        }
+
+        #cart-dropdown-menu * {
+            pointer-events: auto;
+        }
+    `;
+        document.head.appendChild(style);
+    </script>
+
+
+    </div>
+
 </body>
 
 </html>

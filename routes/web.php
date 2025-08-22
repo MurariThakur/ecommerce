@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
+use App\Http\Controllers\Frontend\PaymentController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -91,13 +92,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 });
 
+Route::post('/cart/add', [PaymentController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [PaymentController::class, 'cart'])->name('cart.index');
+Route::post('/cart/update', [PaymentController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/remove', [PaymentController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/clear', [PaymentController::class, 'clearCart'])->name('cart.clear');
+Route::post('/cart/check', [PaymentController::class, 'checkCart'])->name('cart.check');
+Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->name('cart.dropdown');
+
+
+
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 Route::get('/search', [FrontendProductController::class, 'search'])->name('frontend.search');
 Route::get('{slug?}/{subslug?}', [FrontendProductController::class,'getCategory']);
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
-// Redirect root to frontend home
-// Route::get('/', function () {
-//     return redirect()->route('frontend.home');
-// });
+
 
