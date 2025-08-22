@@ -13,6 +13,7 @@ use App\Models\ProductSize;
 use App\Models\ProductImage;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -68,7 +69,6 @@ class ProductController extends Controller
                 ProductSize::create([
                     'product_id' => $product->id,
                     'size_name' => $sizeData['size_name'],
-                    'size_value' => $sizeData['size_value'] ?? '', // Assuming size_value is the same as size_name
                     'additional_price' => $sizeData['additional_price'] ?? 0,
                     'quantity' => $sizeData['stock_quantity'] ?? 0
                 ]);
@@ -78,13 +78,28 @@ class ProductController extends Controller
         // Store images if provided
         if ($request->has('images') && !empty($request->images)) {
             foreach ($request->images as $imageData) {
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_data' => $imageData['image_data'],
-                    'mime_type' => $imageData['mime_type'],
-                    'original_name' => $imageData['original_name'],
-                    'order' => $imageData['order'] ?? 0
-                ]);
+                if (isset($imageData['image_data']) && !empty($imageData['image_data'])) {
+                    // Extract the base64 data
+                    $base64Data = preg_replace('/^data:image\/\w+;base64,/', '', $imageData['image_data']);
+                    $imageContent = base64_decode($base64Data);
+
+                    // Generate a unique filename
+                    $filename = uniqid('product_') . '_' . time() . '.' . $this->getExtensionFromMimeType($imageData['mime_type']);
+                    $path = 'products/' . $filename;
+
+                    // Store the file
+                    Storage::disk('public')->put($path, $imageContent);
+
+                    // Create database record
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $path,
+                        'mime_type' => $imageData['mime_type'],
+                        'original_name' => $imageData['original_name'],
+                        'file_size' => strlen($imageContent),
+                        'order' => $imageData['order'] ?? 0
+                    ]);
+                }
             }
         }
 
@@ -97,16 +112,16 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load([
-            'category', 
-            'subcategory', 
+            'category',
+            'subcategory',
             'brand',
-            'productImages' => function($query) {
+            'productImages' => function ($query) {
                 $query->orderBy('order');
             },
             'colors',
             'productSizes'
         ]);
-        
+
         return view('admin.product.show', compact('product'));
     }
 
@@ -134,9 +149,9 @@ class ProductController extends Controller
 
         // Load current product sizes with full data
         $selectedSizes = ProductSize::where('product_id', $product->id)
-            ->get(['size_name','size_value', 'additional_price', 'quantity'])
+            ->get(['size_name', 'additional_price', 'quantity'])
             ->toArray();
-            // dd($selectedSizes);
+        // dd($selectedSizes);
 
         // Load product with images
         $product->load('productImages');
@@ -177,7 +192,6 @@ class ProductController extends Controller
                 ProductSize::create([
                     'product_id' => $product->id,
                     'size_name' => $sizeData['size_name'],
-                    'size_value' => $sizeData['size_value'] ?? '',
                     'additional_price' => $sizeData['additional_price'] ?? 0,
                     'quantity' => $sizeData['stock_quantity'] ?? 0
                 ]);
@@ -197,10 +211,10 @@ class ProductController extends Controller
     {
         // Delete all associated product images when soft deleting the product
         ProductImage::where('product_id', $product->id)->delete();
-        
+
         // Soft delete the product
         $product->softDelete();
-        
+
         return redirect()->route('admin.product.index')->with('success', 'Product deleted successfully.');
     }
 
@@ -227,9 +241,25 @@ class ProductController extends Controller
     /**
      * Handle image updates for product edit
      */
+    /**
+     * Get file extension from MIME type
+     */
+    private function getExtensionFromMimeType($mimeType)
+    {
+        $map = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            'image/svg+xml' => 'svg'
+        ];
+
+        return $map[$mimeType] ?? 'jpg';
+    }
+
     private function handleImageUpdates(Request $request, Product $product)
     {
-        // Handle deleted images
+        // Handle deleted images - they will be automatically deleted through the model's boot method
         if ($request->has('deleted_images') && !empty($request->deleted_images)) {
             ProductImage::whereIn('id', $request->deleted_images)
                 ->where('product_id', $product->id)
@@ -252,11 +282,24 @@ class ProductController extends Controller
             foreach ($request->images as $imageData) {
                 // Only create if it has image_data (new images)
                 if (isset($imageData['image_data']) && !empty($imageData['image_data'])) {
+                    // Extract the base64 data
+                    $base64Data = preg_replace('/^data:image\/\w+;base64,/', '', $imageData['image_data']);
+                    $imageContent = base64_decode($base64Data);
+
+                    // Generate a unique filename
+                    $filename = uniqid('product_') . '_' . time() . '.' . $this->getExtensionFromMimeType($imageData['mime_type']);
+                    $path = 'products/'. $filename;
+
+                    // Store the file
+                    Storage::disk('public')->put($path, $imageContent);
+
+                    // Create database record
                     ProductImage::create([
                         'product_id' => $product->id,
-                        'image_data' => $imageData['image_data'],
+                        'image_path' => $path,
                         'mime_type' => $imageData['mime_type'],
                         'original_name' => $imageData['original_name'],
+                        'file_size' => strlen($imageContent),
                         'order' => $imageData['order'] ?? 0
                     ]);
                 }

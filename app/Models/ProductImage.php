@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImage extends Model
 {
@@ -11,7 +12,7 @@ class ProductImage extends Model
 
     protected $fillable = [
         'product_id',
-        'image_data',
+        'image_path',
         'mime_type',
         'original_name',
         'order'
@@ -23,29 +24,32 @@ class ProductImage extends Model
     }
 
     /**
-     * Get the properly formatted image source for display
+     * Get the URL for the image
      */
-    public function getImageSrcAttribute()
+    public function getImageUrlAttribute()
     {
-        // Check if the image_data already contains the data URL prefix
-        if (strpos($this->image_data, 'data:') === 0) {
-            return $this->image_data;
-        }
-        
-        // If not, construct the proper data URL
-        return 'data:' . $this->mime_type . ';base64,' . $this->image_data;
+        return asset('storage/' . $this->image_path);
     }
 
     /**
-     * Get clean base64 data without data URL prefix
+     * Get the properly formatted image source for display (for backward compatibility)
      */
-    public function getCleanBase64Attribute()
+    public function getImageSrcAttribute()
     {
-        // Remove data URL prefix if it exists
-        if (strpos($this->image_data, 'data:') === 0) {
-            return preg_replace('/^data:image\/[^;]+;base64,/', '', $this->image_data);
-        }
-        
-        return $this->image_data;
+        return $this->image_url;
+    }
+
+    /**
+     * Delete the image file when the model is deleted
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($productImage) {
+            if (Storage::disk('public')->exists($productImage->image_path)) {
+                Storage::disk('public')->delete($productImage->image_path);
+            }
+        });
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use Cart;
+use Darryldecode\Cart\Facades\CartFacade as Cart;
 
 class PaymentController extends Controller
 {
@@ -77,13 +77,11 @@ class PaymentController extends Controller
             return back()->with('success', 'Product quantity updated in cart!');
         }
 
-        // Product image (handle base64 or storage path)
+        // Product image from storage
         $image = null;
         if ($product->productImages->count() > 0) {
-            $imgSrc = $product->productImages->first()->image_src;
-            $image = str_starts_with($imgSrc, 'data:image')
-                ? $imgSrc // base64 stored in DB
-                : asset('storage/' . $imgSrc); // normal storage image
+            $productImage = $product->productImages->first();
+            $image = asset('storage/' . $productImage->image_path);
         }
 
         // Add new item to cart
@@ -142,12 +140,12 @@ class PaymentController extends Controller
         $item = Cart::get($rowId);
 
         return response()->json([
-        'success' => true,
-        'itemTotal' => number_format($item->price * $item->quantity, 2),
-        'subTotal' => number_format(Cart::getSubTotal(), 2),
-        'total' => number_format(Cart::getTotal(), 2),
-        'itemsCount' => Cart::getTotalQuantity() // Add this
-    ]);
+            'success' => true,
+            'itemTotal' => number_format($item->price * $item->quantity, 2),
+            'subTotal' => number_format(Cart::getSubTotal(), 2),
+            'total' => number_format(Cart::getTotal(), 2),
+            'itemsCount' => Cart::getTotalQuantity() // Add this
+        ]);
     }
 
     /**
@@ -160,11 +158,11 @@ class PaymentController extends Controller
         Cart::remove($rowId);
 
         return response()->json([
-        'success' => true,
-        'subTotal' => number_format(Cart::getSubTotal(), 2),
-        'total' => number_format(Cart::getTotal(), 2),
-        'itemsCount' => Cart::getTotalQuantity() // This already exists
-    ]);
+            'success' => true,
+            'subTotal' => number_format(Cart::getSubTotal(), 2),
+            'total' => number_format(Cart::getTotal(), 2),
+            'itemsCount' => Cart::getTotalQuantity() // This already exists
+        ]);
     }
 
     /**
