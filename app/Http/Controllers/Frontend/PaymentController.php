@@ -40,10 +40,18 @@ class PaymentController extends Controller
 
         // Validate options
         if ($product->productSizes->count() > 0 && !$request->size) {
-            return back()->with('error', 'Please select a size.');
+            $message = 'Please select a size.';
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
         }
         if ($product->colors->count() > 0 && !$request->color) {
-            return back()->with('error', 'Please select a color.');
+            $message = 'Please select a color.';
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
         }
 
         // Base price + size adjustment
@@ -74,7 +82,17 @@ class PaymentController extends Controller
                 ]
             ]);
 
-            return back()->with('success', 'Product quantity updated in cart!');
+            $message = 'Product quantity updated in cart!';
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'itemsCount' => Cart::getTotalQuantity(),
+                    'cartTotal' => number_format(Cart::getTotal(), 2),
+                    'action' => 'updated'
+                ]);
+            }
+            return back()->with('success', $message);
         }
 
         // Product image from storage
@@ -101,7 +119,17 @@ class PaymentController extends Controller
             ],
         ]);
 
-        return back()->with('success', 'Product added to cart successfully!');
+        $message = 'Product added to cart successfully!';
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'itemsCount' => Cart::getTotalQuantity(),
+                'cartTotal' => number_format(Cart::getTotal(), 2),
+                'action' => 'added'
+            ]);
+        }
+        return back()->with('success', $message);
     }
 
     /**

@@ -515,14 +515,40 @@
         document.addEventListener('DOMContentLoaded', function() {
             CartManager.init();
 
-            // Flash message handler for server-side messages
-            @if (session('success'))
-                CartManager.showToast("{{ session('success') }}", "success");
-            @endif
+            // Flash message handler for server-side messages with navigation detection
+            const showFlashMessages = () => {
+                const navigationKey = 'flash_message_shown_' + Date.now();
+                const lastShownKey = sessionStorage.getItem('last_flash_message_key');
 
-            @if (session('error'))
-                CartManager.showToast("{{ session('error') }}", "error");
-            @endif
+                // Check if we're coming from browser navigation
+                const isNavigationReload = performance.navigation.type === 2 || // Back/Forward
+                                         (performance.navigation.type === 1 && document.referrer === window.location.href); // Refresh
+
+                @if (session('success'))
+                    const successMessage = "{{ session('success') }}";
+                    const successKey = 'success_' + btoa(successMessage).slice(0, 10);
+
+                    // Only show if not from navigation and not already shown
+                    if (!isNavigationReload && lastShownKey !== successKey) {
+                        CartManager.showToast(successMessage, "success");
+                        sessionStorage.setItem('last_flash_message_key', successKey);
+                    }
+                @endif
+
+                @if (session('error'))
+                    const errorMessage = "{{ session('error') }}";
+                    const errorKey = 'error_' + btoa(errorMessage).slice(0, 10);
+
+                    // Only show if not from navigation and not already shown
+                    if (!isNavigationReload && lastShownKey !== errorKey) {
+                        CartManager.showToast(errorMessage, "error");
+                        sessionStorage.setItem('last_flash_message_key', errorKey);
+                    }
+                @endif
+            };
+
+            // Show flash messages after a short delay to ensure proper detection
+            setTimeout(showFlashMessages, 100);
         });
 
         // Add CSS for cart animations if not already present

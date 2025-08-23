@@ -451,6 +451,86 @@
                 });
             });
 
+            // AJAX Add to Cart functionality
+            const addToCartForm = document.getElementById('add-to-cart-form');
+            const addToCartButton = document.getElementById('add-to-cart-button');
+            const buttonText = document.getElementById('cart-button-text');
+
+            addToCartForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // Disable button to prevent double submission
+                addToCartButton.disabled = true;
+                const originalText = buttonText.textContent;
+                buttonText.textContent = 'Adding...';
+
+                // Get form data
+                const formData = new FormData(addToCartForm);
+
+                // Convert FormData to JSON
+                const formObject = {};
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                // Make AJAX request
+                fetch('{{ route('cart.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(formObject)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button state
+                        addToCartButton.classList.add('disabled');
+                        buttonText.textContent = 'Added to Cart';
+
+                        // Show success toast
+                        if (window.CartManager) {
+                            window.CartManager.showToast(data.message, 'success');
+
+                            // Update header cart count
+                            window.CartManager.updateHeaderCart({
+                                itemsCount: data.itemsCount,
+                                cartTotal: data.cartTotal
+                            });
+
+                            // Refresh cart dropdown
+                            window.CartManager.refreshCartDropdown();
+                        }
+
+                        // Re-check cart status after a short delay
+                        setTimeout(checkCartStatus, 1000);
+                    } else {
+                        // Show error toast
+                        if (window.CartManager) {
+                            window.CartManager.showToast(data.message, 'error');
+                        }
+
+                        // Re-enable button
+                        addToCartButton.disabled = false;
+                        buttonText.textContent = originalText;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding to cart:', error);
+
+                    // Show error toast
+                    if (window.CartManager) {
+                        window.CartManager.showToast('Error adding product to cart', 'error');
+                    }
+
+                    // Re-enable button
+                    addToCartButton.disabled = false;
+                    buttonText.textContent = originalText;
+                });
+            });
+
             // Function to check if current variant is in cart
             function checkCartStatus() {
                 const color = document.getElementById('selected-color').value;
@@ -483,9 +563,11 @@
 
                         if (data.in_cart) {
                             addButton.classList.add('disabled');
+                            addButton.disabled = true;
                             buttonText.textContent = `Already in Cart (${data.quantity})`;
                         } else {
                             addButton.classList.remove('disabled');
+                            addButton.disabled = false;
                             buttonText.textContent = 'Add to Cart';
                         }
                     })
