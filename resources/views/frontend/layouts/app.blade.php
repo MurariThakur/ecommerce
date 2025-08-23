@@ -187,27 +187,20 @@
     @yield('scripts')
     <div id="toast-container" class="toast-container"></div>
     <script>
-        // Global CartManager Object
         window.CartManager = {
-            // Properties
             routes: {},
             csrfToken: '',
 
-            // Initialize the cart system
             init: function() {
                 this.setupRoutes();
                 this.initializeDropdownEvents();
                 this.setupGlobalEventListeners();
 
-                // Initialize cart page if we're on the cart page
                 if (document.querySelector('.cart')) {
                     this.initializeCartPage();
                 }
-
-                console.log('CartManager initialized');
             },
 
-            // Setup route URLs
             setupRoutes: function() {
                 this.routes = {
                     update: '{{ route('cart.update') }}',
@@ -218,28 +211,24 @@
                 this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             },
 
-            // Initialize dropdown events using event delegation
             initializeDropdownEvents: function() {
                 document.addEventListener('click', (e) => {
-                    if (e.target.closest('.remove-item-dropdown')) {
+                    const btn = e.target.closest('.remove-item-dropdown');
+                    if (btn) {
                         e.preventDefault();
-                        const rowId = e.target.closest('.remove-item-dropdown').dataset.rowid;
+                        const rowId = btn.dataset.rowid;
                         this.removeItem(rowId, true);
                     }
                 });
             },
 
-            // Setup global event listeners
             setupGlobalEventListeners: function() {
-                // Listen for custom cart update events
                 document.addEventListener('cartUpdated', (e) => {
                     this.updateHeaderCart(e.detail);
                 });
             },
 
-            // Initialize cart page functionality
             initializeCartPage: function() {
-                // Update quantity with debounce
                 let updateTimeout;
                 const debounceTime = 500;
 
@@ -247,7 +236,6 @@
                     input.addEventListener('change', (e) => {
                         const rowId = e.target.dataset.rowid;
                         const newQuantity = e.target.value;
-
                         clearTimeout(updateTimeout);
                         updateTimeout = setTimeout(() => {
                             this.updateQuantity(rowId, newQuantity);
@@ -255,7 +243,6 @@
                     });
                 });
 
-                // Remove item from cart page
                 document.querySelectorAll('.remove-item').forEach(button => {
                     button.addEventListener('click', (e) => {
                         const rowId = e.target.closest('.remove-item').dataset.rowid;
@@ -263,7 +250,6 @@
                     });
                 });
 
-                // Clear entire cart
                 document.querySelectorAll('.clear-cart').forEach(button => {
                     button.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -271,7 +257,6 @@
                     });
                 });
 
-                // Update shipping cost when selection changes
                 document.querySelectorAll('input[name="shipping"]').forEach(input => {
                     input.addEventListener('change', () => {
                         this.updateTotals();
@@ -279,7 +264,6 @@
                 });
             },
 
-            // Update item quantity
             updateQuantity: function(rowId, quantity) {
                 fetch(this.routes.update, {
                         method: 'POST',
@@ -288,39 +272,27 @@
                             'X-CSRF-TOKEN': this.csrfToken
                         },
                         body: JSON.stringify({
-                            rowId: rowId,
-                            quantity: quantity
+                            rowId,
+                            quantity
                         })
                     })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.success) {
-                            // Update individual item total
-                            const itemTotalElement = document.querySelector(`#cart-item-${rowId} .item-total`);
-                            if (itemTotalElement) {
-                                itemTotalElement.textContent = response.itemTotal;
-                            }
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            const itemTotal = document.querySelector(`#cart-item-${rowId} .item-total`);
+                            if (itemTotal) itemTotal.textContent = res.itemTotal;
 
-                            // Update cart totals
-                            this.updateCartTotals(response.subTotal, response.total);
-
-                            // Trigger custom event to update header
-                            this.triggerCartUpdated(response);
-
+                            this.updateCartTotals(res.subTotal, res.total);
+                            this.triggerCartUpdated(res);
                             this.showToast('Quantity updated successfully', 'success');
                         } else {
-                            this.showToast(response.message, 'error');
+                            this.showToast(res.message, 'error');
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        this.showToast('Error updating quantity', 'error');
-                    });
+                    .catch(() => this.showToast('Error updating quantity', 'error'));
             },
 
-            // Remove item from cart
             removeItem: function(rowId, fromDropdown = false) {
-
                 fetch(this.routes.remove, {
                         method: 'POST',
                         headers: {
@@ -328,47 +300,40 @@
                             'X-CSRF-TOKEN': this.csrfToken
                         },
                         body: JSON.stringify({
-                            rowId: rowId
+                            rowId
                         })
                     })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.success) {
-                            if (!fromDropdown) {
-                                // Remove item from DOM on cart page
-                                const itemElement = document.querySelector(`#cart-item-${rowId}`);
-                                if (itemElement) {
-                                    itemElement.remove();
-                                }
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            // Always remove from dropdown and header
+                            this.triggerCartUpdated(res);
 
-                                // Update cart totals
-                                this.updateCartTotals(response.subTotal, response.total);
+                            // If on cart page, remove DOM item and update totals
+                            const cartItem = document.querySelector(`#cart-item-${rowId}`);
+                            if (cartItem) {
+                                cartItem.remove();
+                                this.updateCartTotals(res.subTotal, res.total);
 
-                                // Check if cart is empty
-                                if (response.itemsCount === 0) {
-                                    location.reload();
+                                if (res.itemsCount === 0) {
+                                    document.querySelector('.cart').innerHTML = `
+                            <div class="text-center py-5">
+                                <h4>Your cart is empty</h4>
+                                <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
+                            </div>`;
                                 }
                             }
-
-                            // Trigger custom event to update header
-                            this.triggerCartUpdated(response);
 
                             this.showToast('Item removed from cart', 'success');
                         } else {
                             this.showToast('Error removing item', 'error');
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        this.showToast('Error removing item', 'error');
-                    });
+                    .catch(() => this.showToast('Error removing item', 'error'));
             },
 
-            // Clear entire cart
             clearCart: function() {
-                if (!confirm('Are you sure you want to clear your entire cart?')) {
-                    return;
-                }
+                if (!confirm('Are you sure you want to clear your entire cart?')) return;
 
                 fetch(this.routes.clear, {
                         method: 'POST',
@@ -377,125 +342,83 @@
                             'X-CSRF-TOKEN': this.csrfToken
                         }
                     })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.success) {
-                            // Trigger custom event to update header
-                            this.triggerCartUpdated(response);
-
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            this.triggerCartUpdated(res);
                             location.reload();
                         } else {
                             this.showToast('Error clearing cart', 'error');
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        this.showToast('Error clearing cart', 'error');
-                    });
+                    .catch(() => this.showToast('Error clearing cart', 'error'));
             },
 
-            // Update cart totals display
             updateCartTotals: function(subTotal, total) {
-                const subtotalElement = document.querySelector('#cart-subtotal');
-                const totalElement = document.querySelector('#cart-total');
-
-                if (subtotalElement) subtotalElement.textContent = '$' + subTotal;
-                if (totalElement) totalElement.textContent = '$' + total;
+                const sub = document.querySelector('#cart-subtotal');
+                const tot = document.querySelector('#cart-total');
+                if (sub) sub.textContent = '$' + subTotal;
+                if (tot) tot.textContent = '$' + total;
             },
 
-            // Update shipping totals
             updateTotals: function() {
-                const selectedShipping = document.querySelector('input[name="shipping"]:checked');
-                if (!selectedShipping) return;
-
-                const shippingCost = parseFloat(selectedShipping.parentElement.nextElementSibling.textContent
-                    .replace('$', ''));
-                const subTotal = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
-                const total = subTotal + shippingCost;
-
-                document.querySelector('#cart-total').textContent = '$' + total.toFixed(2);
+                const selected = document.querySelector('input[name="shipping"]:checked');
+                if (!selected) return;
+                const shipCost = parseFloat(selected.parentElement.nextElementSibling.textContent.replace('$', ''));
+                const sub = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
+                document.querySelector('#cart-total').textContent = '$' + (sub + shipCost).toFixed(2);
             },
 
-            // Update header cart
-            updateHeaderCart: function(response) {
-                // Update cart count with animation
+            updateHeaderCart: function(res) {
                 const cartCount = document.querySelector('#header-cart-count');
                 if (cartCount) {
-                    cartCount.textContent = response.itemsCount;
+                    cartCount.textContent = res.itemsCount;
                     cartCount.classList.add('cart-update-animation');
                     setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
                 }
 
-                // Update cart dropdown content
-                if (response.itemsCount === 0) {
-                    const dropdownMenu = document.querySelector('#cart-dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
-                    }
-                    return;
+                const dropdown = document.querySelector('#cart-dropdown-menu');
+                if (res.itemsCount === 0 && dropdown) {
+                    dropdown.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
+                } else {
+                    this.refreshCartDropdown();
                 }
-
-                // Refresh dropdown via AJAX
-                this.refreshCartDropdown();
             },
 
-            // Refresh cart dropdown via AJAX
             refreshCartDropdown: function() {
                 fetch(this.routes.dropdown)
-                    .then(response => response.text())
-                    .then(data => {
-                        const dropdownMenu = document.querySelector('#cart-dropdown-menu');
-                        if (dropdownMenu) {
-                            dropdownMenu.innerHTML = data;
-
-                         
-                        }
+                    .then(res => res.text())
+                    .then(html => {
+                        const dropdown = document.querySelector('#cart-dropdown-menu');
+                        if (dropdown) dropdown.innerHTML = html;
                     })
-                    .catch(error => {
-                        console.error('Failed to refresh cart dropdown:', error);
-                    });
+                    .catch(err => console.error('Failed to refresh cart dropdown:', err));
             },
 
-            // Trigger cart updated event
-            triggerCartUpdated: function(response) {
-                const event = new CustomEvent('cartUpdated', {
-                    detail: response
-                });
-                document.dispatchEvent(event);
+            triggerCartUpdated: function(res) {
+                document.dispatchEvent(new CustomEvent('cartUpdated', {
+                    detail: res
+                }));
             },
 
-            // Show toast notification (using your existing toast system)
             showToast: function(message, type = "success") {
-                // Create toast element
                 const container = document.getElementById("toast-container");
                 const toast = document.createElement("div");
                 toast.className = `toast-custom toast-${type}`;
-
                 toast.innerHTML = `
-                <div class="toast-message">
-                    ${this.getToastIcon(type)}
-                    <span>${message}</span>
-                </div>
-                <button class="close-btn" onclick="this.parentElement.remove()">×</button>
-            `;
-
+            <div class="toast-message">
+                ${this.getToastIcon(type)}
+                <span>${message}</span>
+            </div>
+            <button class="close-btn" onclick="this.parentElement.remove()">×</button>`;
                 container.appendChild(toast);
-
-                // Show toast with animation
                 setTimeout(() => toast.classList.add("show"), 50);
-
-                // Auto remove after 3 seconds
                 setTimeout(() => {
                     toast.classList.remove("show");
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.parentNode.removeChild(toast);
-                        }
-                    }, 400);
+                    setTimeout(() => toast.remove(), 400);
                 }, 3000);
             },
 
-            // Get icon for toast based on type
             getToastIcon: function(type) {
                 switch (type) {
                     case "success":
@@ -510,70 +433,10 @@
             }
         };
 
-        // Initialize CartManager when document is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            CartManager.init();
-
-            // Flash message handler for server-side messages with navigation detection
-            const showFlashMessages = () => {
-                const navigationKey = 'flash_message_shown_' + Date.now();
-                const lastShownKey = sessionStorage.getItem('last_flash_message_key');
-
-                // Check if we're coming from browser navigation
-                const isNavigationReload = performance.navigation.type === 2 || // Back/Forward
-                                         (performance.navigation.type === 1 && document.referrer === window.location.href); // Refresh
-
-                @if (session('success'))
-                    const successMessage = "{{ session('success') }}";
-                    const successKey = 'success_' + btoa(successMessage).slice(0, 10);
-
-                    // Only show if not from navigation and not already shown
-                    if (!isNavigationReload && lastShownKey !== successKey) {
-                        CartManager.showToast(successMessage, "success");
-                        sessionStorage.setItem('last_flash_message_key', successKey);
-                    }
-                @endif
-
-                @if (session('error'))
-                    const errorMessage = "{{ session('error') }}";
-                    const errorKey = 'error_' + btoa(errorMessage).slice(0, 10);
-
-                    // Only show if not from navigation and not already shown
-                    if (!isNavigationReload && lastShownKey !== errorKey) {
-                        CartManager.showToast(errorMessage, "error");
-                        sessionStorage.setItem('last_flash_message_key', errorKey);
-                    }
-                @endif
-            };
-
-            // Show flash messages after a short delay to ensure proper detection
-            setTimeout(showFlashMessages, 100);
-        });
-
-        // Add CSS for cart animations if not already present
-        const style = document.createElement('style');
-        style.textContent = `
-        .cart-update-animation {
-            animation: cartPulse 0.5s ease;
-        }
-
-        @keyframes cartPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        /* Prevent dropdown from closing when clicking inside */
-        #cart-dropdown-menu {
-            pointer-events: auto;
-        }
-
-        #cart-dropdown-menu * {
-            pointer-events: auto;
-        }
-    `;
-        document.head.appendChild(style);
+        document.addEventListener('DOMContentLoaded', () => CartManager.init());
     </script>
+
+
 
 
     </div>
