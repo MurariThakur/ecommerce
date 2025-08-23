@@ -187,6 +187,11 @@
     @yield('scripts')
     <div id="toast-container" class="toast-container"></div>
     <script>
+        window.addEventListener('pageshow', event => {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
         window.CartManager = {
             routes: {},
             csrfToken: '',
