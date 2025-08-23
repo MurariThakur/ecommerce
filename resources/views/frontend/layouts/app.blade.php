@@ -448,8 +448,7 @@
                         if (dropdownMenu) {
                             dropdownMenu.innerHTML = data;
 
-                            // Re-attach event listeners to new remove buttons
-                            this.initializeDropdownEvents();
+                         
                         }
                     })
                     .catch(error => {

@@ -403,181 +403,208 @@
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/jquery.elevateZoom.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/bootstrap-input-spinner.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Price update functionality
+    const sizeSelector = document.getElementById('size');
+    const priceContainer = document.querySelector('.product-price');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Price update functionality
-            const sizeSelector = document.getElementById('size');
-            const priceContainer = document.querySelector('.product-price');
+    if (sizeSelector && priceContainer) {
+        const basePrice = parseFloat(priceContainer.getAttribute('data-base-price'));
+        const originalPriceHTML = priceContainer.innerHTML;
 
-            if (sizeSelector && priceContainer) {
-                const basePrice = parseFloat(priceContainer.getAttribute('data-base-price'));
-                const originalPriceHTML = priceContainer.innerHTML;
+        sizeSelector.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const additionalPrice = parseFloat(selectedOption.getAttribute('data-price'));
 
-                sizeSelector.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-                    const additionalPrice = parseFloat(selectedOption.getAttribute('data-price'));
-
-                    if (!isNaN(additionalPrice) && additionalPrice >= 0) {
-                        if (additionalPrice === 0) {
-                            priceContainer.innerHTML = originalPriceHTML;
-                        } else {
-                            const totalPrice = basePrice + additionalPrice;
-                            const newPriceHTML = `<span class="new-price">$${totalPrice.toFixed(2)}</span>`;
-                            priceContainer.innerHTML = newPriceHTML;
-                        }
-                    }
-
-                    // Check cart status when size changes
-                    checkCartStatus();
-                });
+            if (!isNaN(additionalPrice) && additionalPrice >= 0) {
+                if (additionalPrice === 0) {
+                    priceContainer.innerHTML = originalPriceHTML;
+                } else {
+                    const totalPrice = basePrice + additionalPrice;
+                    const newPriceHTML = `<span class="new-price">$${totalPrice.toFixed(2)}</span>`;
+                    priceContainer.innerHTML = newPriceHTML;
+                }
             }
 
-            // Color selection
-            const colorOptions = document.querySelectorAll('#color-options a');
-            const selectedColorInput = document.getElementById('selected-color');
+            // Check cart status when size changes
+            checkCartStatus();
+        });
+    }
 
-            colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Update active class
-                    colorOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
+    // Color selection
+    const colorOptions = document.querySelectorAll('#color-options a');
+    const selectedColorInput = document.getElementById('selected-color');
 
-                    // Update hidden input value
-                    selectedColorInput.value = this.dataset.color;
+    colorOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Update active class
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
 
-                    // Check cart status when color changes
-                    checkCartStatus();
-                });
-            });
+            // Update hidden input value
+            selectedColorInput.value = this.dataset.color;
 
-            // AJAX Add to Cart functionality
-            const addToCartForm = document.getElementById('add-to-cart-form');
-            const addToCartButton = document.getElementById('add-to-cart-button');
-            const buttonText = document.getElementById('cart-button-text');
+            // Check cart status when color changes
+            checkCartStatus();
+        });
+    });
 
-            addToCartForm.addEventListener('submit', function(e) {
-                e.preventDefault(); // Prevent default form submission
+    // AJAX Add to Cart functionality
+    const addToCartForm = document.getElementById('add-to-cart-form');
+    const addToCartButton = document.getElementById('add-to-cart-button');
+    const buttonText = document.getElementById('cart-button-text');
 
-                // Disable button to prevent double submission
-                addToCartButton.disabled = true;
-                const originalText = buttonText.textContent;
-                buttonText.textContent = 'Adding...';
+    addToCartForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
 
-                // Get form data
-                const formData = new FormData(addToCartForm);
+        // Disable button to prevent double submission
+        addToCartButton.disabled = true;
+        const originalText = buttonText.textContent;
+        buttonText.textContent = 'Adding...';
 
-                // Convert FormData to JSON
-                const formObject = {};
-                formData.forEach((value, key) => {
-                    formObject[key] = value;
-                });
+        // Get form data
+        const formData = new FormData(addToCartForm);
 
-                // Make AJAX request
-                fetch('{{ route('cart.add') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(formObject)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update button state
-                        addToCartButton.classList.add('disabled');
-                        buttonText.textContent = 'Added to Cart';
+        // Convert FormData to JSON
+        const formObject = {};
+        formData.forEach((value, key) => {
+            formObject[key] = value;
+        });
 
-                        // Show success toast
-                        if (window.CartManager) {
-                            window.CartManager.showToast(data.message, 'success');
+        // Make AJAX request
+        fetch('{{ route('cart.add') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formObject)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success toast
+                if (window.CartManager) {
+                    window.CartManager.showToast(data.message, 'success');
 
-                            // Update header cart count
-                            window.CartManager.updateHeaderCart({
-                                itemsCount: data.itemsCount,
-                                cartTotal: data.cartTotal
-                            });
+                    // Update header cart count
+                    window.CartManager.updateHeaderCart({
+                        itemsCount: data.itemsCount,
+                        cartTotal: data.cartTotal
+                    });
 
-                            // Refresh cart dropdown
-                            window.CartManager.refreshCartDropdown();
-                        }
-
-                        // Re-check cart status after a short delay
-                        setTimeout(checkCartStatus, 1000);
-                    } else {
-                        // Show error toast
-                        if (window.CartManager) {
-                            window.CartManager.showToast(data.message, 'error');
-                        }
-
-                        // Re-enable button
-                        addToCartButton.disabled = false;
-                        buttonText.textContent = originalText;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error adding to cart:', error);
-
-                    // Show error toast
-                    if (window.CartManager) {
-                        window.CartManager.showToast('Error adding product to cart', 'error');
-                    }
-
-                    // Re-enable button
-                    addToCartButton.disabled = false;
-                    buttonText.textContent = originalText;
-                });
-            });
-
-            // Function to check if current variant is in cart
-            function checkCartStatus() {
-                const color = document.getElementById('selected-color').value;
-                const sizeSelect = document.getElementById('size');
-                const size = sizeSelect ? sizeSelect.value : 'no-size';
-                const productId = {{ $product->id }};
-
-                // If size is required but not selected yet, don't check
-                if (sizeSelect && sizeSelect.required && !size) {
-                    return;
+                    // Refresh cart dropdown
+                    window.CartManager.refreshCartDropdown();
                 }
 
-                // Make AJAX request to check cart status
-                fetch('{{ route('cart.check') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            product_id: productId,
-                            color: color,
-                            size: size
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        const addButton = document.getElementById('add-to-cart-button');
-                        const buttonText = document.getElementById('cart-button-text');
+                // Re-check cart status to update button
+                checkCartStatus();
+            } else {
+                // Show error toast
+                if (window.CartManager) {
+                    window.CartManager.showToast(data.message, 'error');
+                }
 
-                        if (data.in_cart) {
-                            addButton.classList.add('disabled');
-                            addButton.disabled = true;
-                            buttonText.textContent = `Already in Cart (${data.quantity})`;
-                        } else {
-                            addButton.classList.remove('disabled');
-                            addButton.disabled = false;
-                            buttonText.textContent = 'Add to Cart';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking cart status:', error);
-                    });
+                // Re-enable button
+                addToCartButton.disabled = false;
+                buttonText.textContent = originalText;
+            }
+        })
+        .catch(error => {
+            console.error('Error adding to cart:', error);
+
+            // Show error toast
+            if (window.CartManager) {
+                window.CartManager.showToast('Error adding product to cart', 'error');
             }
 
-            // Initial check on page load
-            setTimeout(checkCartStatus, 500);
+            // Re-enable button
+            addToCartButton.disabled = false;
+            buttonText.textContent = originalText;
         });
-    </script>
+    });
+
+    // Function to check if current variant is in cart
+    function checkCartStatus() {
+        const color = document.getElementById('selected-color').value;
+        const sizeSelect = document.getElementById('size');
+        const size = sizeSelect ? sizeSelect.value : 'no-size';
+        const productId = {{ $product->id }};
+
+        // If size is required but not selected yet, reset button and don't check
+        if (sizeSelect && sizeSelect.required && !size) {
+            resetToAddButton();
+            return;
+        }
+
+        // Make AJAX request to check cart status
+        fetch('{{ route('cart.check') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                color: color,
+                size: size
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.in_cart) {
+                convertToViewCartLink();
+            } else {
+                resetToAddButton();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking cart status:', error);
+            resetToAddButton();
+        });
+    }
+
+    // Helper function to reset back to original Add to Cart button
+    function resetToAddButton() {
+        const addButton = document.getElementById('add-to-cart-button');
+        const buttonText = document.getElementById('cart-button-text');
+
+        if (addButton.tagName === 'A') {
+            // If it's currently a link, replace it with original button
+            const newButton = document.createElement('button');
+            newButton.type = 'submit';
+            newButton.className = 'btn-product btn-cart';
+            newButton.id = 'add-to-cart-button';
+            newButton.innerHTML = '<span id="cart-button-text">Add to Cart</span>';
+
+            addButton.parentNode.replaceChild(newButton, addButton);
+        } else {
+            addButton.classList.remove('disabled');
+            addButton.disabled = false;
+            buttonText.textContent = 'Add to Cart';
+        }
+    }
+
+    // Helper function to convert button to View Cart link
+    function convertToViewCartLink() {
+        const addButton = document.getElementById('add-to-cart-button');
+
+        // Create a new <a> element styled as button
+        const viewCartLink = document.createElement('a');
+        viewCartLink.href = '{{ route('cart.index') }}';
+        viewCartLink.className = 'btn-product btn-cart'; // Reuse same classes for styling
+        viewCartLink.id = 'add-to-cart-button'; // Keep same ID for consistency
+        viewCartLink.innerHTML = '<span id="cart-button-text">View Cart</span>';
+
+        // Replace the button with the link
+        addButton.parentNode.replaceChild(viewCartLink, addButton);
+    }
+
+    // Initial check on page load
+    setTimeout(checkCartStatus, 500);
+});
+
+</script>
 @endsection
