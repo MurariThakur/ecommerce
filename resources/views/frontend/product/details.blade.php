@@ -604,6 +604,9 @@
 
     // Initial check on page load
     setTimeout(checkCartStatus, 500);
+    document.addEventListener('cartUpdated', function() {
+    checkCartStatus();
+});
 });
 
 </script>

@@ -186,260 +186,277 @@
 
     @yield('scripts')
     <div id="toast-container" class="toast-container"></div>
-    <script>
-        window.addEventListener('pageshow', event => {
-            if (event.persisted) {
-                window.location.reload();
+ <script>
+    window.addEventListener('pageshow', event => {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
+
+    window.CartManager = {
+        routes: {},
+        csrfToken: '',
+
+        init: function() {
+            this.setupRoutes();
+            this.initializeDropdownEvents();
+            this.setupGlobalEventListeners();
+
+            if (document.querySelector('.cart')) {
+                this.initializeCartPage();
             }
-        });
-        window.CartManager = {
-            routes: {},
-            csrfToken: '',
+        },
 
-            init: function() {
-                this.setupRoutes();
-                this.initializeDropdownEvents();
-                this.setupGlobalEventListeners();
+        setupRoutes: function() {
+            this.routes = {
+                update: '{{ route('cart.update') }}',
+                remove: '{{ route('cart.remove') }}',
+                clear: '{{ route('cart.clear') }}',
+                dropdown: '{{ route('cart.dropdown') }}',
+                check: '{{ url('cart/check') }}' // Make sure this backend route exists
+            };
+            this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        },
 
-                if (document.querySelector('.cart')) {
-                    this.initializeCartPage();
+        initializeDropdownEvents: function() {
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.remove-item-dropdown');
+                if (btn) {
+                    e.preventDefault();
+                    const rowId = btn.dataset.rowid;
+                    this.removeItem(rowId, true);
                 }
-            },
+            });
+        },
 
-            setupRoutes: function() {
-                this.routes = {
-                    update: '{{ route('cart.update') }}',
-                    remove: '{{ route('cart.remove') }}',
-                    clear: '{{ route('cart.clear') }}',
-                    dropdown: '{{ route('cart.dropdown') }}'
-                };
-                this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            },
+        setupGlobalEventListeners: function() {
+            document.addEventListener('cartUpdated', (e) => {
+                this.updateHeaderCart(e.detail);
 
-            initializeDropdownEvents: function() {
-                document.addEventListener('click', (e) => {
-                    const btn = e.target.closest('.remove-item-dropdown');
-                    if (btn) {
-                        e.preventDefault();
-                        const rowId = btn.dataset.rowid;
-                        this.removeItem(rowId, true);
-                    }
-                });
-            },
-
-            setupGlobalEventListeners: function() {
-                document.addEventListener('cartUpdated', (e) => {
-                    this.updateHeaderCart(e.detail);
-                });
-            },
-
-            initializeCartPage: function() {
-                let updateTimeout;
-                const debounceTime = 500;
-
-                document.querySelectorAll('.quantity-input').forEach(input => {
-                    input.addEventListener('change', (e) => {
-                        const rowId = e.target.dataset.rowid;
-                        const newQuantity = e.target.value;
-                        clearTimeout(updateTimeout);
-                        updateTimeout = setTimeout(() => {
-                            this.updateQuantity(rowId, newQuantity);
-                        }, debounceTime);
-                    });
-                });
-
-                document.querySelectorAll('.remove-item').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const rowId = e.target.closest('.remove-item').dataset.rowid;
-                        this.removeItem(rowId);
-                    });
-                });
-
-                document.querySelectorAll('.clear-cart').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.clearCart();
-                    });
-                });
-
-                document.querySelectorAll('input[name="shipping"]').forEach(input => {
-                    input.addEventListener('change', () => {
-                        this.updateTotals();
-                    });
-                });
-            },
-
-            updateQuantity: function(rowId, quantity) {
-                fetch(this.routes.update, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': this.csrfToken
-                        },
-                        body: JSON.stringify({
-                            rowId,
-                            quantity
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.success) {
-                            const itemTotal = document.querySelector(`#cart-item-${rowId} .item-total`);
-                            if (itemTotal) itemTotal.textContent = res.itemTotal;
-
-                            this.updateCartTotals(res.subTotal, res.total);
-                            this.triggerCartUpdated(res);
-                            this.showToast('Quantity updated successfully', 'success');
-                        } else {
-                            this.showToast(res.message, 'error');
-                        }
-                    })
-                    .catch(() => this.showToast('Error updating quantity', 'error'));
-            },
-
-            removeItem: function(rowId, fromDropdown = false) {
-                fetch(this.routes.remove, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': this.csrfToken
-                        },
-                        body: JSON.stringify({
-                            rowId
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.success) {
-                            // Always remove from dropdown and header
-                            this.triggerCartUpdated(res);
-
-                            // If on cart page, remove DOM item and update totals
-                            const cartItem = document.querySelector(`#cart-item-${rowId}`);
-                            if (cartItem) {
-                                cartItem.remove();
-                                this.updateCartTotals(res.subTotal, res.total);
-
-                                if (res.itemsCount === 0) {
-                                    document.querySelector('.cart').innerHTML = `
-                            <div class="text-center py-5">
-                                <h4>Your cart is empty</h4>
-                                <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
-                            </div>`;
-                                }
-                            }
-
-                            this.showToast('Item removed from cart', 'success');
-                        } else {
-                            this.showToast('Error removing item', 'error');
-                        }
-                    })
-                    .catch(() => this.showToast('Error removing item', 'error'));
-            },
-
-            clearCart: function() {
-                if (!confirm('Are you sure you want to clear your entire cart?')) return;
-
-                fetch(this.routes.clear, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': this.csrfToken
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.success) {
-                            this.triggerCartUpdated(res);
-                            location.reload();
-                        } else {
-                            this.showToast('Error clearing cart', 'error');
-                        }
-                    })
-                    .catch(() => this.showToast('Error clearing cart', 'error'));
-            },
-
-            updateCartTotals: function(subTotal, total) {
-                const sub = document.querySelector('#cart-subtotal');
-                const tot = document.querySelector('#cart-total');
-                if (sub) sub.textContent = '$' + subTotal;
-                if (tot) tot.textContent = '$' + total;
-            },
-
-            updateTotals: function() {
-                const selected = document.querySelector('input[name="shipping"]:checked');
-                if (!selected) return;
-                const shipCost = parseFloat(selected.parentElement.nextElementSibling.textContent.replace('$', ''));
-                const sub = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
-                document.querySelector('#cart-total').textContent = '$' + (sub + shipCost).toFixed(2);
-            },
-
-            updateHeaderCart: function(res) {
-                const cartCount = document.querySelector('#header-cart-count');
-                if (cartCount) {
-                    cartCount.textContent = res.itemsCount;
-                    cartCount.classList.add('cart-update-animation');
-                    setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
+                // If on details page, re-check product status
+                const addBtn = document.querySelector('#add-to-cart-btn');
+                if (addBtn && addBtn.dataset.productId) {
+                    this.checkProductStatus(addBtn.dataset.productId);
                 }
+            });
+        },
 
-                const dropdown = document.querySelector('#cart-dropdown-menu');
-                if (res.itemsCount === 0 && dropdown) {
-                    dropdown.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
+        initializeCartPage: function() {
+            let updateTimeout;
+            const debounceTime = 500;
+
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const rowId = e.target.dataset.rowid;
+                    const newQuantity = e.target.value;
+                    clearTimeout(updateTimeout);
+                    updateTimeout = setTimeout(() => {
+                        this.updateQuantity(rowId, newQuantity);
+                    }, debounceTime);
+                });
+            });
+
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const rowId = e.target.closest('.remove-item').dataset.rowid;
+                    this.removeItem(rowId);
+                });
+            });
+
+            document.querySelectorAll('.clear-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.clearCart();
+                });
+            });
+
+            document.querySelectorAll('input[name="shipping"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    this.updateTotals();
+                });
+            });
+        },
+
+        updateQuantity: function(rowId, quantity) {
+            fetch(this.routes.update, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken
+                },
+                body: JSON.stringify({ rowId, quantity })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    const itemTotal = document.querySelector(`#cart-item-${rowId} .item-total`);
+                    if (itemTotal) itemTotal.textContent = res.itemTotal;
+                    this.updateCartTotals(res.subTotal, res.total);
+                    this.triggerCartUpdated(res);
+                    this.showToast('Quantity updated successfully', 'success');
                 } else {
-                    this.refreshCartDropdown();
+                    this.showToast(res.message, 'error');
                 }
-            },
+            })
+            .catch(() => this.showToast('Error updating quantity', 'error'));
+        },
 
-            refreshCartDropdown: function() {
-                fetch(this.routes.dropdown)
-                    .then(res => res.text())
-                    .then(html => {
-                        const dropdown = document.querySelector('#cart-dropdown-menu');
-                        if (dropdown) dropdown.innerHTML = html;
-                    })
-                    .catch(err => console.error('Failed to refresh cart dropdown:', err));
-            },
+        removeItem: function(rowId, fromDropdown = false) {
+            fetch(this.routes.remove, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken
+                },
+                body: JSON.stringify({ rowId })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    this.triggerCartUpdated(res);
 
-            triggerCartUpdated: function(res) {
-                document.dispatchEvent(new CustomEvent('cartUpdated', {
-                    detail: res
-                }));
-            },
+                    const cartItem = document.querySelector(`#cart-item-${rowId}`);
+                    if (cartItem) {
+                        cartItem.remove();
+                        this.updateCartTotals(res.subTotal, res.total);
 
-            showToast: function(message, type = "success") {
-                const container = document.getElementById("toast-container");
-                const toast = document.createElement("div");
-                toast.className = `toast-custom toast-${type}`;
-                toast.innerHTML = `
-            <div class="toast-message">
-                ${this.getToastIcon(type)}
-                <span>${message}</span>
-            </div>
-            <button class="close-btn" onclick="this.parentElement.remove()">×</button>`;
-                container.appendChild(toast);
-                setTimeout(() => toast.classList.add("show"), 50);
-                setTimeout(() => {
-                    toast.classList.remove("show");
-                    setTimeout(() => toast.remove(), 400);
-                }, 3000);
-            },
+                        if (res.itemsCount === 0) {
+                            document.querySelector('.cart').innerHTML = `
+                                <div class="text-center py-5">
+                                    <h4>Your cart is empty</h4>
+                                    <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
+                                </div>`;
+                        }
+                    }
 
-            getToastIcon: function(type) {
-                switch (type) {
-                    case "success":
-                        return `<i class="icon-check-circle"></i>`;
-                    case "error":
-                        return `<i class="icon-times-circle"></i>`;
-                    case "warning":
-                        return `<i class="icon-exclamation-circle"></i>`;
-                    default:
-                        return `<i class="icon-info-circle"></i>`;
+                    // **NEW**: If on product details page, re-check button state
+                    const addBtn = document.querySelector('#add-to-cart-btn');
+                    if (fromDropdown && addBtn && addBtn.dataset.productId) {
+                        this.checkProductStatus(addBtn.dataset.productId);
+                    }
+
+                    this.showToast('Item removed from cart', 'success');
+                } else {
+                    this.showToast('Error removing item', 'error');
                 }
+            })
+            .catch(() => this.showToast('Error removing item', 'error'));
+        },
+
+        clearCart: function() {
+            if (!confirm('Are you sure you want to clear your entire cart?')) return;
+
+            fetch(this.routes.clear, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    this.triggerCartUpdated(res);
+                    location.reload();
+                } else {
+                    this.showToast('Error clearing cart', 'error');
+                }
+            })
+            .catch(() => this.showToast('Error clearing cart', 'error'));
+        },
+
+        updateCartTotals: function(subTotal, total) {
+            const sub = document.querySelector('#cart-subtotal');
+            const tot = document.querySelector('#cart-total');
+            if (sub) sub.textContent = '$' + subTotal;
+            if (tot) tot.textContent = '$' + total;
+        },
+
+        updateTotals: function() {
+            const selected = document.querySelector('input[name="shipping"]:checked');
+            if (!selected) return;
+            const shipCost = parseFloat(selected.parentElement.nextElementSibling.textContent.replace('$', ''));
+            const sub = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
+            document.querySelector('#cart-total').textContent = '$' + (sub + shipCost).toFixed(2);
+        },
+
+        updateHeaderCart: function(res) {
+            const cartCount = document.querySelector('#header-cart-count');
+            if (cartCount) {
+                cartCount.textContent = res.itemsCount;
+                cartCount.classList.add('cart-update-animation');
+                setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
             }
-        };
+            const dropdown = document.querySelector('#cart-dropdown-menu');
+            if (res.itemsCount === 0 && dropdown) {
+                dropdown.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
+            } else {
+                this.refreshCartDropdown();
+            }
+        },
 
-        document.addEventListener('DOMContentLoaded', () => CartManager.init());
-    </script>
+        refreshCartDropdown: function() {
+            fetch(this.routes.dropdown)
+                .then(res => res.text())
+                .then(html => {
+                    const dropdown = document.querySelector('#cart-dropdown-menu');
+                    if (dropdown) dropdown.innerHTML = html;
+                })
+                .catch(err => console.error('Failed to refresh cart dropdown:', err));
+        },
+
+        triggerCartUpdated: function(res) {
+            document.dispatchEvent(new CustomEvent('cartUpdated', { detail: res }));
+        },
+
+        checkProductStatus: function(productId) {
+            fetch(`${this.routes.check}/${productId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const btn = document.querySelector('#add-to-cart-btn');
+                    if (!btn) return;
+                    if (data.in_cart) {
+                        btn.disabled = true;
+                        btn.textContent = 'Added';
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = 'Add to Cart';
+                    }
+                })
+                .catch(err => console.error('Check status failed', err));
+        },
+
+        showToast: function(message, type = "success") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `toast-custom toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-message">
+                    ${this.getToastIcon(type)}
+                    <span>${message}</span>
+                </div>
+                <button class="close-btn" onclick="this.parentElement.remove()">×</button>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add("show"), 50);
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        },
+
+        getToastIcon: function(type) {
+            switch (type) {
+                case "success": return `<i class="icon-check-circle"></i>`;
+                case "error": return `<i class="icon-times-circle"></i>`;
+                case "warning": return `<i class="icon-exclamation-circle"></i>`;
+                default: return `<i class="icon-info-circle"></i>`;
+            }
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => CartManager.init());
+</script>
+
 
 
 
