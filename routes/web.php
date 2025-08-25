@@ -100,6 +100,9 @@ Route::post('/cart/clear', [PaymentController::class, 'clearCart'])->name('cart.
 Route::post('/cart/check', [PaymentController::class, 'checkCart'])->name('cart.check');
 Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->name('cart.dropdown');
 
+// Checkout Routes
+Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
 
 
 // Frontend Routes (no authentication required)

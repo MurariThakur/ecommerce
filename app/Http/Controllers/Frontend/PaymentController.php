@@ -205,6 +205,24 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * Show checkout page
+     */
+    public function checkout()
+    {
+        $cartContent = Cart::getContent();
+
+        // Redirect to cart if empty
+        if ($cartContent->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty');
+        }
+
+        $subTotal = Cart::getSubTotal();
+        $total = Cart::getTotal();
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total'));
+    }
+
     public function getCartDropdown()
     {
         $cartContent = Cart::getContent();

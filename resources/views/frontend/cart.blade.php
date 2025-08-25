@@ -92,16 +92,6 @@
                         </table><!-- End .table table-wishlist -->
 
                         <div class="cart-bottom">
-                            <div class="cart-discount">
-                                <form action="#" id="coupon-form">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="coupon code">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
-                                        </div><!-- .End .input-group-append -->
-                                    </div><!-- End .input-group -->
-                                </form>
-                            </div><!-- End .cart-discount -->
 
                             <a href="{{ route('cart.clear') }}" class="btn btn-outline-dark-2 clear-cart">
                                 <span>CLEAR CART</span><i class="icon-trash"></i>
@@ -119,42 +109,7 @@
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
                                         <td id="cart-subtotal">${{ number_format(Cart::getSubTotal(), 2) }}</td>
-                                    </tr><!-- End .summary-subtotal -->
-
-                                    <tr class="summary-shipping">
-                                        <td>Shipping:</td>
-                                        <td>&nbsp;</td>
                                     </tr>
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="free-shipping" name="shipping" class="custom-control-input" checked>
-                                                <label class="custom-control-label" for="free-shipping">Free Shipping</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$0.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="standart-shipping">Standard:</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$10.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="express-shipping">Express:</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$20.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
 
                                     <tr class="summary-total">
                                         <td>Total:</td>
@@ -163,11 +118,10 @@
                                 </tbody>
                             </table><!-- End .table table-summary -->
 
-                            <a href="" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+                            <a href="{{ url('/checkout') }}"class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
                         </div><!-- End .summary -->
 
-                        <a href="{{ url('/') }}" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
-                    </aside><!-- End .col-lg-3 -->
+
                 </div><!-- End .row -->
             </div><!-- End .container -->
         </div><!-- End .cart -->
