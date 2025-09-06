@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
@@ -54,6 +55,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/subcategory/update/{subcategory}', [SubcategoryController::class, 'update'])->name('admin.subcategory.update');
     Route::delete('/admin/subcategory/delete/{subcategory}', [SubcategoryController::class, 'destroy'])->name('admin.subcategory.destroy');
     Route::post('/admin/subcategory/toggle-status/{subcategory}', [SubcategoryController::class, 'toggleStatus'])->name('admin.subcategory.toggle.status');
+
+    // Discount management routes
+    Route::get('/admin/discount', [DiscountController::class, 'index'])->name('admin.discount.index');
+    Route::get('/admin/discount/create', [DiscountController::class, 'create'])->name('admin.discount.create');
+    Route::post('/admin/discount/store', [DiscountController::class, 'store'])->name('admin.discount.store');
+    Route::get('/admin/discount/view/{discount}', [DiscountController::class, 'show'])->name('admin.discount.show');
+    Route::get('/admin/discount/edit/{discount}', [DiscountController::class, 'edit'])->name('admin.discount.edit');
+    Route::put('/admin/discount/update/{discount}', [DiscountController::class, 'update'])->name('admin.discount.update');
+    Route::delete('/admin/discount/delete/{discount}', [DiscountController::class, 'destroy'])->name('admin.discount.destroy');
+    Route::post('/admin/discount/toggle-status/{discount}', [DiscountController::class, 'toggleStatus'])->name('admin.discount.toggle.status');
 
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
