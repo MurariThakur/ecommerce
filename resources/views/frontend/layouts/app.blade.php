@@ -420,15 +420,72 @@
         },
 
         updateCheckoutOrderSummary: function(res) {
-            // Refresh the entire checkout page to update the order summary
+            // If cart is empty, redirect to cart page
             if (res.itemsCount === 0) {
-                // If cart is empty, redirect to cart page
                 window.location.href = '/cart';
                 return;
             }
 
-            // Reload the page to get updated cart data
-            window.location.reload();
+            // Update checkout order summary dynamically without page reload
+            this.refreshCheckoutOrderSummary();
+        },
+
+        refreshCheckoutOrderSummary: function() {
+            // Use the checkout summary route
+            const checkoutSummaryRoute = '{{ route("checkout.summary") }}';
+
+            fetch(checkoutSummaryRoute)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.updateCheckoutOrderTable(data.cartItems, data.subTotal, data.total);
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to refresh checkout order summary:', err);
+                    // Fallback: show a toast message
+                    this.showToast('Cart updated. Please refresh to see changes.', 'info');
+                });
+        },
+
+        updateCheckoutOrderTable: function(cartItems, subTotal, total) {
+            // Update the order summary table in checkout page
+            const orderTableBody = document.querySelector('.table-summary tbody');
+            if (!orderTableBody) return;
+
+            // Clear existing product rows (keep subtotal, discount, shipping, total rows)
+            const productRows = orderTableBody.querySelectorAll('tr:not(.summary-subtotal):not(.summary-total)');
+            productRows.forEach(row => {
+                // Only remove rows that contain product data (not discount, shipping, etc.)
+                if (row.cells.length === 2 && !row.querySelector('.cart-discount') &&
+                    !row.textContent.includes('Discount:') &&
+                    !row.textContent.includes('Shipping:')) {
+                    row.remove();
+                }
+            });
+
+            // Add updated product rows
+            const subtotalRow = orderTableBody.querySelector('.summary-subtotal');
+            cartItems.forEach(item => {
+                const productRow = document.createElement('tr');
+                productRow.innerHTML = `
+                    <td><a href="#">${item.name}</a></td>
+                    <td>$${parseFloat(item.price).toFixed(2)}</td>
+                `;
+                orderTableBody.insertBefore(productRow, subtotalRow);
+            });
+
+            // Update subtotal
+            const subtotalCell = subtotalRow.querySelector('td:last-child');
+            if (subtotalCell) {
+                subtotalCell.textContent = `$${parseFloat(subTotal).toFixed(2)}`;
+            }
+
+            // Update total
+            const totalRow = orderTableBody.querySelector('.summary-total td:last-child');
+            if (totalRow) {
+                totalRow.textContent = `$${parseFloat(total).toFixed(2)}`;
+            }
         },
 
         triggerCartUpdated: function(res) {

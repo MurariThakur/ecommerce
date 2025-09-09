@@ -113,6 +113,7 @@ Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->nam
 
 // Checkout Routes
 Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary'])->name('checkout.summary');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
 
 

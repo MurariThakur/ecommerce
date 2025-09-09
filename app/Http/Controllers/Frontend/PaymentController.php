@@ -223,6 +223,40 @@ class PaymentController extends Controller
         return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total'));
     }
 
+    /**
+     * Get checkout summary data for AJAX updates
+     */
+    public function getCheckoutSummary()
+    {
+        $cartContent = Cart::getContent();
+
+        if ($cartContent->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cart is empty'
+            ]);
+        }
+
+        $cartItems = [];
+        foreach ($cartContent as $item) {
+            $cartItems[] = [
+                'id' => $item->id,
+                'name' => $item->name,
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'total' => $item->price * $item->quantity
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'cartItems' => $cartItems,
+            'subTotal' => Cart::getSubTotal(),
+            'total' => Cart::getTotal(),
+            'itemsCount' => Cart::getTotalQuantity()
+        ]);
+    }
+
     public function getCartDropdown()
     {
         $cartContent = Cart::getContent();
