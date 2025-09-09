@@ -9,8 +9,10 @@ use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
+use App\Http\Controllers\Frontend\PaymentController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -54,6 +56,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/subcategory/delete/{subcategory}', [SubcategoryController::class, 'destroy'])->name('admin.subcategory.destroy');
     Route::post('/admin/subcategory/toggle-status/{subcategory}', [SubcategoryController::class, 'toggleStatus'])->name('admin.subcategory.toggle.status');
 
+    // Discount management routes
+    Route::get('/admin/discount', [DiscountController::class, 'index'])->name('admin.discount.index');
+    Route::get('/admin/discount/create', [DiscountController::class, 'create'])->name('admin.discount.create');
+    Route::post('/admin/discount/store', [DiscountController::class, 'store'])->name('admin.discount.store');
+    Route::get('/admin/discount/view/{discount}', [DiscountController::class, 'show'])->name('admin.discount.show');
+    Route::get('/admin/discount/edit/{discount}', [DiscountController::class, 'edit'])->name('admin.discount.edit');
+    Route::put('/admin/discount/update/{discount}', [DiscountController::class, 'update'])->name('admin.discount.update');
+    Route::delete('/admin/discount/delete/{discount}', [DiscountController::class, 'destroy'])->name('admin.discount.destroy');
+    Route::post('/admin/discount/toggle-status/{discount}', [DiscountController::class, 'toggleStatus'])->name('admin.discount.toggle.status');
+
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
         'index' => 'admin.brand.index',
@@ -91,13 +103,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 });
 
+Route::post('/cart/add', [PaymentController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [PaymentController::class, 'cart'])->name('cart.index');
+Route::post('/cart/update', [PaymentController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/remove', [PaymentController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/clear', [PaymentController::class, 'clearCart'])->name('cart.clear');
+Route::post('/cart/check', [PaymentController::class, 'checkCart'])->name('cart.check');
+Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->name('cart.dropdown');
+
+// Checkout Routes
+Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary'])->name('checkout.summary');
+Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
+
+
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 Route::get('/search', [FrontendProductController::class, 'search'])->name('frontend.search');
 Route::get('{slug?}/{subslug?}', [FrontendProductController::class,'getCategory']);
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
-// Redirect root to frontend home
-// Route::get('/', function () {
-//     return redirect()->route('frontend.home');
-// });
+
 

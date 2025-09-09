@@ -41,7 +41,6 @@
              </div><!-- End .header-right -->
          </div><!-- End .container -->
      </div><!-- End .header-top -->
-
      <div class="header-middle sticky-header">
          <div class="container">
              <div class="header-left">
@@ -50,66 +49,71 @@
                      <i class="icon-bars"></i>
                  </button>
 
-                <a href="{{ url('') }}" class="logo">
-                    <img src="{{ asset('frontend/assets/images/logo.png') }}" alt="Molla Logo" width="105" height="25">
-                </a>
+                 <a href="{{ url('') }}" class="logo">
+                     <img src="{{ asset('frontend/assets/images/logo.png') }}" alt="Molla Logo" width="105"
+                         height="25">
+                 </a>
 
                  <nav class="main-nav">
                      <ul class="menu sf-arrows">
                          <li class="active">
-                             <a href="{{url('/')}}" >Home</a>
+                             <a href="{{ url('/') }}">Home</a>
                          </li>
-                        <li>
-                            <a href="#" class="sf-with-ul">Shop</a>
+                         <li>
+                             <a href="#" class="sf-with-ul">Shop</a>
 
-                            @php
-                                $categories = App\Models\Category::getMenuCategories();
-                            @endphp
+                             @php
+                                 $categories = App\Models\Category::getMenuCategories();
+                             @endphp
 
-                            @if($categories->count() > 0)
-                            <div class="megamenu megamenu-md">
-                                <div class="row no-gutters">
-                                    <div class="col-md-12">
-                                        <div class="menu-col">
-                                            <div class="row">
-                                                @foreach($categories as $category)
-                                                    <div class="col-md-4" style="margin-bottom: 20px;">
-                                                        <a href="{{ url($category->slug) }}" class="menu-title">{{ $category->name }}</a>
-                                                        <!-- End .menu-title -->
-                                                        @if($category->activeSubcategories->count() > 0)
-                                                        <ul>
-                                                            @foreach($category->activeSubcategories as $subcategory)
-                                                                <li><a href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a></li>
-                                                            @endforeach
-                                                        </ul>
-                                                        @else
-                                                        <ul>
-                                                            <li><a href="{{ url($category->slug) }}">View All {{ $category->name }}</a></li>
-                                                        </ul>
-                                                        @endif
-                                                    </div><!-- End .col-md-4 -->
-                                                @endforeach
-                                            </div><!-- End .row -->
-                                        </div><!-- End .menu-col -->
-                                    </div><!-- End .col-md-12 -->
-                                </div><!-- End .row -->
-                            </div><!-- End .megamenu megamenu-md -->
-                            @else
-                            <div class="megamenu megamenu-md">
-                                <div class="row no-gutters">
-                                    <div class="col-md-12">
-                                        <div class="menu-col">
-                                            <div class="row">
-                                                <div class="col-md-12 text-center" style="padding: 20px;">
-                                                    <p>No categories available</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                        </li>
+                             @if ($categories->count() > 0)
+                                 <div class="megamenu megamenu-md">
+                                     <div class="row no-gutters">
+                                         <div class="col-md-12">
+                                             <div class="menu-col">
+                                                 <div class="row">
+                                                     @foreach ($categories as $category)
+                                                         <div class="col-md-4" style="margin-bottom: 20px;">
+                                                             <a href="{{ url($category->slug) }}"
+                                                                 class="menu-title">{{ $category->name }}</a>
+                                                             <!-- End .menu-title -->
+                                                             @if ($category->activeSubcategories->count() > 0)
+                                                                 <ul>
+                                                                     @foreach ($category->activeSubcategories as $subcategory)
+                                                                         <li><a
+                                                                                 href="{{ url($category->slug . '/' . $subcategory->slug) }}">{{ $subcategory->name }}</a>
+                                                                         </li>
+                                                                     @endforeach
+                                                                 </ul>
+                                                             @else
+                                                                 <ul>
+                                                                     <li><a href="{{ url($category->slug) }}">View All
+                                                                             {{ $category->name }}</a></li>
+                                                                 </ul>
+                                                             @endif
+                                                         </div><!-- End .col-md-4 -->
+                                                     @endforeach
+                                                 </div><!-- End .row -->
+                                             </div><!-- End .menu-col -->
+                                         </div><!-- End .col-md-12 -->
+                                     </div><!-- End .row -->
+                                 </div><!-- End .megamenu megamenu-md -->
+                             @else
+                                 <div class="megamenu megamenu-md">
+                                     <div class="row no-gutters">
+                                         <div class="col-md-12">
+                                             <div class="menu-col">
+                                                 <div class="row">
+                                                     <div class="col-md-12 text-center" style="padding: 20px;">
+                                                         <p>No categories available</p>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             @endif
+                         </li>
 
 
                      </ul><!-- End .menu -->
@@ -129,72 +133,62 @@
                      </form>
                  </div><!-- End .header-search -->
 
-                 <div class="dropdown cart-dropdown">
-                     <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                         aria-haspopup="true" aria-expanded="false" data-display="static">
-                         <i class="icon-shopping-cart"></i>
-                         <span class="cart-count">2</span>
-                     </a>
+               <div class="dropdown cart-dropdown" id="cart-dropdown">
+    <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false" data-display="static">
+        <i class="icon-shopping-cart"></i>
+        <span class="cart-count" id="header-cart-count">{{ Cart::getTotalQuantity() }}</span>
+    </a>
 
-                     <div class="dropdown-menu dropdown-menu-right">
-                         <div class="dropdown-cart-products">
-                             <div class="product">
-                                 <div class="product-cart-details">
-                                     <h4 class="product-title">
-                                     <a href="{{ asset('product.html') }}">Beige knitted elastic runner shoes</a>
-                                     </h4>
+    <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">
+        @if (Cart::isEmpty())
+            <p class="text-center p-3">Your cart is empty</p>
+        @else
+            <div class="dropdown-cart-products" id="dropdown-cart-products">
+                @foreach (Cart::getContent() as $item)
+                    <div class="product" id="dropdown-item-{{ $item->id }}">
+                        <div class="product-cart-details">
+                            <h4 class="product-title">
+                                <a href="">
+                                    {{ $item->name }}
+                                </a>
+                            </h4>
 
-                                     <span class="cart-product-info">
-                                         <span class="cart-product-qty">1</span>
-                                         x $84.00
-                                     </span>
-                                 </div><!-- End .product-cart-details -->
+                            <span class="cart-product-info">
+                                <span class="cart-product-qty">{{ $item->quantity }}</span>
+                                x ${{ number_format($item->price, 2) }}
+                            </span>
+                        </div><!-- End .product-cart-details -->
 
-                                 <figure class="product-image-container">
-                                     <a href="{{ asset('product.html') }}" class="product-image">
-                                         <img src="{{ asset('frontend/assets/images/products/cart/product-1.jpg') }}" alt="product">
-                                     </a>
-                                 </figure>
-                                 <a href="#" class="btn-remove" title="Remove Product"><i
-                                         class="icon-close"></i></a>
-                             </div><!-- End .product -->
+                        <figure class="product-image-container">
+                            <a href="" class="product-image">
+                                <img src="{{ $item->attributes->image }}" alt="{{ $item->name }}">
+                            </a>
+                        </figure>
 
-                             <div class="product">
-                                 <div class="product-cart-details">
-                                     <h4 class="product-title">
-                                     <a href="{{ asset('product.html') }}">Blue utility pinafore denim dress</a>
-                                     </h4>
+                        <a href="#" class="btn-remove remove-item-dropdown"
+                           data-rowid="{{ $item->id }}" title="Remove Product">
+                            <i class="icon-close"></i>
+                        </a>
+                    </div><!-- End .product -->
+                @endforeach
+            </div><!-- End .dropdown-cart-products -->
 
-                                     <span class="cart-product-info">
-                                         <span class="cart-product-qty">1</span>
-                                         x $76.00
-                                     </span>
-                                 </div><!-- End .product-cart-details -->
+            <div class="dropdown-cart-total">
+                <span>Total</span>
+                <span class="cart-total-price" id="dropdown-cart-total">${{ number_format(Cart::getTotal(), 2) }}</span>
+            </div><!-- End .dropdown-cart-total -->
 
-                                 <figure class="product-image-container">
-                                     <a href="{{ asset('product.html') }}" class="product-image">
-                                         <img src="{{ asset('frontend/assets/images/products/cart/product-2.jpg') }}" alt="product">
-                                     </a>
-                                 </figure>
-                                 <a href="#" class="btn-remove" title="Remove Product"><i
-                                         class="icon-close"></i></a>
-                             </div><!-- End .product -->
-                         </div><!-- End .cart-product -->
-
-                         <div class="dropdown-cart-total">
-                             <span>Total</span>
-
-                             <span class="cart-total-price">$160.00</span>
-                         </div><!-- End .dropdown-cart-total -->
-
-                         <div class="dropdown-cart-action">
-                             <a href="{{ asset('cart.html') }}" class="btn btn-primary">View Cart</a>
-                             <a href="{{ asset('checkout.html') }}" class="btn btn-outline-primary-2"><span>Checkout</span><i
-                                     class="icon-long-arrow-right"></i></a>
-                         </div><!-- End .dropdown-cart-total -->
-                     </div><!-- End .dropdown-menu -->
-                 </div><!-- End .cart-dropdown -->
-             </div><!-- End .header-right -->
-         </div><!-- End .container -->
-     </div><!-- End .header-middle -->
+            <div class="dropdown-cart-action">
+                <a href="{{ route('cart.index') }}" class="btn btn-primary">View Cart</a>
+                <a href="" class="btn btn-outline-primary-2">
+                    <span>Checkout</span>
+                    <i class="icon-long-arrow-right"></i>
+                </a>
+            </div><!-- End .dropdown-cart-action -->
+        @endif
+    </div><!-- End .dropdown-menu -->
+</div>
+             </div><!-- End .container -->
+         </div><!-- End .header-middle -->
  </header><!-- End .header -->

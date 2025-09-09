@@ -27,7 +27,7 @@
                         class="nav-link {{ request()->is('admin/index*') || request()->is('admin/admin/*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
-                            Admin 
+                            Admin
                         </p>
                     </a>
                 </li>
@@ -68,6 +68,16 @@
                         <i class="nav-icon fas fa-palette"></i>
                         <p>
                             Color
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url('admin/discount') }}"
+                        class="nav-link {{ request()->is('admin/discount*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-palette"></i>
+                        <p>
+                            Discount Code
                         </p>
                     </a>
                 </li>
