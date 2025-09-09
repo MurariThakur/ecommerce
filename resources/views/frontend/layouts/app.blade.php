@@ -205,6 +205,10 @@
             if (document.querySelector('.cart')) {
                 this.initializeCartPage();
             }
+
+            if (document.querySelector('.checkout')) {
+                this.initializeCheckoutPage();
+            }
         },
 
         setupRoutes: function() {
@@ -277,6 +281,11 @@
             });
         },
 
+        initializeCheckoutPage: function() {
+            // Initialize checkout-specific functionality
+            console.log('Checkout page initialized');
+        },
+
         updateQuantity: function(rowId, quantity) {
             fetch(this.routes.update, {
                 method: 'POST',
@@ -327,6 +336,11 @@
                                     <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
                                 </div>`;
                         }
+                    }
+
+                    // Update checkout page if we're on it
+                    if (fromDropdown && document.querySelector('.checkout')) {
+                        this.updateCheckoutOrderSummary(res);
                     }
 
                     // **NEW**: If on product details page, re-check button state
@@ -403,6 +417,18 @@
                     if (dropdown) dropdown.innerHTML = html;
                 })
                 .catch(err => console.error('Failed to refresh cart dropdown:', err));
+        },
+
+        updateCheckoutOrderSummary: function(res) {
+            // Refresh the entire checkout page to update the order summary
+            if (res.itemsCount === 0) {
+                // If cart is empty, redirect to cart page
+                window.location.href = '/cart';
+                return;
+            }
+
+            // Reload the page to get updated cart data
+            window.location.reload();
         },
 
         triggerCartUpdated: function(res) {
