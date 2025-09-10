@@ -244,7 +244,9 @@ class PaymentController extends Controller
                 'name' => $item->name,
                 'price' => $item->price,
                 'quantity' => $item->quantity,
-                'total' => $item->price * $item->quantity
+                'total' => $item->price * $item->quantity,
+                'color' => $item->attributes->color ?? null,
+                'size' => $item->attributes->size ?? null
             ];
         }
 
@@ -259,56 +261,7 @@ class PaymentController extends Controller
 
     public function getCartDropdown()
     {
-        $cartContent = Cart::getContent();
-        $total = Cart::getTotal();
-        $itemsCount = Cart::getTotalQuantity();
-
-        if ($cartContent->isEmpty()) {
-            return '<p class="text-center p-3">Your cart is empty</p>';
-        }
-
-        $html = '<div class="dropdown-cart-products">';
-
-        foreach ($cartContent as $item) {
-            $html .= '
-        <div class="product" id="dropdown-item-' . $item->id . '">
-            <div class="product-cart-details">
-                <h4 class="product-title">
-                    <a href=" ">
-                        ' . e($item->name) . '
-                    </a>
-                </h4>
-                <span class="cart-product-info">
-                    <span class="cart-product-qty">' . $item->quantity . '</span>
-                    x $' . number_format($item->price, 2) . '
-                </span>
-            </div>
-            <figure class="product-image-container">
-                <a href="" class="product-image">
-                    <img src="' . e($item->attributes->image) . '" alt="' . e($item->name) . '">
-                </a>
-            </figure>
-            <a href="#" class="btn-remove remove-item-dropdown"
-               data-rowid="' . $item->id . '" title="Remove Product">
-                <i class="icon-close"></i>
-            </a>
-        </div>';
-        }
-
-        $html .= '</div>
-    <div class="dropdown-cart-total">
-        <span>Total</span>
-        <span class="cart-total-price">$' . number_format($total, 2) . '</span>
-    </div>
-    <div class="dropdown-cart-action">
-        <a href="' . route('cart.index') . '" class="btn btn-primary">View Cart</a>
-        <a href="" class="btn btn-outline-primary-2">
-            <span>Checkout</span>
-            <i class="icon-long-arrow-right"></i>
-        </a>
-    </div>';
-
-        return $html;
+        return view('frontend.layouts.cart_dropdown')->render();
     }
 
 }

@@ -186,359 +186,393 @@
 
     @yield('scripts')
     <div id="toast-container" class="toast-container"></div>
- <script>
-    window.addEventListener('pageshow', event => {
-        if (event.persisted) {
-            window.location.reload();
-        }
-    });
-
-    window.CartManager = {
-        routes: {},
-        csrfToken: '',
-
-        init: function() {
-            this.setupRoutes();
-            this.initializeDropdownEvents();
-            this.setupGlobalEventListeners();
-
-            if (document.querySelector('.cart')) {
-                this.initializeCartPage();
+    <script>
+        window.addEventListener('pageshow', event => {
+            if (event.persisted) {
+                window.location.reload();
             }
+        });
 
-            if (document.querySelector('.checkout')) {
-                this.initializeCheckoutPage();
-            }
-        },
+        window.CartManager = {
+            routes: {},
+            csrfToken: '',
 
-        setupRoutes: function() {
-            this.routes = {
-                update: '{{ route('cart.update') }}',
-                remove: '{{ route('cart.remove') }}',
-                clear: '{{ route('cart.clear') }}',
-                dropdown: '{{ route('cart.dropdown') }}',
-                check: '{{ url('cart/check') }}' // Make sure this backend route exists
-            };
-            this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        },
+            init: function() {
+                this.setupRoutes();
+                this.initializeDropdownEvents();
+                this.setupGlobalEventListeners();
 
-        initializeDropdownEvents: function() {
-            document.addEventListener('click', (e) => {
-                const btn = e.target.closest('.remove-item-dropdown');
-                if (btn) {
-                    e.preventDefault();
-                    const rowId = btn.dataset.rowid;
-                    this.removeItem(rowId, true);
+                if (document.querySelector('.cart')) {
+                    this.initializeCartPage();
                 }
-            });
-        },
 
-        setupGlobalEventListeners: function() {
-            document.addEventListener('cartUpdated', (e) => {
-                this.updateHeaderCart(e.detail);
-
-                // If on details page, re-check product status
-                const addBtn = document.querySelector('#add-to-cart-btn');
-                if (addBtn && addBtn.dataset.productId) {
-                    this.checkProductStatus(addBtn.dataset.productId);
+                if (document.querySelector('.checkout')) {
+                    this.initializeCheckoutPage();
                 }
-            });
-        },
+            },
 
-        initializeCartPage: function() {
-            let updateTimeout;
-            const debounceTime = 500;
+            setupRoutes: function() {
+                this.routes = {
+                    update: '{{ route('cart.update') }}',
+                    remove: '{{ route('cart.remove') }}',
+                    clear: '{{ route('cart.clear') }}',
+                    dropdown: '{{ route('cart.dropdown') }}',
+                    check: '{{ url('cart/check') }}' // Make sure this backend route exists
+                };
+                this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            },
 
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const rowId = e.target.dataset.rowid;
-                    const newQuantity = e.target.value;
-                    clearTimeout(updateTimeout);
-                    updateTimeout = setTimeout(() => {
-                        this.updateQuantity(rowId, newQuantity);
-                    }, debounceTime);
+            initializeDropdownEvents: function() {
+                document.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.remove-item-dropdown');
+                    if (btn) {
+                        e.preventDefault();
+                        const rowId = btn.dataset.rowid;
+                        this.removeItem(rowId, true);
+                    }
                 });
-            });
+            },
 
-            document.querySelectorAll('.remove-item').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const rowId = e.target.closest('.remove-item').dataset.rowid;
-                    this.removeItem(rowId);
+            setupGlobalEventListeners: function() {
+                document.addEventListener('cartUpdated', (e) => {
+                    this.updateHeaderCart(e.detail);
+
+                    // If on details page, re-check product status
+                    const addBtn = document.querySelector('#add-to-cart-btn');
+                    if (addBtn && addBtn.dataset.productId) {
+                        this.checkProductStatus(addBtn.dataset.productId);
+                    }
                 });
-            });
+            },
 
-            document.querySelectorAll('.clear-cart').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.clearCart();
+            initializeCartPage: function() {
+                let updateTimeout;
+                const debounceTime = 500;
+
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const rowId = e.target.dataset.rowid;
+                        const newQuantity = e.target.value;
+                        clearTimeout(updateTimeout);
+                        updateTimeout = setTimeout(() => {
+                            this.updateQuantity(rowId, newQuantity);
+                        }, debounceTime);
+                    });
                 });
-            });
 
-            document.querySelectorAll('input[name="shipping"]').forEach(input => {
-                input.addEventListener('change', () => {
-                    this.updateTotals();
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const rowId = e.target.closest('.remove-item').dataset.rowid;
+                        this.removeItem(rowId);
+                    });
                 });
-            });
-        },
 
-        initializeCheckoutPage: function() {
-            // Initialize checkout-specific functionality
-            console.log('Checkout page initialized');
-        },
+                document.querySelectorAll('.clear-cart').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.clearCart();
+                    });
+                });
 
-        updateQuantity: function(rowId, quantity) {
-            fetch(this.routes.update, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': this.csrfToken
-                },
-                body: JSON.stringify({ rowId, quantity })
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    const itemTotal = document.querySelector(`#cart-item-${rowId} .item-total`);
-                    if (itemTotal) itemTotal.textContent = res.itemTotal;
-                    this.updateCartTotals(res.subTotal, res.total);
-                    this.triggerCartUpdated(res);
-                    this.showToast('Quantity updated successfully', 'success');
-                } else {
-                    this.showToast(res.message, 'error');
-                }
-            })
-            .catch(() => this.showToast('Error updating quantity', 'error'));
-        },
+                document.querySelectorAll('input[name="shipping"]').forEach(input => {
+                    input.addEventListener('change', () => {
+                        this.updateTotals();
+                    });
+                });
+            },
 
-        removeItem: function(rowId, fromDropdown = false) {
-            fetch(this.routes.remove, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': this.csrfToken
-                },
-                body: JSON.stringify({ rowId })
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    this.triggerCartUpdated(res);
+            initializeCheckoutPage: function() {
+                // Initialize checkout-specific functionality
+                console.log('Checkout page initialized');
+            },
 
-                    const cartItem = document.querySelector(`#cart-item-${rowId}`);
-                    if (cartItem) {
-                        cartItem.remove();
-                        this.updateCartTotals(res.subTotal, res.total);
+            updateQuantity: function(rowId, quantity) {
+                fetch(this.routes.update, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            rowId,
+                            quantity
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            const itemTotal = document.querySelector(`#cart-item-${rowId} .item-total`);
+                            if (itemTotal) itemTotal.textContent = res.itemTotal;
+                            this.updateCartTotals(res.subTotal, res.total);
+                            this.triggerCartUpdated(res);
+                            this.showToast('Quantity updated successfully', 'success');
+                        } else {
+                            this.showToast(res.message, 'error');
+                        }
+                    })
+                    .catch(() => this.showToast('Error updating quantity', 'error'));
+            },
 
-                        if (res.itemsCount === 0) {
-                            document.querySelector('.cart').innerHTML = `
+            removeItem: function(rowId, fromDropdown = false) {
+                fetch(this.routes.remove, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            rowId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            this.triggerCartUpdated(res);
+
+                            const cartItem = document.querySelector(`#cart-item-${rowId}`);
+                            if (cartItem) {
+                                cartItem.remove();
+                                this.updateCartTotals(res.subTotal, res.total);
+
+                                if (res.itemsCount === 0) {
+                                    document.querySelector('.cart').innerHTML = `
                                 <div class="text-center py-5">
                                     <h4>Your cart is empty</h4>
                                     <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
                                 </div>`;
+                                }
+                            }
+
+                            // Update checkout page if we're on it
+                            if (fromDropdown && document.querySelector('.checkout')) {
+                                this.updateCheckoutOrderSummary(res);
+                            }
+
+                            // **NEW**: If on product details page, re-check button state
+                            const addBtn = document.querySelector('#add-to-cart-btn');
+                            if (fromDropdown && addBtn && addBtn.dataset.productId) {
+                                this.checkProductStatus(addBtn.dataset.productId);
+                            }
+
+                            this.showToast('Item removed from cart', 'success');
+                        } else {
+                            this.showToast('Error removing item', 'error');
                         }
-                    }
+                    })
+                    .catch(() => this.showToast('Error removing item', 'error'));
+            },
 
-                    // Update checkout page if we're on it
-                    if (fromDropdown && document.querySelector('.checkout')) {
-                        this.updateCheckoutOrderSummary(res);
-                    }
+            clearCart: function() {
+                if (!confirm('Are you sure you want to clear your entire cart?')) return;
 
-                    // **NEW**: If on product details page, re-check button state
-                    const addBtn = document.querySelector('#add-to-cart-btn');
-                    if (fromDropdown && addBtn && addBtn.dataset.productId) {
-                        this.checkProductStatus(addBtn.dataset.productId);
-                    }
+                fetch(this.routes.clear, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            this.triggerCartUpdated(res);
+                            location.reload();
+                        } else {
+                            this.showToast('Error clearing cart', 'error');
+                        }
+                    })
+                    .catch(() => this.showToast('Error clearing cart', 'error'));
+            },
 
-                    this.showToast('Item removed from cart', 'success');
+            updateCartTotals: function(subTotal, total) {
+                const sub = document.querySelector('#cart-subtotal');
+                const tot = document.querySelector('#cart-total');
+                if (sub) sub.textContent = '$' + subTotal;
+                if (tot) tot.textContent = '$' + total;
+            },
+
+            updateTotals: function() {
+                const selected = document.querySelector('input[name="shipping"]:checked');
+                if (!selected) return;
+                const shipCost = parseFloat(selected.parentElement.nextElementSibling.textContent.replace('$', ''));
+                const sub = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
+                document.querySelector('#cart-total').textContent = '$' + (sub + shipCost).toFixed(2);
+            },
+
+            updateHeaderCart: function(res) {
+                const cartCount = document.querySelector('#header-cart-count');
+                if (cartCount) {
+                    cartCount.textContent = res.itemsCount;
+                    cartCount.classList.add('cart-update-animation');
+                    setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
+                }
+                const dropdown = document.querySelector('#cart-dropdown-menu');
+                if (res.itemsCount === 0 && dropdown) {
+                    dropdown.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
                 } else {
-                    this.showToast('Error removing item', 'error');
+                    this.refreshCartDropdown();
                 }
-            })
-            .catch(() => this.showToast('Error removing item', 'error'));
-        },
+            },
 
-        clearCart: function() {
-            if (!confirm('Are you sure you want to clear your entire cart?')) return;
+            refreshCartDropdown: function() {
+                fetch(this.routes.dropdown)
+                    .then(res => res.text())
+                    .then(html => {
+                        const dropdown = document.querySelector('#cart-dropdown-menu');
+                        if (dropdown) dropdown.innerHTML = html;
+                    })
+                    .catch(err => console.error('Failed to refresh cart dropdown:', err));
+            },
 
-            fetch(this.routes.clear, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': this.csrfToken
+            updateCheckoutOrderSummary: function(res) {
+                // If cart is empty, redirect to cart page
+                if (res.itemsCount === 0) {
+                    window.location.href = '/cart';
+                    return;
                 }
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    this.triggerCartUpdated(res);
-                    location.reload();
-                } else {
-                    this.showToast('Error clearing cart', 'error');
-                }
-            })
-            .catch(() => this.showToast('Error clearing cart', 'error'));
-        },
 
-        updateCartTotals: function(subTotal, total) {
-            const sub = document.querySelector('#cart-subtotal');
-            const tot = document.querySelector('#cart-total');
-            if (sub) sub.textContent = '$' + subTotal;
-            if (tot) tot.textContent = '$' + total;
-        },
+                // Update checkout order summary dynamically without page reload
+                this.refreshCheckoutOrderSummary();
+            },
 
-        updateTotals: function() {
-            const selected = document.querySelector('input[name="shipping"]:checked');
-            if (!selected) return;
-            const shipCost = parseFloat(selected.parentElement.nextElementSibling.textContent.replace('$', ''));
-            const sub = parseFloat(document.querySelector('#cart-subtotal').textContent.replace('$', ''));
-            document.querySelector('#cart-total').textContent = '$' + (sub + shipCost).toFixed(2);
-        },
+            refreshCheckoutOrderSummary: function() {
+                // Use the checkout summary route
+                const checkoutSummaryRoute = '{{ route('checkout.summary') }}';
 
-        updateHeaderCart: function(res) {
-            const cartCount = document.querySelector('#header-cart-count');
-            if (cartCount) {
-                cartCount.textContent = res.itemsCount;
-                cartCount.classList.add('cart-update-animation');
-                setTimeout(() => cartCount.classList.remove('cart-update-animation'), 500);
-            }
-            const dropdown = document.querySelector('#cart-dropdown-menu');
-            if (res.itemsCount === 0 && dropdown) {
-                dropdown.innerHTML = '<p class="text-center p-3">Your cart is empty</p>';
-            } else {
-                this.refreshCartDropdown();
-            }
-        },
+                fetch(checkoutSummaryRoute)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.updateCheckoutOrderTable(data.cartItems, data.subTotal, data.total);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Failed to refresh checkout order summary:', err);
+                        // Fallback: show a toast message
+                        this.showToast('Cart updated. Please refresh to see changes.', 'info');
+                    });
+            },
 
-        refreshCartDropdown: function() {
-            fetch(this.routes.dropdown)
-                .then(res => res.text())
-                .then(html => {
-                    const dropdown = document.querySelector('#cart-dropdown-menu');
-                    if (dropdown) dropdown.innerHTML = html;
-                })
-                .catch(err => console.error('Failed to refresh cart dropdown:', err));
-        },
+            updateCheckoutOrderTable: function(cartItems, subTotal, total) {
+                const orderTableBody = document.querySelector('.table-summary tbody');
+                if (!orderTableBody) return;
 
-        updateCheckoutOrderSummary: function(res) {
-            // If cart is empty, redirect to cart page
-            if (res.itemsCount === 0) {
-                window.location.href = '/cart';
-                return;
-            }
-
-            // Update checkout order summary dynamically without page reload
-            this.refreshCheckoutOrderSummary();
-        },
-
-        refreshCheckoutOrderSummary: function() {
-            // Use the checkout summary route
-            const checkoutSummaryRoute = '{{ route("checkout.summary") }}';
-
-            fetch(checkoutSummaryRoute)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        this.updateCheckoutOrderTable(data.cartItems, data.subTotal, data.total);
+                // Clear existing product rows (keep subtotal, discount, shipping, total rows)
+                const productRows = orderTableBody.querySelectorAll(
+                    'tr:not(.summary-subtotal):not(.summary-total)');
+                productRows.forEach(row => {
+                    if (row.cells.length === 2 && !row.querySelector('.cart-discount') &&
+                        !row.textContent.includes('Discount:') &&
+                        !row.textContent.includes('Shipping:')) {
+                        row.remove();
                     }
-                })
-                .catch(err => {
-                    console.error('Failed to refresh checkout order summary:', err);
-                    // Fallback: show a toast message
-                    this.showToast('Cart updated. Please refresh to see changes.', 'info');
                 });
-        },
 
-        updateCheckoutOrderTable: function(cartItems, subTotal, total) {
-            // Update the order summary table in checkout page
-            const orderTableBody = document.querySelector('.table-summary tbody');
-            if (!orderTableBody) return;
+                const subtotalRow = orderTableBody.querySelector('.summary-subtotal');
 
-            // Clear existing product rows (keep subtotal, discount, shipping, total rows)
-            const productRows = orderTableBody.querySelectorAll('tr:not(.summary-subtotal):not(.summary-total)');
-            productRows.forEach(row => {
-                // Only remove rows that contain product data (not discount, shipping, etc.)
-                if (row.cells.length === 2 && !row.querySelector('.cart-discount') &&
-                    !row.textContent.includes('Discount:') &&
-                    !row.textContent.includes('Shipping:')) {
-                    row.remove();
-                }
-            });
+                // Add updated product rows with color & size
+                cartItems.forEach(item => {
+                    const productRow = document.createElement('tr');
+                    let variantHtml = '';
 
-            // Add updated product rows
-            const subtotalRow = orderTableBody.querySelector('.summary-subtotal');
-            cartItems.forEach(item => {
-                const productRow = document.createElement('tr');
-                productRow.innerHTML = `
-                    <td><a href="#">${item.name}</a></td>
-                    <td>$${parseFloat(item.price).toFixed(2)}</td>
-                `;
-                orderTableBody.insertBefore(productRow, subtotalRow);
-            });
-
-            // Update subtotal
-            const subtotalCell = subtotalRow.querySelector('td:last-child');
-            if (subtotalCell) {
-                subtotalCell.textContent = `$${parseFloat(subTotal).toFixed(2)}`;
-            }
-
-            // Update total
-            const totalRow = orderTableBody.querySelector('.summary-total td:last-child');
-            if (totalRow) {
-                totalRow.textContent = `$${parseFloat(total).toFixed(2)}`;
-            }
-        },
-
-        triggerCartUpdated: function(res) {
-            document.dispatchEvent(new CustomEvent('cartUpdated', { detail: res }));
-        },
-
-        checkProductStatus: function(productId) {
-            fetch(`${this.routes.check}/${productId}`)
-                .then(res => res.json())
-                .then(data => {
-                    const btn = document.querySelector('#add-to-cart-btn');
-                    if (!btn) return;
-                    if (data.in_cart) {
-                        btn.disabled = true;
-                        btn.textContent = 'Added';
-                    } else {
-                        btn.disabled = false;
-                        btn.textContent = 'Add to Cart';
+                    if (item.color) {
+                        variantHtml +=
+                            `<span class="d-inline-block rounded-circle me-2 border" style="width:15px; height:15px; background:${item.color}"></span>`;
+                        variantHtml +=
+                            `<span style="font-size: 1.5rem;padding-left:0.5rem">${item.color}</span>`;
                     }
-                })
-                .catch(err => console.error('Check status failed', err));
-        },
 
-        showToast: function(message, type = "success") {
-            const container = document.getElementById("toast-container");
-            const toast = document.createElement("div");
-            toast.className = `toast-custom toast-${type}`;
-            toast.innerHTML = `
+                    if (item.size) {
+                        variantHtml +=
+                            `<span style="padding-left: 1.5rem;font-size: 1.3rem">Size: <strong>${item.size}</strong></span>`;
+                    }
+
+                    productRow.innerHTML = `
+            <td>
+                <a href="#">${item.name}</a>
+                <div class="d-flex align-items-center flex-wrap small text-muted mt-1">
+                    ${variantHtml}
+                </div>
+                <div class="mb-1 mt-1">
+                    <span class="fw-semibold">${item.quantity}</span> x
+                    <span class="fw-semibold">$${parseFloat(item.price).toFixed(2)}</span>
+                </div>
+            </td>
+            <td>$${parseFloat(item.price * item.quantity).toFixed(2)}</td>
+        `;
+                    orderTableBody.insertBefore(productRow, subtotalRow);
+                });
+
+                // Update subtotal
+                const subtotalCell = subtotalRow.querySelector('td:last-child');
+                if (subtotalCell) {
+                    subtotalCell.textContent = `$${parseFloat(subTotal).toFixed(2)}`;
+                }
+
+                // Update total
+                const totalRow = orderTableBody.querySelector('.summary-total td:last-child');
+                if (totalRow) {
+                    totalRow.textContent = `$${parseFloat(total).toFixed(2)}`;
+                }
+            },
+
+            triggerCartUpdated: function(res) {
+                document.dispatchEvent(new CustomEvent('cartUpdated', {
+                    detail: res
+                }));
+            },
+
+            checkProductStatus: function(productId) {
+                fetch(`${this.routes.check}/${productId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const btn = document.querySelector('#add-to-cart-btn');
+                        if (!btn) return;
+                        if (data.in_cart) {
+                            btn.disabled = true;
+                            btn.textContent = 'Added';
+                        } else {
+                            btn.disabled = false;
+                            btn.textContent = 'Add to Cart';
+                        }
+                    })
+                    .catch(err => console.error('Check status failed', err));
+            },
+
+            showToast: function(message, type = "success") {
+                const container = document.getElementById("toast-container");
+                const toast = document.createElement("div");
+                toast.className = `toast-custom toast-${type}`;
+                toast.innerHTML = `
                 <div class="toast-message">
                     ${this.getToastIcon(type)}
                     <span>${message}</span>
                 </div>
                 <button class="close-btn" onclick="this.parentElement.remove()">×</button>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add("show"), 50);
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
-        },
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add("show"), 50);
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => toast.remove(), 400);
+                }, 3000);
+            },
 
-        getToastIcon: function(type) {
-            switch (type) {
-                case "success": return `<i class="icon-check-circle"></i>`;
-                case "error": return `<i class="icon-times-circle"></i>`;
-                case "warning": return `<i class="icon-exclamation-circle"></i>`;
-                default: return `<i class="icon-info-circle"></i>`;
+            getToastIcon: function(type) {
+                switch (type) {
+                    case "success":
+                        return `<i class="icon-check-circle"></i>`;
+                    case "error":
+                        return `<i class="icon-times-circle"></i>`;
+                    case "warning":
+                        return `<i class="icon-exclamation-circle"></i>`;
+                    default:
+                        return `<i class="icon-info-circle"></i>`;
+                }
             }
-        }
-    };
+        };
 
-    document.addEventListener('DOMContentLoaded', () => CartManager.init());
-</script>
+        document.addEventListener('DOMContentLoaded', () => CartManager.init());
+    </script>
 
 
 

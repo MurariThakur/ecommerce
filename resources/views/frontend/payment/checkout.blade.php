@@ -103,16 +103,44 @@
                                         </thead>
 
                                         <tbody>
-                                             @foreach (Cart::getContent() as $item)
-                                            <tr>
-                                                <td> <a href="#">{{ $item->name }}</a></td>
-                                                <td>{{ number_format($item->price, 2) }}</td>
-                                            </tr>
+                                            @foreach (Cart::getContent() as $item)
+                                                <tr>
+                                                    <td>
+                                                        <a href="#">{{ $item->name }}</a>
+
+                                                        @if ($item->attributes->color || $item->attributes->size)
+                        <div class="d-flex align-items-center flex-wrap small text-muted">
+                            @if ($item->attributes->color)
+                                <span class="d-inline-block rounded-circle me-2 border"
+                                    style="width:15px; height:15px; background: {{ $item->attributes->color }}">
+                                </span>
+                                <span
+                                    style="font-size: 1.5rem;padding-left:0.5rem">{{ ucfirst($item->attributes->color) }}</span>
+                            @endif
+
+                            @if ($item->attributes->size)
+                                <span style="padding-left: 1.5rem;font-size: 1.3rem">Size:
+                                    <strong>{{ strtoupper($item->attributes->size) }}</strong></span>
+                            @endif
+                        </div>
+                    @endif
+
+                    <div>
+                        <span class="fw-semibold">{{ $item->quantity }}</span>
+                        <span class="text-muted">x</span>
+                        <span class="fw-semibold">${{ number_format($item->price, 2) }}</span>
+                    </div>
+                                                    </td>
+
+                                                    {{-- Line total = price × quantity --}}
+                                                    <td>${{ number_format($item->price * $item->quantity, 2) }}</td>
+                                                </tr>
                                             @endforeach
+
                                             <tr class="summary-subtotal">
                                                 <td>Subtotal:</td>
                                                 <td>${{ number_format(Cart::getSubTotal(), 2) }}</td>
-                                            </tr><!-- End .summary-subtotal -->
+                                            </tr>
                                             <tr>
                                                 <td colspan="2">
                                                     <div class="cart-discount">
@@ -122,12 +150,13 @@
                                                                     placeholder="coupon code">
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-outline-primary-2"
-                                                                        type="submit"><i
-                                                                            class="icon-long-arrow-right"></i></button>
-                                                                </div><!-- .End .input-group-append -->
-                                                            </div><!-- End .input-group -->
+                                                                        type="submit">
+                                                                        <i class="icon-long-arrow-right"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </form>
-                                                    </div><!-- End .cart-discount -->
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -141,9 +170,10 @@
                                             <tr class="summary-total">
                                                 <td>Total:</td>
                                                 <td>${{ number_format(Cart::getTotal(), 2) }}</td>
-                                            </tr><!-- End .summary-total -->
+                                            </tr>
                                         </tbody>
-                                    </table><!-- End .table table-summary -->
+                                    </table>
+
 
                                     <div class="accordion-summary" id="accordion-payment">
 
