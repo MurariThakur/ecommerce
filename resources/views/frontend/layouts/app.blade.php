@@ -593,7 +593,6 @@
             },
 
             refreshCheckoutOrderSummary: function() {
-                // Use the checkout summary route
                 const checkoutSummaryRoute = '{{ route('checkout.summary') }}';
 
                 fetch(checkoutSummaryRoute)
@@ -601,11 +600,12 @@
                     .then(data => {
                         if (data.success) {
                             this.updateCheckoutOrderTable(data.cartItems, data.subTotal, data.total);
+                            this.updateShippingMethods(data.isFreeShipping, data.shippingMethods, data
+                                .freeShippingThreshold, data.freeShippingEnabled);
                         }
                     })
                     .catch(err => {
                         console.error('Failed to refresh checkout order summary:', err);
-                        // Fallback: show a toast message
                         this.showToast('Cart updated. Please refresh to see changes.', 'info');
                     });
             },
@@ -673,6 +673,82 @@
                 }
             },
 
+            updateShippingMethods: function(isFreeShipping, shippingMethods, freeShippingThreshold,
+            freeShippingEnabled) {
+                // Remove all shipping-related rows (including threshold messages)
+                const shippingRows = document.querySelectorAll('.summary-shipping-row, .summary-shipping-estimate');
+                shippingRows.forEach(row => row.remove());
+
+                // Also remove any rows that contain threshold messages
+                const allRows = document.querySelectorAll('.table-summary tbody tr');
+                allRows.forEach(row => {
+                    if (row.textContent.includes('Free shipping above')) {
+                        row.remove();
+                    }
+                });
+
+                const shippingHeaderRow = document.querySelector('.summary-shipping');
+                if (!shippingHeaderRow) return;
+
+                if (isFreeShipping) {
+                    const freeShippingRow = document.createElement('tr');
+                    freeShippingRow.className = 'summary-shipping-row';
+                    freeShippingRow.innerHTML = `
+                        <td>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="free-shipping" name="shipping" class="custom-control-input" value="0" data-price="0" checked>
+                                <label class="custom-control-label" for="free-shipping">Free Shipping</label>
+                            </div>
+                        </td>
+                        <td>$0.00</td>
+                    `;
+                    shippingHeaderRow.insertAdjacentElement('afterend', freeShippingRow);
+                } else {
+                    let lastShippingRow = shippingHeaderRow;
+                    shippingMethods.forEach((method, index) => {
+                        const methodRow = document.createElement('tr');
+                        methodRow.className = 'summary-shipping-row';
+                        methodRow.innerHTML = `
+                            <td>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="shipping-${method.id}" name="shipping" class="custom-control-input" value="${method.id}" data-price="${method.price}" ${index === 0 ? 'checked' : ''}>
+                                    <label class="custom-control-label" for="shipping-${method.id}">${method.name}</label>
+                                </div>
+                            </td>
+                            <td>$${parseFloat(method.price).toFixed(2)}</td>
+                        `;
+                        lastShippingRow.insertAdjacentElement('afterend', methodRow);
+                        lastShippingRow = methodRow;
+                    });
+
+                    if (freeShippingEnabled) {
+                        const thresholdRow = document.createElement('tr');
+                        thresholdRow.innerHTML = `
+                            <td colspan="2" class="text-center py-2">
+                                <span class="free-shipping-badge">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Free shipping above $${parseFloat(freeShippingThreshold).toFixed(2)}
+                                </span>
+                            </td>
+                        `;
+                        lastShippingRow.insertAdjacentElement('afterend', thresholdRow);
+                    }
+                }
+
+                // Add the shipping estimate row back
+                const estimateRow = document.createElement('tr');
+                estimateRow.className = 'summary-shipping-estimate';
+                estimateRow.innerHTML = '<td style="padding-bottom: 0"></td><td></td>';
+                const totalRow = document.querySelector('.summary-total');
+                if (totalRow) {
+                    totalRow.insertAdjacentElement('beforebegin', estimateRow);
+                }
+
+                // Re-initialize shipping events for new elements
+                this.initializeShippingEvents();
+                this.updateCheckoutTotals();
+            },
+
             triggerCartUpdated: function(res) {
                 document.dispatchEvent(new CustomEvent('cartUpdated', {
                     detail: res
@@ -730,10 +806,6 @@
 
         document.addEventListener('DOMContentLoaded', () => CartManager.init());
     </script>
-
-
-
-
 
     </div>
 

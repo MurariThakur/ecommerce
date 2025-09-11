@@ -241,12 +241,12 @@
                                                 @endforelse
                                                 @if ($freeShippingEnabled)
                                                     <tr>
-                                                        <td colspan="2">
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-info-circle"></i>
+                                                        <td colspan="2" class="text-center py-2">
+                                                            <span class="free-shipping-badge">
+                                                                <i class="fas fa-shipping-fast"></i>
                                                                 Free shipping above
                                                                 ${{ number_format($freeShippingThreshold, 2) }}
-                                                            </small>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 @endif

@@ -264,12 +264,34 @@ class PaymentController extends Controller
             ];
         }
 
+        $subTotal = Cart::getSubTotal();
+        $freeShippingSetting = \App\Models\Setting::where('key', 'free_shipping_threshold')->first();
+        $freeShippingThreshold = $freeShippingSetting ? (float) $freeShippingSetting->value : 0;
+        $freeShippingEnabled = $freeShippingSetting ? $freeShippingSetting->status : false;
+        $isFreeShipping = $freeShippingEnabled && $subTotal >= $freeShippingThreshold && $freeShippingThreshold > 0;
+
+        $shippingMethods = [];
+        if (!$isFreeShipping) {
+            $methods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
+            foreach ($methods as $method) {
+                $shippingMethods[] = [
+                    'id' => $method->id,
+                    'name' => $method->name,
+                    'price' => $method->price
+                ];
+            }
+        }
+
         return response()->json([
             'success' => true,
             'cartItems' => $cartItems,
             'subTotal' => Cart::getSubTotal(),
             'total' => Cart::getTotal(),
-            'itemsCount' => Cart::getTotalQuantity()
+            'itemsCount' => Cart::getTotalQuantity(),
+            'isFreeShipping' => $isFreeShipping,
+            'shippingMethods' => $shippingMethods,
+            'freeShippingThreshold' => $freeShippingThreshold,
+            'freeShippingEnabled' => $freeShippingEnabled
         ]);
     }
 
