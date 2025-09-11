@@ -11,8 +11,7 @@ class DiscountController extends Controller
 {
     public function index()
     {
-        $discounts = Discount::notDeleted()
-            ->latest()
+        $discounts = Discount::latest()
             ->paginate(10);
         return view('admin.discount.index', compact('discounts'));
     }
@@ -61,7 +60,7 @@ class DiscountController extends Controller
     public function destroy(Discount $discount)
     {
         try {
-            $discount->update(['is_deleted' => true]);
+            $discount->delete();
             return redirect()->route('admin.discount.index')
                 ->with('success', 'Discount deleted successfully.');
         } catch (\Exception $e) {
