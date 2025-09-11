@@ -31,7 +31,7 @@
                                 <h3 class="card-title">Discounts</h3>
                                 <div class="card-tools">
                                     <a href="{{ route('admin.discount.create') }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus"></i> Add New Discount
+                                        <i class="fas fa-plus"></i> Add New Coupon
                                     </a>
                                 </div>
                             </div>

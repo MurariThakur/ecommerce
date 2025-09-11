@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
@@ -65,6 +66,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/discount/update/{discount}', [DiscountController::class, 'update'])->name('admin.discount.update');
     Route::delete('/admin/discount/delete/{discount}', [DiscountController::class, 'destroy'])->name('admin.discount.destroy');
     Route::post('/admin/discount/toggle-status/{discount}', [DiscountController::class, 'toggleStatus'])->name('admin.discount.toggle.status');
+
+    // Shipping management routes
+    Route::get('/admin/shipping', [ShippingController::class, 'index'])->name('admin.shipping.index');
+    Route::get('/admin/shipping/create', [ShippingController::class, 'create'])->name('admin.shipping.create');
+    Route::post('/admin/shipping/store', [ShippingController::class, 'store'])->name('admin.shipping.store');
+    Route::get('/admin/shipping/view/{shipping}', [ShippingController::class, 'show'])->name('admin.shipping.show');
+    Route::get('/admin/shipping/edit/{shipping}', [ShippingController::class, 'edit'])->name('admin.shipping.edit');
+    Route::put('/admin/shipping/update/{shipping}', [ShippingController::class, 'update'])->name('admin.shipping.update');
+    Route::delete('/admin/shipping/delete/{shipping}', [ShippingController::class, 'destroy'])->name('admin.shipping.destroy');
+    Route::post('/admin/shipping/toggle-status/{shipping}', [ShippingController::class, 'toggleStatus'])->name('admin.shipping.toggle.status');
 
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
