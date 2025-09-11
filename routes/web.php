@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
 
@@ -76,6 +77,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/shipping/update/{shipping}', [ShippingController::class, 'update'])->name('admin.shipping.update');
     Route::delete('/admin/shipping/delete/{shipping}', [ShippingController::class, 'destroy'])->name('admin.shipping.destroy');
     Route::post('/admin/shipping/toggle-status/{shipping}', [ShippingController::class, 'toggleStatus'])->name('admin.shipping.toggle.status');
+
+    // Settings management routes
+    Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
+    Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([

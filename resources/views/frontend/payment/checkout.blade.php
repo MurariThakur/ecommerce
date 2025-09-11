@@ -192,24 +192,7 @@
                                                 <td>&nbsp;</td>
                                             </tr>
 
-                                            @forelse($shippingMethods as $shipping)
-                                                <tr class="summary-shipping-row">
-                                                    <td>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" id="shipping-{{ $shipping->id }}"
-                                                                name="shipping" class="custom-control-input"
-                                                                value="{{ $shipping->id }}"
-                                                                data-price="{{ $shipping->price }}"
-                                                                {{ $loop->first ? 'checked' : '' }}>
-                                                            <label class="custom-control-label"
-                                                                for="shipping-{{ $shipping->id }}">
-                                                                {{ $shipping->name }}
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                    <td>${{ number_format($shipping->price, 2) }}</td>
-                                                </tr>
-                                            @empty
+                                            @if ($isFreeShipping)
                                                 <tr class="summary-shipping-row">
                                                     <td>
                                                         <div class="custom-control custom-radio">
@@ -223,7 +206,51 @@
                                                     </td>
                                                     <td>$0.00</td>
                                                 </tr>
-                                            @endforelse
+                                            @else
+                                                @forelse($shippingMethods as $shipping)
+                                                    <tr class="summary-shipping-row">
+                                                        <td>
+                                                            <div class="custom-control custom-radio">
+                                                                <input type="radio" id="shipping-{{ $shipping->id }}"
+                                                                    name="shipping" class="custom-control-input"
+                                                                    value="{{ $shipping->id }}"
+                                                                    data-price="{{ $shipping->price }}"
+                                                                    {{ $loop->first ? 'checked' : '' }}>
+                                                                <label class="custom-control-label"
+                                                                    for="shipping-{{ $shipping->id }}">
+                                                                    {{ $shipping->name }}
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>${{ number_format($shipping->price, 2) }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr class="summary-shipping-row">
+                                                        <td>
+                                                            <div class="custom-control custom-radio">
+                                                                <input type="radio" id="free-shipping" name="shipping"
+                                                                    class="custom-control-input" value="0"
+                                                                    data-price="0" checked>
+                                                                <label class="custom-control-label" for="free-shipping">
+                                                                    Free Shipping
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>$0.00</td>
+                                                    </tr>
+                                                @endforelse
+                                                @if ($freeShippingEnabled)
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-info-circle"></i>
+                                                                Free shipping above
+                                                                ${{ number_format($freeShippingThreshold, 2) }}
+                                                            </small>
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endif
 
                                             <tr class="summary-shipping-estimate">
                                                 <td style="padding-bottom: 0"></td>
@@ -231,7 +258,7 @@
                                             </tr><!-- End .summary-shipping-estimate -->
                                             <tr class="summary-total">
                                                 <td>Total:</td>
-                                                <td>${{ number_format(Cart::getTotal(), 2) }}</td>
+                                                <td>${{ number_format($total, 2) }}</td>
                                             </tr>
                                         </tbody>
                                     </table>

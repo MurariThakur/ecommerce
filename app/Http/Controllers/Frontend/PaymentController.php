@@ -218,13 +218,23 @@ class PaymentController extends Controller
         }
 
         $subTotal = Cart::getSubTotal();
-        $shippingMethods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
+        $freeShippingSetting = \App\Models\Setting::where('key', 'free_shipping_threshold')->first();
+        $freeShippingThreshold = $freeShippingSetting ? (float) $freeShippingSetting->value : 0;
+        $freeShippingEnabled = $freeShippingSetting ? $freeShippingSetting->status : false;
 
-        // Calculate total with first shipping method or free shipping
-        $firstShippingCost = $shippingMethods->first() ? $shippingMethods->first()->price : 0;
-        $total = Cart::getTotal() + $firstShippingCost;
+        // Check if eligible for free shipping
+        $isFreeShipping = $freeShippingEnabled && $subTotal >= $freeShippingThreshold && $freeShippingThreshold > 0;
 
-        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods'));
+        if ($isFreeShipping) {
+            $shippingMethods = collect();
+            $total = Cart::getTotal();
+        } else {
+            $shippingMethods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
+            $firstShippingCost = $shippingMethods->first() ? $shippingMethods->first()->price : 0;
+            $total = Cart::getTotal() + $firstShippingCost;
+        }
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled'));
     }
 
     /**
