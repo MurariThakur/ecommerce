@@ -282,8 +282,137 @@
             },
 
             initializeCheckoutPage: function() {
-                // Initialize checkout-specific functionality
-                console.log('Checkout page initialized');
+                this.initializeDiscountForm();
+            },
+
+            initializeDiscountForm: function() {
+                const applyDiscountBtn = document.getElementById('apply-discount-btn');
+                if (applyDiscountBtn) {
+                    applyDiscountBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.applyDiscount();
+                    });
+                }
+
+                const discountInput = document.getElementById('discount_code');
+                if (discountInput) {
+                    discountInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.applyDiscount();
+                        }
+                    });
+                }
+
+                const removeDiscountBtn = document.getElementById('remove-discount');
+                if (removeDiscountBtn) {
+                    removeDiscountBtn.addEventListener('click', () => {
+                        this.removeDiscount();
+                    });
+                }
+            },
+
+            applyDiscount: function() {
+                const discountCode = document.getElementById('discount_code').value.trim();
+                if (!discountCode) {
+                    this.showDiscountError('Please enter a discount code');
+                    return;
+                }
+
+                fetch('{{ route('checkout.apply.discount') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            discount_code: discountCode
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.showDiscountSuccess(data.message);
+                            this.displayAppliedDiscount(data.discount_name, data.discount_amount, data
+                                .new_total);
+                        } else {
+                            this.showDiscountError(data.message);
+                        }
+                    })
+                    .catch(() => {
+                        this.showDiscountError('Error applying discount code');
+                    });
+            },
+
+            removeDiscount: function() {
+                fetch('{{ route('checkout.remove.discount') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': this.csrfToken
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.clearAppliedDiscount();
+                            this.updateCheckoutTotal(data.new_total);
+                            this.showToast('Discount removed', 'info');
+                        }
+                    })
+                    .catch(() => {
+                        this.showToast('Error removing discount', 'error');
+                    });
+            },
+
+            displayAppliedDiscount: function(discountName, discountAmount, newTotal) {
+                document.getElementById('applied-discount-name').textContent = discountName;
+                document.getElementById('discount-amount').textContent = discountAmount;
+                document.getElementById('discount-row').style.display = 'table-row';
+                document.getElementById('discount_code').value = '';
+                this.updateCheckoutTotal(newTotal);
+            },
+
+            clearAppliedDiscount: function() {
+                document.getElementById('discount-row').style.display = 'none';
+                document.getElementById('discount_code').value = '';
+                this.hideDiscountMessages();
+
+                fetch('{{ route('checkout.remove.discount') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': this.csrfToken
+                    }
+                }).catch(() => {});
+            },
+
+            updateCheckoutTotal: function(newTotal) {
+                const totalCell = document.querySelector('.summary-total td:last-child');
+                if (totalCell) {
+                    totalCell.textContent = '$' + newTotal;
+                }
+            },
+
+            showDiscountError: function(message) {
+                const errorDiv = document.getElementById('discount-error');
+                const successDiv = document.getElementById('discount-success');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'flex';
+                successDiv.style.display = 'none';
+            },
+
+            showDiscountSuccess: function(message) {
+                const errorDiv = document.getElementById('discount-error');
+                const successDiv = document.getElementById('discount-success');
+                successDiv.textContent = message;
+                successDiv.style.display = 'flex';
+                errorDiv.style.display = 'none';
+            },
+
+            hideDiscountMessages: function() {
+                document.getElementById('discount-error').style.display = 'none';
+                document.getElementById('discount-success').style.display = 'none';
             },
 
             updateQuantity: function(rowId, quantity) {
@@ -431,6 +560,8 @@
                     return;
                 }
 
+                // Clear discount when cart changes
+                this.clearAppliedDiscount();
                 // Update checkout order summary dynamically without page reload
                 this.refreshCheckoutOrderSummary();
             },

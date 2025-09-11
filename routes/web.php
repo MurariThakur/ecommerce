@@ -26,8 +26,8 @@ Route::get('/session-timeout', [AuthController::class, 'sessionTimeout'])->name(
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 
-   // Admin management routes
-   Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
+    // Admin management routes
+    Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/admin/create', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/admin/admin/store', [AdminController::class, 'store'])->name('admin.store');
     Route::get('/admin/admin/view/{id}', [AdminController::class, 'show'])->name('admin.show');
@@ -114,13 +114,15 @@ Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->nam
 // Checkout Routes
 Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary'])->name('checkout.summary');
+Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscount'])->name('checkout.apply.discount');
+Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
 
 
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 Route::get('/search', [FrontendProductController::class, 'search'])->name('frontend.search');
-Route::get('{slug?}/{subslug?}', [FrontendProductController::class,'getCategory']);
+Route::get('{slug?}/{subslug?}', [FrontendProductController::class, 'getCategory']);
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
 
 

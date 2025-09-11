@@ -264,4 +264,92 @@ class PaymentController extends Controller
         return view('frontend.layouts.cart_dropdown')->render();
     }
 
+    public function applyDiscount(Request $request)
+    {
+        $request->validate([
+            'discount_code' => 'required|string'
+        ]);
+
+        $discountCode = $request->discount_code;
+        $cartSubTotal = Cart::getSubTotal();
+
+        // Find active discount
+        $discount = \App\Models\Discount::where('name', $discountCode)
+            ->where('status', true)
+            ->whereDate('expire_date', '>=', now())
+            ->first();
+
+        if (!$discount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired discount code'
+            ]);
+        }
+
+        // Check minimum order amount
+        if ($discount->min_order_amount && $cartSubTotal < $discount->min_order_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Minimum order amount of $' . number_format($discount->min_order_amount, 2) . ' required'
+            ]);
+        }
+
+        // Check usage limit
+        if ($discount->usage_limit && $discount->used_count >= $discount->usage_limit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discount code usage limit exceeded'
+            ]);
+        }
+
+        // Calculate discount amount
+        $discountAmount = 0;
+        if ($discount->type === 'percentage') {
+            $discountAmount = ($cartSubTotal * $discount->value) / 100;
+            // Apply max discount limit if set
+            if ($discount->max_discount_amount && $discountAmount > $discount->max_discount_amount) {
+                $discountAmount = $discount->max_discount_amount;
+            }
+        } else {
+            $discountAmount = $discount->value;
+        }
+
+        // Ensure discount doesn't exceed cart total
+        if ($discountAmount > $cartSubTotal) {
+            $discountAmount = $cartSubTotal;
+        }
+
+        $newTotal = $cartSubTotal - $discountAmount;
+
+        // Store discount in session
+        session([
+            'applied_discount' => [
+                'id' => $discount->id,
+                'name' => $discount->name,
+                'type' => $discount->type,
+                'value' => $discount->value,
+                'amount' => $discountAmount
+            ]
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount applied successfully',
+            'discount_amount' => number_format($discountAmount, 2),
+            'new_total' => number_format($newTotal, 2),
+            'discount_name' => $discount->name
+        ]);
+    }
+
+    public function removeDiscount()
+    {
+        session()->forget('applied_discount');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount removed',
+            'new_total' => number_format(Cart::getTotal(), 2)
+        ]);
+    }
+
 }

@@ -20,7 +20,7 @@
         <div class="page-content">
             <div class="checkout">
                 <div class="container">
-                    <form action="#">
+                    <form action="#" id="checkout-form">
                         <div class="row">
                             <div class="col-lg-9">
                                 <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
@@ -109,27 +109,30 @@
                                                         <a href="#">{{ $item->name }}</a>
 
                                                         @if ($item->attributes->color || $item->attributes->size)
-                        <div class="d-flex align-items-center flex-wrap small text-muted">
-                            @if ($item->attributes->color)
-                                <span class="d-inline-block rounded-circle me-2 border"
-                                    style="width:15px; height:15px; background: {{ $item->attributes->color }}">
-                                </span>
-                                <span
-                                    style="font-size: 1.5rem;padding-left:0.5rem">{{ ucfirst($item->attributes->color) }}</span>
-                            @endif
+                                                            <div
+                                                                class="d-flex align-items-center flex-wrap small text-muted">
+                                                                @if ($item->attributes->color)
+                                                                    <span class="d-inline-block rounded-circle me-2 border"
+                                                                        style="width:15px; height:15px; background: {{ $item->attributes->color }}">
+                                                                    </span>
+                                                                    <span
+                                                                        style="font-size: 1.5rem;padding-left:0.5rem">{{ ucfirst($item->attributes->color) }}</span>
+                                                                @endif
 
-                            @if ($item->attributes->size)
-                                <span style="padding-left: 1.5rem;font-size: 1.3rem">Size:
-                                    <strong>{{ strtoupper($item->attributes->size) }}</strong></span>
-                            @endif
-                        </div>
-                    @endif
+                                                                @if ($item->attributes->size)
+                                                                    <span
+                                                                        style="padding-left: 1.5rem;font-size: 1.3rem">Size:
+                                                                        <strong>{{ strtoupper($item->attributes->size) }}</strong></span>
+                                                                @endif
+                                                            </div>
+                                                        @endif
 
-                    <div>
-                        <span class="fw-semibold">{{ $item->quantity }}</span>
-                        <span class="text-muted">x</span>
-                        <span class="fw-semibold">${{ number_format($item->price, 2) }}</span>
-                    </div>
+                                                        <div>
+                                                            <span class="fw-semibold">{{ $item->quantity }}</span>
+                                                            <span class="text-muted">x</span>
+                                                            <span
+                                                                class="fw-semibold">${{ number_format($item->price, 2) }}</span>
+                                                        </div>
                                                     </td>
 
                                                     {{-- Line total = price × quantity --}}
@@ -143,25 +146,40 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2">
-                                                    <div class="cart-discount">
-                                                        <form action="#" id="coupon-form">
-                                                            <div class="input-group">
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="coupon code">
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-primary-2"
-                                                                        type="submit">
-                                                                        <i class="icon-long-arrow-right"></i>
-                                                                    </button>
-                                                                </div>
+                                                    <div class="cart-discount mt-1">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="discount_code"
+                                                                name="discount_code" placeholder="Enter discount code">
+                                                            <div class="input-group-append" style="height:40px">
+                                                                <button class="btn btn-outline-primary-2" type="button"
+                                                                    id="apply-discount-btn">
+                                                                    <i class="icon-long-arrow-right"></i>
+                                                                </button>
                                                             </div>
-                                                        </form>
+                                                        </div>
+                                                        <div id="discount-error" class="text-danger mb-1 text-center"
+                                                            style="display: none;"></div>
+                                                        <div id="discount-success" class="text-success mb-1 text-center"
+                                                            style="display: none;"></div>
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>Discount:</td>
-                                                <td>00</td>
+                                            <tr style="display: none;" id="discount-row">
+                                                <td colspan="2">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center mb-2 mt-1">
+                                                        <span>Discount: <strong id="applied-discount-name"></strong></span>
+                                                        <span class="text-right">-$<span
+                                                                id="discount-amount">0.00</span></span>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <button type="button" id="remove-discount"
+                                                            class="btn btn-outline-primary-2 mb-1">
+                                                            Remove Discount
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                             </tr>
                                             <tr>
                                                 <td>Shipping:</td>
