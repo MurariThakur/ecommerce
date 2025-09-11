@@ -239,17 +239,16 @@
                                                         <td>$0.00</td>
                                                     </tr>
                                                 @endforelse
-                                                @if ($freeShippingEnabled)
-                                                    <tr>
-                                                        <td colspan="2" class="text-center py-2">
-                                                            <span class="free-shipping-badge">
-                                                                <i class="fas fa-shipping-fast"></i>
-                                                                Free shipping above
-                                                                ${{ number_format($freeShippingThreshold, 2) }}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                @endif
+                                            @endif
+                                            @if ($freeShippingEnabled && !$isFreeShipping)
+                                                <tr>
+                                                    <td colspan="2" class="text-center" style="border:none">
+
+                                                        <span> Free shipping above
+                                                            ${{ number_format($freeShippingThreshold, 2) }} </span>
+
+                                                    </td>
+                                                </tr>
                                             @endif
 
                                             <tr class="summary-shipping-estimate">
@@ -262,6 +261,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
+
 
 
                                     <div class="accordion-summary" id="accordion-payment">

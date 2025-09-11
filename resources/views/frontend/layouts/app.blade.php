@@ -674,7 +674,7 @@
             },
 
             updateShippingMethods: function(isFreeShipping, shippingMethods, freeShippingThreshold,
-            freeShippingEnabled) {
+                freeShippingEnabled) {
                 // Remove all shipping-related rows (including threshold messages)
                 const shippingRows = document.querySelectorAll('.summary-shipping-row, .summary-shipping-estimate');
                 shippingRows.forEach(row => row.remove());
@@ -721,14 +721,13 @@
                         lastShippingRow = methodRow;
                     });
 
-                    if (freeShippingEnabled) {
+                    if (freeShippingEnabled && !isFreeShipping) {
                         const thresholdRow = document.createElement('tr');
                         thresholdRow.innerHTML = `
-                            <td colspan="2" class="text-center py-2">
-                                <span class="free-shipping-badge">
-                                    <i class="fas fa-shipping-fast"></i>
-                                    Free shipping above $${parseFloat(freeShippingThreshold).toFixed(2)}
-                                </span>
+                            <td colspan="2" class="text-center" style="border:none">
+
+                                 <span>   Free shipping above $${parseFloat(freeShippingThreshold).toFixed(2)} </span>
+
                             </td>
                         `;
                         lastShippingRow.insertAdjacentElement('afterend', thresholdRow);
