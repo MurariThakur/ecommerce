@@ -218,9 +218,13 @@ class PaymentController extends Controller
         }
 
         $subTotal = Cart::getSubTotal();
-        $total = Cart::getTotal();
+        $shippingMethods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
 
-        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total'));
+        // Calculate total with first shipping method or free shipping
+        $firstShippingCost = $shippingMethods->first() ? $shippingMethods->first()->price : 0;
+        $total = Cart::getTotal() + $firstShippingCost;
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods'));
     }
 
     /**

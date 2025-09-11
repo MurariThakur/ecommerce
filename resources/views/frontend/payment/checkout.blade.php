@@ -1,5 +1,11 @@
 @extends('frontend.layouts.app')
-
+@section('styles')
+    <style>
+        .table.table-summary .summary-shipping-estimate td {
+            padding-bottom: 0;
+        }
+    </style>
+@endsection
 @section('content')
     <main class="main">
         <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -181,10 +187,48 @@
                                                 </td>
                                             </tr>
                                             </tr>
-                                            <tr>
+                                            <tr class="summary-shipping">
                                                 <td>Shipping:</td>
-                                                <td>Free shipping</td>
+                                                <td>&nbsp;</td>
                                             </tr>
+
+                                            @forelse($shippingMethods as $shipping)
+                                                <tr class="summary-shipping-row">
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="shipping-{{ $shipping->id }}"
+                                                                name="shipping" class="custom-control-input"
+                                                                value="{{ $shipping->id }}"
+                                                                data-price="{{ $shipping->price }}"
+                                                                {{ $loop->first ? 'checked' : '' }}>
+                                                            <label class="custom-control-label"
+                                                                for="shipping-{{ $shipping->id }}">
+                                                                {{ $shipping->name }}
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>${{ number_format($shipping->price, 2) }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr class="summary-shipping-row">
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="free-shipping" name="shipping"
+                                                                class="custom-control-input" value="0"
+                                                                data-price="0" checked>
+                                                            <label class="custom-control-label" for="free-shipping">
+                                                                Free Shipping
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>$0.00</td>
+                                                </tr>
+                                            @endforelse
+
+                                            <tr class="summary-shipping-estimate">
+                                                <td style="padding-bottom: 0"></td>
+                                                <td></td>
+                                            </tr><!-- End .summary-shipping-estimate -->
                                             <tr class="summary-total">
                                                 <td>Total:</td>
                                                 <td>${{ number_format(Cart::getTotal(), 2) }}</td>
