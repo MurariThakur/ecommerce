@@ -384,24 +384,32 @@
                 const shippingCost = selectedShipping ? parseFloat(selectedShipping.dataset.price) : 0;
 
                 const subtotalElement = document.querySelector('.summary-subtotal td:last-child');
-                const subtotal = parseFloat(subtotalElement.textContent.replace('$', '').replace(',', ''));
+                const subtotal = parseFloat(subtotalElement.textContent.replace(/[$,]/g, ''));
 
+                const discountRow = document.getElementById('discount-row');
                 const discountElement = document.getElementById('discount-amount');
-                const discountAmount = discountElement ? parseFloat(discountElement.textContent) : 0;
+                const discountAmount = (discountRow && discountRow.style.display !== 'none' && discountElement) ?
+                    parseFloat(discountElement.textContent) : 0;
 
                 const total = subtotal - discountAmount + shippingCost;
 
                 const totalElement = document.querySelector('.summary-total td:last-child');
-                totalElement.textContent = '$' + total.toFixed(2);
+                totalElement.textContent = '$' + total.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             },
 
             updateCheckoutTotal: function(newTotal) {
                 const selectedShipping = document.querySelector('input[name="shipping"]:checked');
                 const shippingCost = selectedShipping ? parseFloat(selectedShipping.dataset.price) : 0;
-                const finalTotal = parseFloat(newTotal) + shippingCost;
+                const finalTotal = parseFloat(newTotal.replace(/[$,]/g, '')) + shippingCost;
 
                 const totalElement = document.querySelector('.summary-total td:last-child');
-                totalElement.textContent = '$' + finalTotal.toFixed(2);
+                totalElement.textContent = '$' + finalTotal.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             },
 
             showDiscountError: function(message) {
@@ -544,18 +552,7 @@
                 if (tot) tot.textContent = '$' + total;
             },
 
-            updateCheckoutTotals: function() {
-                const selected = document.querySelector('input[name="shipping"]:checked');
-                if (!selected) return;
 
-                const shippingCost = parseFloat(selected.dataset.price || 0);
-                const subtotal = parseFloat(document.querySelector('.summary-subtotal td:last-child').textContent
-                    .replace('$', ''));
-                const discountAmount = parseFloat(document.getElementById('discount-amount').textContent || 0);
-
-                const total = subtotal + shippingCost - discountAmount;
-                document.querySelector('.summary-total td:last-child').textContent = '$' + total.toFixed(2);
-            },
 
             updateHeaderCart: function(res) {
                 const cartCount = document.querySelector('#header-cart-count');
