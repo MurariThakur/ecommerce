@@ -806,6 +806,23 @@
         document.addEventListener('DOMContentLoaded', () => {
             CartManager.init();
             initializeAuth();
+
+            // Check for session messages and show toast
+            @if(session('success'))
+                CartManager.showToast('{{ session('success') }}', 'success');
+            @endif
+
+            @if(session('error'))
+                CartManager.showToast('{{ session('error') }}', 'error');
+            @endif
+
+            @if(session('warning'))
+                CartManager.showToast('{{ session('warning') }}', 'warning');
+            @endif
+
+            @if(session('info'))
+                CartManager.showToast('{{ session('info') }}', 'info');
+            @endif
         });
 
         function initializeAuth() {
