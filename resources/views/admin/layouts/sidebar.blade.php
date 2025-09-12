@@ -75,9 +75,19 @@
                 <li class="nav-item">
                     <a href="{{ url('admin/discount') }}"
                         class="nav-link {{ request()->is('admin/discount*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-palette"></i>
+                        <i class="nav-icon fas fa-percent"></i>
                         <p>
                             Discount Code
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url('admin/shipping') }}"
+                        class="nav-link {{ request()->is('admin/shipping*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-truck"></i>
+                        <p>
+                            Shipping Methods
                         </p>
                     </a>
                 </li>

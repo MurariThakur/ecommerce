@@ -1,5 +1,11 @@
 @extends('frontend.layouts.app')
-
+@section('styles')
+    <style>
+        .table.table-summary .summary-shipping-estimate td {
+            padding-bottom: 0;
+        }
+    </style>
+@endsection
 @section('content')
     <main class="main">
         <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -20,7 +26,7 @@
         <div class="page-content">
             <div class="checkout">
                 <div class="container">
-                    <form action="#">
+                    <form action="#" id="checkout-form">
                         <div class="row">
                             <div class="col-lg-9">
                                 <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
@@ -103,47 +109,161 @@
                                         </thead>
 
                                         <tbody>
-                                             @foreach (Cart::getContent() as $item)
-                                            <tr>
-                                                <td> <a href="#">{{ $item->name }}</a></td>
-                                                <td>{{ number_format($item->price, 2) }}</td>
-                                            </tr>
+                                            @foreach (Cart::getContent() as $item)
+                                                <tr>
+                                                    <td>
+                                                        <a
+                                                            href="{{ $item->attributes->url ?? '#' }}">{{ $item->name }}</a>
+
+                                                        @if ($item->attributes->color || $item->attributes->size)
+                                                            <div
+                                                                class="d-flex align-items-center flex-wrap small text-muted">
+                                                                @if ($item->attributes->color)
+                                                                    <span class="d-inline-block rounded-circle me-2 border"
+                                                                        style="width:15px; height:15px; background: {{ $item->attributes->color }}">
+                                                                    </span>
+                                                                    <span
+                                                                        style="font-size: 1.5rem;padding-left:0.5rem">{{ ucfirst($item->attributes->color) }}</span>
+                                                                @endif
+
+                                                                @if ($item->attributes->size)
+                                                                    <span
+                                                                        style="padding-left: 1.5rem;font-size: 1.3rem">Size:
+                                                                        <strong>{{ strtoupper($item->attributes->size) }}</strong></span>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+
+                                                        <div>
+                                                            <span class="fw-semibold">{{ $item->quantity }}</span>
+                                                            <span class="text-muted">x</span>
+                                                            <span
+                                                                class="fw-semibold">${{ number_format($item->price, 2) }}</span>
+                                                        </div>
+                                                    </td>
+
+                                                    {{-- Line total = price × quantity --}}
+                                                    <td>${{ number_format($item->price * $item->quantity, 2) }}</td>
+                                                </tr>
                                             @endforeach
+
                                             <tr class="summary-subtotal">
                                                 <td>Subtotal:</td>
                                                 <td>${{ number_format(Cart::getSubTotal(), 2) }}</td>
-                                            </tr><!-- End .summary-subtotal -->
+                                            </tr>
                                             <tr>
                                                 <td colspan="2">
-                                                    <div class="cart-discount">
-                                                        <form action="#" id="coupon-form">
-                                                            <div class="input-group">
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="coupon code">
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-primary-2"
-                                                                        type="submit"><i
-                                                                            class="icon-long-arrow-right"></i></button>
-                                                                </div><!-- .End .input-group-append -->
-                                                            </div><!-- End .input-group -->
-                                                        </form>
-                                                    </div><!-- End .cart-discount -->
+                                                    <div class="cart-discount mt-1">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="discount_code"
+                                                                name="discount_code" placeholder="Enter discount code">
+                                                            <div class="input-group-append" style="height:40px">
+                                                                <button class="btn btn-outline-primary-2" type="button"
+                                                                    id="apply-discount-btn">
+                                                                    <i class="icon-long-arrow-right"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div id="discount-error" class="text-danger mb-1 text-center"
+                                                            style="display: none;"></div>
+                                                        <div id="discount-success" class="text-success mb-1 text-center"
+                                                            style="display: none;"></div>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>Discount:</td>
-                                                <td>00</td>
+                                            <tr style="display: none;" id="discount-row">
+                                                <td colspan="2">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center mb-2 mt-1">
+                                                        <span>Discount: <strong id="applied-discount-name"></strong></span>
+                                                        <span class="text-right">-$<span
+                                                                id="discount-amount">0.00</span></span>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <button type="button" id="remove-discount"
+                                                            class="btn btn-outline-primary-2 mb-1">
+                                                            Remove Discount
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                            <tr>
+                                            </tr>
+                                            <tr class="summary-shipping">
                                                 <td>Shipping:</td>
-                                                <td>Free shipping</td>
+                                                <td>&nbsp;</td>
                                             </tr>
+
+                                            @if ($isFreeShipping)
+                                                <tr class="summary-shipping-row">
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="free-shipping" name="shipping"
+                                                                class="custom-control-input" value="0"
+                                                                data-price="0" checked>
+                                                            <label class="custom-control-label" for="free-shipping">
+                                                                Free Shipping
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>$0.00</td>
+                                                </tr>
+                                            @else
+                                                @forelse($shippingMethods as $shipping)
+                                                    <tr class="summary-shipping-row">
+                                                        <td>
+                                                            <div class="custom-control custom-radio">
+                                                                <input type="radio" id="shipping-{{ $shipping->id }}"
+                                                                    name="shipping" class="custom-control-input"
+                                                                    value="{{ $shipping->id }}"
+                                                                    data-price="{{ $shipping->price }}"
+                                                                    {{ $loop->first ? 'checked' : '' }}>
+                                                                <label class="custom-control-label"
+                                                                    for="shipping-{{ $shipping->id }}">
+                                                                    {{ $shipping->name }}
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>${{ number_format($shipping->price, 2) }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr class="summary-shipping-row">
+                                                        <td>
+                                                            <div class="custom-control custom-radio">
+                                                                <input type="radio" id="free-shipping" name="shipping"
+                                                                    class="custom-control-input" value="0"
+                                                                    data-price="0" checked>
+                                                                <label class="custom-control-label" for="free-shipping">
+                                                                    Free Shipping
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>$0.00</td>
+                                                    </tr>
+                                                @endforelse
+                                            @endif
+                                            @if ($freeShippingEnabled && !$isFreeShipping)
+                                                <tr>
+                                                    <td colspan="2" class="text-center" style="border:none">
+
+                                                        <span> Free shipping above
+                                                            ${{ number_format($freeShippingThreshold, 2) }} </span>
+
+                                                    </td>
+                                                </tr>
+                                            @endif
+
+                                            <tr class="summary-shipping-estimate">
+                                                <td style="padding-bottom: 0"></td>
+                                                <td></td>
+                                            </tr><!-- End .summary-shipping-estimate -->
                                             <tr class="summary-total">
                                                 <td>Total:</td>
-                                                <td>${{ number_format(Cart::getTotal(), 2) }}</td>
-                                            </tr><!-- End .summary-total -->
+                                                <td>${{ number_format($total, 2) }}</td>
+                                            </tr>
                                         </tbody>
-                                    </table><!-- End .table table-summary -->
+                                    </table>
+
+
 
                                     <div class="accordion-summary" id="accordion-payment">
 

@@ -7,14 +7,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">View Discount</h1>
+                        <h1 class="m-0">View Shipping Method</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin.discount.index') }}">Discount
+                            <li class="breadcrumb-item"><a href="{{ route('admin.shipping.index') }}">Shipping
                                     Management</a></li>
-                            <li class="breadcrumb-item active">View Discount</li>
+                            <li class="breadcrumb-item active">View Shipping Method</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -30,13 +30,13 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    <i class="fas fa-eye"></i> Discount Details
+                                    <i class="fas fa-eye"></i> Shipping Method Details
                                 </h3>
                                 <div class="card-tools">
-                                    <a href="{{ route('admin.discount.edit', $discount) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> Edit Discount
+                                    <a href="{{ route('admin.shipping.edit', $shipping) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit Shipping Method
                                     </a>
-                                    <a href="{{ route('admin.discount.index') }}" class="btn btn-secondary btn-sm">
+                                    <a href="{{ route('admin.shipping.index') }}" class="btn btn-secondary btn-sm">
                                         <i class="fas fa-arrow-left"></i> Back to List
                                     </a>
                                 </div>
@@ -56,56 +56,20 @@
                                                 <table class="table table-borderless">
                                                     <tr>
                                                         <td width="200"><strong>ID</strong></td>
-                                                        <td>{{ $discount->id }}</td>
+                                                        <td>{{ $shipping->id }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Name</strong></td>
-                                                        <td>{{ $discount->name }}</td>
+                                                        <td>{{ $shipping->name }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td><strong>Type</strong></td>
-                                                        <td>{{ ucfirst($discount->type) }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Value</strong></td>
-                                                        <td>
-                                                            @if ($discount->type === 'percentage')
-                                                                {{ $discount->value }}%
-                                                            @else
-                                                                ${{ number_format($discount->value, 2) }}
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Min Order Amount</strong></td>
-                                                        <td>{{ $discount->min_order_amount ? '$' . number_format($discount->min_order_amount, 2) : 'N/A' }}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Max Discount Amount</strong></td>
-                                                        <td>{{ $discount->max_discount_amount ? '$' . number_format($discount->max_discount_amount, 2) : 'N/A' }}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Usage Limit</strong></td>
-                                                        <td>{{ $discount->usage_limit ?? 'Unlimited' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Per User Limit</strong></td>
-                                                        <td>{{ $discount->per_user_limit ?? 'Unlimited' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Used Count</strong></td>
-                                                        <td>{{ $discount->used_count }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>Expire Date</strong></td>
-                                                        <td>{{ $discount->expire_date->format('M d, Y') }}</td>
+                                                        <td><strong>Price</strong></td>
+                                                        <td>${{ number_format($shipping->price, 2) }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Status</strong></td>
                                                         <td>
-                                                            @if ($discount->status)
+                                                            @if ($shipping->status)
                                                                 <span class="badge badge-success">
                                                                     <i class="fas fa-check-circle"></i> Active
                                                                 </span>
@@ -118,11 +82,11 @@
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Created At</strong></td>
-                                                        <td>{{ $discount->created_at->format('M d, Y H:i:s') }}</td>
+                                                        <td>{{ $shipping->created_at->format('M d, Y H:i:s') }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Updated At</strong></td>
-                                                        <td>{{ $discount->updated_at->format('M d, Y H:i:s') }}</td>
+                                                        <td>{{ $shipping->updated_at->format('M d, Y H:i:s') }}</td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -140,29 +104,29 @@
                                             <div class="card-body">
                                                 <div class="d-grid gap-2">
                                                     <!-- Edit Button -->
-                                                    <a href="{{ route('admin.discount.edit', $discount) }}"
+                                                    <a href="{{ route('admin.shipping.edit', $shipping) }}"
                                                         class="btn btn-warning btn-block">
-                                                        <i class="fas fa-edit"></i> Edit Discount
+                                                        <i class="fas fa-edit"></i> Edit Shipping Method
                                                     </a>
 
                                                     <!-- Toggle Status Button -->
                                                     <button type="button"
-                                                        class="btn btn-block {{ $discount->status ? 'btn-secondary' : 'btn-success' }}"
+                                                        class="btn btn-block {{ $shipping->status ? 'btn-secondary' : 'btn-success' }}"
                                                         data-toggle="modal" data-target="#statusModal">
-                                                        <i class="fas fa-{{ $discount->status ? 'ban' : 'check' }}"></i>
-                                                        {{ $discount->status ? 'Deactivate' : 'Activate' }} Discount
+                                                        <i class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
+                                                        {{ $shipping->status ? 'Deactivate' : 'Activate' }} Shipping Method
                                                     </button>
 
                                                     <!-- Delete Button -->
                                                     <button type="button" class="btn btn-danger btn-block"
                                                         data-toggle="modal" data-target="#deleteModal">
-                                                        <i class="fas fa-trash"></i> Delete Discount
+                                                        <i class="fas fa-trash"></i> Delete Shipping Method
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Discount Statistics -->
+                                        <!-- Shipping Statistics -->
                                         <div class="card card-outline card-warning">
                                             <div class="card-header">
                                                 <h3 class="card-title">
@@ -171,25 +135,12 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="info-box">
-                                                    <span class="info-box-icon bg-info">
-                                                        <i class="fas fa-calendar"></i>
-                                                    </span>
-                                                    <div class="info-box-content">
-                                                        <span class="info-box-text">Days Until Expiry</span>
-                                                        <span class="info-box-number">
-                                                            {{ now()->diffInDays($discount->expire_date, false) > 0 ? now()->diffInDays($discount->expire_date) : 0 }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="info-box">
                                                     <span class="info-box-icon bg-success">
                                                         <i class="fas fa-calendar-plus"></i>
                                                     </span>
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Days Since Created</span>
-                                                        <span
-                                                            class="info-box-number">{{ $discount->created_at->diffInDays(now()) }}</span>
+                                                        <span class="info-box-number">{{ $shipping->created_at->diffInDays(now()) }}</span>
                                                     </div>
                                                 </div>
 
@@ -199,8 +150,17 @@
                                                     </span>
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Last Updated</span>
-                                                        <span
-                                                            class="info-box-number text-sm">{{ $discount->updated_at->diffForHumans() }}</span>
+                                                        <span class="info-box-number text-sm">{{ $shipping->updated_at->diffForHumans() }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="info-box">
+                                                    <span class="info-box-icon bg-info">
+                                                        <i class="fas fa-dollar-sign"></i>
+                                                    </span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text">Shipping Price</span>
+                                                        <span class="info-box-number">${{ number_format($shipping->price, 2) }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -227,29 +187,29 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="statusModalLabel">
-                        <i class="fas fa-{{ $discount->status ? 'ban text-warning' : 'check text-success' }}"></i>
-                        {{ $discount->status ? 'Deactivate' : 'Activate' }} Discount
+                        <i class="fas fa-{{ $shipping->status ? 'ban text-warning' : 'check text-success' }}"></i>
+                        {{ $shipping->status ? 'Deactivate' : 'Activate' }} Shipping Method
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to {{ $discount->status ? 'deactivate' : 'activate' }} this discount?</p>
+                    <p>Are you sure you want to {{ $shipping->status ? 'deactivate' : 'activate' }} this shipping method?</p>
                     <div class="alert alert-info">
-                        <strong>Discount:</strong> {{ $discount->name }}
+                        <strong>Shipping Method:</strong> {{ $shipping->name }}
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times"></i> Cancel
                     </button>
-                    <form action="{{ route('admin.discount.toggle.status', $discount) }}" method="POST"
+                    <form action="{{ route('admin.shipping.toggle.status', $shipping) }}" method="POST"
                         style="display: inline-block;">
                         @csrf
-                        <button type="submit" class="btn {{ $discount->status ? 'btn-warning' : 'btn-success' }}">
-                            <i class="fas fa-{{ $discount->status ? 'ban' : 'check' }}"></i>
-                            {{ $discount->status ? 'Deactivate' : 'Activate' }} Discount
+                        <button type="submit" class="btn {{ $shipping->status ? 'btn-warning' : 'btn-success' }}">
+                            <i class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
+                            {{ $shipping->status ? 'Deactivate' : 'Activate' }} Shipping Method
                         </button>
                     </form>
                 </div>
@@ -272,22 +232,22 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this discount?</p>
+                    <p>Are you sure you want to delete this shipping method?</p>
                     <div class="alert alert-danger">
                         <strong>Warning:</strong> This action cannot be undone!<br>
-                        <strong>Discount:</strong> {{ $discount->name }}
+                        <strong>Shipping Method:</strong> {{ $shipping->name }}
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times"></i> Cancel
                     </button>
-                    <form action="{{ route('admin.discount.destroy', $discount) }}" method="POST"
+                    <form action="{{ route('admin.shipping.destroy', $shipping) }}" method="POST"
                         style="display: inline-block;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Delete Discount
+                            <i class="fas fa-trash"></i> Delete Shipping Method
                         </button>
                     </form>
                 </div>

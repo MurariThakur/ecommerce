@@ -36,7 +36,7 @@ class PaymentController extends Controller
      */
     public function addToCart(Request $request)
     {
-        $product = Product::with(['productSizes', 'colors', 'productImages'])->findOrFail($request->product_id);
+        $product = Product::with(['productSizes', 'colors', 'productImages', 'category', 'subcategory'])->findOrFail($request->product_id);
 
         // Validate options
         if ($product->productSizes->count() > 0 && !$request->size) {
@@ -102,6 +102,13 @@ class PaymentController extends Controller
             $image = asset('storage/' . $productImage->image_path);
         }
 
+        // Product URL
+        $productUrl = route('product.details', [
+            'category_slug' => $product->category->slug,
+            'subcategory_slug' => $product->subcategory->slug,
+            'product_slug' => $product->slug
+        ]);
+
         // Add new item to cart
         Cart::add([
             'id' => $rowId, // unique id based on variant
@@ -116,6 +123,7 @@ class PaymentController extends Controller
                 'base_price' => $product->price,
                 'size_additional_price' => $sizeAdditionalPrice,
                 'variant_key' => $variantKey,
+                'url' => $productUrl,
             ],
         ]);
 
@@ -218,9 +226,23 @@ class PaymentController extends Controller
         }
 
         $subTotal = Cart::getSubTotal();
-        $total = Cart::getTotal();
+        $freeShippingSetting = \App\Models\Setting::where('key', 'free_shipping_threshold')->first();
+        $freeShippingThreshold = $freeShippingSetting ? (float) $freeShippingSetting->value : 0;
+        $freeShippingEnabled = $freeShippingSetting ? $freeShippingSetting->status : false;
 
-        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total'));
+        // Check if eligible for free shipping
+        $isFreeShipping = $freeShippingEnabled && $subTotal >= $freeShippingThreshold && $freeShippingThreshold > 0;
+
+        if ($isFreeShipping) {
+            $shippingMethods = collect();
+            $total = Cart::getTotal();
+        } else {
+            $shippingMethods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
+            $firstShippingCost = $shippingMethods->first() ? $shippingMethods->first()->price : 0;
+            $total = Cart::getTotal() + $firstShippingCost;
+        }
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled'));
     }
 
     /**
@@ -244,8 +266,29 @@ class PaymentController extends Controller
                 'name' => $item->name,
                 'price' => $item->price,
                 'quantity' => $item->quantity,
-                'total' => $item->price * $item->quantity
+                'total' => $item->price * $item->quantity,
+                'color' => $item->attributes->color ?? null,
+                'size' => $item->attributes->size ?? null,
+                'url' => $item->attributes->url ?? '#'
             ];
+        }
+
+        $subTotal = Cart::getSubTotal();
+        $freeShippingSetting = \App\Models\Setting::where('key', 'free_shipping_threshold')->first();
+        $freeShippingThreshold = $freeShippingSetting ? (float) $freeShippingSetting->value : 0;
+        $freeShippingEnabled = $freeShippingSetting ? $freeShippingSetting->status : false;
+        $isFreeShipping = $freeShippingEnabled && $subTotal >= $freeShippingThreshold && $freeShippingThreshold > 0;
+
+        $shippingMethods = [];
+        if (!$isFreeShipping) {
+            $methods = \App\Models\Shipping::where('status', true)->where('is_deleted', false)->get();
+            foreach ($methods as $method) {
+                $shippingMethods[] = [
+                    'id' => $method->id,
+                    'name' => $method->name,
+                    'price' => $method->price
+                ];
+            }
         }
 
         return response()->json([
@@ -253,62 +296,105 @@ class PaymentController extends Controller
             'cartItems' => $cartItems,
             'subTotal' => Cart::getSubTotal(),
             'total' => Cart::getTotal(),
-            'itemsCount' => Cart::getTotalQuantity()
+            'itemsCount' => Cart::getTotalQuantity(),
+            'isFreeShipping' => $isFreeShipping,
+            'shippingMethods' => $shippingMethods,
+            'freeShippingThreshold' => $freeShippingThreshold,
+            'freeShippingEnabled' => $freeShippingEnabled
         ]);
     }
 
     public function getCartDropdown()
     {
-        $cartContent = Cart::getContent();
-        $total = Cart::getTotal();
-        $itemsCount = Cart::getTotalQuantity();
+        return view('frontend.layouts.cart_dropdown')->render();
+    }
 
-        if ($cartContent->isEmpty()) {
-            return '<p class="text-center p-3">Your cart is empty</p>';
+    public function applyDiscount(Request $request)
+    {
+        $request->validate([
+            'discount_code' => 'required|string'
+        ]);
+
+        $discountCode = $request->discount_code;
+        $cartSubTotal = Cart::getSubTotal();
+
+        // Find active discount
+        $discount = \App\Models\Discount::where('name', $discountCode)
+            ->where('status', true)
+            ->whereDate('expire_date', '>=', now())
+            ->first();
+
+        if (!$discount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired discount code'
+            ]);
         }
 
-        $html = '<div class="dropdown-cart-products">';
-
-        foreach ($cartContent as $item) {
-            $html .= '
-        <div class="product" id="dropdown-item-' . $item->id . '">
-            <div class="product-cart-details">
-                <h4 class="product-title">
-                    <a href=" ">
-                        ' . e($item->name) . '
-                    </a>
-                </h4>
-                <span class="cart-product-info">
-                    <span class="cart-product-qty">' . $item->quantity . '</span>
-                    x $' . number_format($item->price, 2) . '
-                </span>
-            </div>
-            <figure class="product-image-container">
-                <a href="" class="product-image">
-                    <img src="' . e($item->attributes->image) . '" alt="' . e($item->name) . '">
-                </a>
-            </figure>
-            <a href="#" class="btn-remove remove-item-dropdown"
-               data-rowid="' . $item->id . '" title="Remove Product">
-                <i class="icon-close"></i>
-            </a>
-        </div>';
+        // Check minimum order amount
+        if ($discount->min_order_amount && $cartSubTotal < $discount->min_order_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Minimum order amount of $' . number_format($discount->min_order_amount, 2) . ' required'
+            ]);
         }
 
-        $html .= '</div>
-    <div class="dropdown-cart-total">
-        <span>Total</span>
-        <span class="cart-total-price">$' . number_format($total, 2) . '</span>
-    </div>
-    <div class="dropdown-cart-action">
-        <a href="' . route('cart.index') . '" class="btn btn-primary">View Cart</a>
-        <a href="" class="btn btn-outline-primary-2">
-            <span>Checkout</span>
-            <i class="icon-long-arrow-right"></i>
-        </a>
-    </div>';
+        // Check usage limit
+        if ($discount->usage_limit && $discount->used_count >= $discount->usage_limit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discount code usage limit exceeded'
+            ]);
+        }
 
-        return $html;
+        // Calculate discount amount
+        $discountAmount = 0;
+        if ($discount->type === 'percentage') {
+            $discountAmount = ($cartSubTotal * $discount->value) / 100;
+            // Apply max discount limit if set
+            if ($discount->max_discount_amount && $discountAmount > $discount->max_discount_amount) {
+                $discountAmount = $discount->max_discount_amount;
+            }
+        } else {
+            $discountAmount = $discount->value;
+        }
+
+        // Ensure discount doesn't exceed cart total
+        if ($discountAmount > $cartSubTotal) {
+            $discountAmount = $cartSubTotal;
+        }
+
+        $newTotal = $cartSubTotal - $discountAmount;
+
+        // Store discount in session
+        session([
+            'applied_discount' => [
+                'id' => $discount->id,
+                'name' => $discount->name,
+                'type' => $discount->type,
+                'value' => $discount->value,
+                'amount' => $discountAmount
+            ]
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount applied successfully',
+            'discount_amount' => number_format($discountAmount, 2),
+            'new_total' => number_format($newTotal, 2),
+            'discount_name' => $discount->name
+        ]);
+    }
+
+    public function removeDiscount()
+    {
+        session()->forget('applied_discount');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount removed',
+            'new_total' => number_format(Cart::getTotal(), 2)
+        ]);
     }
 
 }

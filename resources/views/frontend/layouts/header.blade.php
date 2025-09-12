@@ -33,8 +33,11 @@
                                      <span>(3)</span></a></li>
                              <li><a href="{{ asset('about.html') }}">About Us</a></li>
                              <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
-                             <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a>
-                             </li>
+                             @auth
+                                 <li><a href="#" id="logout-btn"><i class="icon-user"></i>Logout</a></li>
+                             @else
+                                 <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
+                             @endauth
                          </ul>
                      </li>
                  </ul><!-- End .top-menu -->
@@ -133,62 +136,17 @@
                      </form>
                  </div><!-- End .header-search -->
 
-               <div class="dropdown cart-dropdown" id="cart-dropdown">
-    <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false" data-display="static">
-        <i class="icon-shopping-cart"></i>
-        <span class="cart-count" id="header-cart-count">{{ Cart::getTotalQuantity() }}</span>
-    </a>
+                 <div class="dropdown cart-dropdown" id="cart-dropdown">
+                     <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                         aria-haspopup="true" aria-expanded="false" data-display="static">
+                         <i class="icon-shopping-cart"></i>
+                         <span class="cart-count" id="header-cart-count">{{ Cart::getTotalQuantity() }}</span>
+                     </a>
 
-    <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">
-        @if (Cart::isEmpty())
-            <p class="text-center p-3">Your cart is empty</p>
-        @else
-            <div class="dropdown-cart-products" id="dropdown-cart-products">
-                @foreach (Cart::getContent() as $item)
-                    <div class="product" id="dropdown-item-{{ $item->id }}">
-                        <div class="product-cart-details">
-                            <h4 class="product-title">
-                                <a href="">
-                                    {{ $item->name }}
-                                </a>
-                            </h4>
-
-                            <span class="cart-product-info">
-                                <span class="cart-product-qty">{{ $item->quantity }}</span>
-                                x ${{ number_format($item->price, 2) }}
-                            </span>
-                        </div><!-- End .product-cart-details -->
-
-                        <figure class="product-image-container">
-                            <a href="" class="product-image">
-                                <img src="{{ $item->attributes->image }}" alt="{{ $item->name }}">
-                            </a>
-                        </figure>
-
-                        <a href="#" class="btn-remove remove-item-dropdown"
-                           data-rowid="{{ $item->id }}" title="Remove Product">
-                            <i class="icon-close"></i>
-                        </a>
-                    </div><!-- End .product -->
-                @endforeach
-            </div><!-- End .dropdown-cart-products -->
-
-            <div class="dropdown-cart-total">
-                <span>Total</span>
-                <span class="cart-total-price" id="dropdown-cart-total">${{ number_format(Cart::getTotal(), 2) }}</span>
-            </div><!-- End .dropdown-cart-total -->
-
-            <div class="dropdown-cart-action">
-                <a href="{{ route('cart.index') }}" class="btn btn-primary">View Cart</a>
-                <a href="" class="btn btn-outline-primary-2">
-                    <span>Checkout</span>
-                    <i class="icon-long-arrow-right"></i>
-                </a>
-            </div><!-- End .dropdown-cart-action -->
-        @endif
-    </div><!-- End .dropdown-menu -->
-</div>
+                     <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">
+                        @include('frontend.layouts.cart_dropdown')
+                     </div><!-- End .dropdown-menu -->
+                 </div>
              </div><!-- End .container -->
          </div><!-- End .header-middle -->
  </header><!-- End .header -->

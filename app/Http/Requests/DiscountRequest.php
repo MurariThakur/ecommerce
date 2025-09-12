@@ -16,7 +16,11 @@ class DiscountRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|in:percentage,amount',
-            'amount_percentage' => 'required|numeric|min:0',
+            'value' => 'required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_discount_amount' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:1',
+            'per_user_limit' => 'nullable|integer|min:1',
             'expire_date' => 'required|date|after:today',
             'status' => 'boolean'
         ];
@@ -28,12 +32,11 @@ class DiscountRequest extends FormRequest
             'name.required' => 'Discount name is required',
             'type.required' => 'Discount type is required',
             'type.in' => 'Discount type must be either percentage or amount',
-            'amount_percentage.required' => 'Amount/Percentage value is required',
-            'amount_percentage.numeric' => 'Amount/Percentage must be a number',
-            'amount_percentage.min' => 'Amount/Percentage cannot be negative',
-            'expire_date.required' => 'Expiry date is required',
-            'expire_date.date' => 'Expiry date must be a valid date',
-            'expire_date.after' => 'Expiry date must be after today'
+            'value.required' => 'Discount value is required',
+            'value.numeric' => 'Discount value must be a number',
+            'value.min' => 'Discount value cannot be negative',
+            'expire_date.required' => 'Expire date is required',
+            'expire_date.after' => 'Expire date must be after today'
         ];
     }
 }

@@ -10,7 +10,9 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
 
@@ -26,8 +28,8 @@ Route::get('/session-timeout', [AuthController::class, 'sessionTimeout'])->name(
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 
-   // Admin management routes
-   Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
+    // Admin management routes
+    Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/admin/create', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/admin/admin/store', [AdminController::class, 'store'])->name('admin.store');
     Route::get('/admin/admin/view/{id}', [AdminController::class, 'show'])->name('admin.show');
@@ -65,6 +67,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/discount/update/{discount}', [DiscountController::class, 'update'])->name('admin.discount.update');
     Route::delete('/admin/discount/delete/{discount}', [DiscountController::class, 'destroy'])->name('admin.discount.destroy');
     Route::post('/admin/discount/toggle-status/{discount}', [DiscountController::class, 'toggleStatus'])->name('admin.discount.toggle.status');
+
+    // Shipping management routes
+    Route::get('/admin/shipping', [ShippingController::class, 'index'])->name('admin.shipping.index');
+    Route::get('/admin/shipping/create', [ShippingController::class, 'create'])->name('admin.shipping.create');
+    Route::post('/admin/shipping/store', [ShippingController::class, 'store'])->name('admin.shipping.store');
+    Route::get('/admin/shipping/view/{shipping}', [ShippingController::class, 'show'])->name('admin.shipping.show');
+    Route::get('/admin/shipping/edit/{shipping}', [ShippingController::class, 'edit'])->name('admin.shipping.edit');
+    Route::put('/admin/shipping/update/{shipping}', [ShippingController::class, 'update'])->name('admin.shipping.update');
+    Route::delete('/admin/shipping/delete/{shipping}', [ShippingController::class, 'destroy'])->name('admin.shipping.destroy');
+    Route::post('/admin/shipping/toggle-status/{shipping}', [ShippingController::class, 'toggleStatus'])->name('admin.shipping.toggle.status');
+
+    // Settings management routes
+    Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
+    Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
@@ -114,13 +130,25 @@ Route::get('/cart/dropdown', [PaymentController::class, 'getCartDropdown'])->nam
 // Checkout Routes
 Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary'])->name('checkout.summary');
+Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscount'])->name('checkout.apply.discount');
+Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
+
+// Auth Routes
+Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');
+Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('auth.login');
+Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('auth.logout');
+Route::get('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
 
 
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 Route::get('/search', [FrontendProductController::class, 'search'])->name('frontend.search');
-Route::get('{slug?}/{subslug?}', [FrontendProductController::class,'getCategory']);
+Route::get('{slug?}/{subslug?}', [FrontendProductController::class, 'getCategory']);
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
 
 
