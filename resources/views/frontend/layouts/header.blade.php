@@ -33,8 +33,11 @@
                                      <span>(3)</span></a></li>
                              <li><a href="{{ asset('about.html') }}">About Us</a></li>
                              <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
-                             <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a>
-                             </li>
+                             @auth
+                                 <li><a href="#" id="logout-btn"><i class="icon-user"></i>Logout</a></li>
+                             @else
+                                 <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
+                             @endauth
                          </ul>
                      </li>
                  </ul><!-- End .top-menu -->

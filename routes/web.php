@@ -134,6 +134,16 @@ Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscoun
 Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
 
+// Auth Routes
+Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');
+Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('auth.login');
+Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('auth.logout');
+Route::get('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
+
 
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');

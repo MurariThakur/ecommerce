@@ -803,7 +803,179 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => CartManager.init());
+        document.addEventListener('DOMContentLoaded', () => {
+            CartManager.init();
+            initializeAuth();
+        });
+
+        function initializeAuth() {
+            const registerForm = document.getElementById('register-form');
+            const loginForm = document.getElementById('login-form');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const registerBtn = document.getElementById('register-btn');
+                    const originalText = registerBtn.innerHTML;
+
+                    registerBtn.innerHTML = '<span>Please wait...</span>';
+                    registerBtn.disabled = true;
+
+                    fetch('{{ route('auth.register') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            },
+                            body: formData
+                        })
+                        .then(response => {
+                            if (response.status === 422) {
+                                return response.json().then(data => {
+                                    showRegisterErrors(data.errors);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data && data.success) {
+                                showSuccessModal(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            showRegisterErrors({
+                                'general': ['Registration failed. Please try again.']
+                            });
+                        })
+                        .finally(() => {
+                            registerBtn.innerHTML = originalText;
+                            registerBtn.disabled = false;
+                        });
+                });
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const loginBtn = document.getElementById('login-btn');
+                    const originalText = loginBtn.innerHTML;
+
+                    loginBtn.innerHTML = '<span>Please wait...</span>';
+                    loginBtn.disabled = true;
+
+                    fetch('{{ route('auth.login') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            },
+                            body: formData
+                        })
+                        .then(response => {
+                            if (response.status === 422) {
+                                return response.json().then(data => {
+                                    showLoginErrors(data.errors);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data && data.success) {
+                                location.reload();
+                            }
+                        })
+                        .catch(error => {
+                            showLoginErrors({
+                                'general': ['Login failed. Please try again.']
+                            });
+                        })
+                        .finally(() => {
+                            loginBtn.innerHTML = originalText;
+                            loginBtn.disabled = false;
+                        });
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    fetch('{{ route('auth.logout') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Logout failed:', error);
+                        });
+                });
+            }
+        }
+
+        function showRegisterErrors(errors) {
+            const errorDiv = document.getElementById('register-errors');
+            const successDiv = document.getElementById('register-success');
+
+            let errorHtml = '<ul class="mb-0">';
+            Object.values(errors).forEach(errorArray => {
+                errorArray.forEach(error => {
+                    errorHtml += `<li>${error}</li>`;
+                });
+            });
+            errorHtml += '</ul>';
+
+            errorDiv.innerHTML = errorHtml;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        }
+
+        function showRegisterSuccess(message) {
+            const errorDiv = document.getElementById('register-errors');
+            const successDiv = document.getElementById('register-success');
+
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+
+        function showSuccessModal(message) {
+            document.getElementById('success-message').textContent = message;
+            $('#signin-modal').modal('hide');
+            $('#success-modal').modal('show');
+
+            document.getElementById('success-ok-btn').addEventListener('click', function() {
+                $('#success-modal').modal('hide');
+                location.reload();
+            });
+        }
+
+        function showLoginErrors(errors) {
+            const errorDiv = document.getElementById('login-errors');
+
+            let errorHtml = '<ul class="mb-0">';
+            Object.values(errors).forEach(errorArray => {
+                errorArray.forEach(error => {
+                    errorHtml += `<li>${error}</li>`;
+                });
+            });
+            errorHtml += '</ul>';
+
+            errorDiv.innerHTML = errorHtml;
+            errorDiv.style.display = 'block';
+        }
     </script>
 
     </div>
