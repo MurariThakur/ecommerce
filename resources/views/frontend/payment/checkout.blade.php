@@ -112,7 +112,7 @@
                                             @foreach (Cart::getContent() as $item)
                                                 <tr>
                                                     <td>
-                                                        <a href="#">{{ $item->name }}</a>
+                                                        <a href="{{ $item->attributes->url ?? '#' }}">{{ $item->name }}</a>
 
                                                         @if ($item->attributes->color || $item->attributes->size)
                                                             <div

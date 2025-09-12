@@ -36,7 +36,7 @@ class PaymentController extends Controller
      */
     public function addToCart(Request $request)
     {
-        $product = Product::with(['productSizes', 'colors', 'productImages'])->findOrFail($request->product_id);
+        $product = Product::with(['productSizes', 'colors', 'productImages', 'category', 'subcategory'])->findOrFail($request->product_id);
 
         // Validate options
         if ($product->productSizes->count() > 0 && !$request->size) {
@@ -102,6 +102,13 @@ class PaymentController extends Controller
             $image = asset('storage/' . $productImage->image_path);
         }
 
+        // Product URL
+        $productUrl = route('product.details', [
+            'category_slug' => $product->category->slug,
+            'subcategory_slug' => $product->subcategory->slug,
+            'product_slug' => $product->slug
+        ]);
+
         // Add new item to cart
         Cart::add([
             'id' => $rowId, // unique id based on variant
@@ -116,6 +123,7 @@ class PaymentController extends Controller
                 'base_price' => $product->price,
                 'size_additional_price' => $sizeAdditionalPrice,
                 'variant_key' => $variantKey,
+                'url' => $productUrl,
             ],
         ]);
 
@@ -260,7 +268,8 @@ class PaymentController extends Controller
                 'quantity' => $item->quantity,
                 'total' => $item->price * $item->quantity,
                 'color' => $item->attributes->color ?? null,
-                'size' => $item->attributes->size ?? null
+                'size' => $item->attributes->size ?? null,
+                'url' => $item->attributes->url ?? '#'
             ];
         }
 

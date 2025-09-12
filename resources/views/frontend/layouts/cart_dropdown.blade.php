@@ -6,7 +6,7 @@
             <div class="product d-flex align-items-center" id="dropdown-item-{{ $item->id }}">
                 <div class="product-cart-details flex-grow-1">
                     <h6 class="product-title">
-                        <a href="#">{{ $item->name }}</a>
+                        <a href="{{ $item->attributes->url ?? '#' }}">{{ $item->name }}</a>
                     </h6>
 
                     {{-- Color & Size --}}
@@ -35,7 +35,7 @@
                 </div>
 
                 <figure class="product-image-container ms-3">
-                    <a href="#" class="product-image">
+                    <a href="{{ $item->attributes->url ?? '#' }}" class="product-image">
                         <img src="{{ $item->attributes->image }}" alt="{{ $item->name }}" class="img-fluid"
                             style="width: 50px;">
                     </a>

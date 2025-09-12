@@ -75,14 +75,14 @@
                                                 <td class="product-col">
                                                     <div class="product d-flex align-items-center">
                                                         <figure class="product-media me-3">
-                                                            <a href="#">
+                                                            <a href="{{ $item->attributes->url ?? '#' }}">
                                                                 <img src="{{ $item->attributes->image ?? 'assets/images/products/table/product-1.jpg' }}"
                                                                     alt="Product image">
                                                             </a>
                                                         </figure>
                                                         <div>
                                                             <h3 class="product-title">
-                                                                <a href="#">{{ $item->name }}</a>
+                                                                <a href="{{ $item->attributes->url ?? '#' }}">{{ $item->name }}</a>
                                                             </h3>
                                                            @if ($item->attributes->color || $item->attributes->size)
                                                                 <div class="d-flex align-items-center flex-wrap small text-muted">

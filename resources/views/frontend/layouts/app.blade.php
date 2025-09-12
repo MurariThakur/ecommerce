@@ -646,7 +646,7 @@
 
                     productRow.innerHTML = `
             <td>
-                <a href="#">${item.name}</a>
+                <a href="${item.url || '#'}">${item.name}</a>
                 <div class="d-flex align-items-center flex-wrap small text-muted mt-1">
                     ${variantHtml}
                 </div>
