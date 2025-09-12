@@ -75,9 +75,6 @@
                 <a href="{{ $resetUrl }}" class="btn">Reset Password</a>
             </div>
 
-            <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
-            <p style="word-break: break-all; color: #007bff;">{{ $resetUrl }}</p>
-
             <div class="warning">
                 <strong>Security Notice:</strong>
                 <ul>
