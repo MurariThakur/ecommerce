@@ -922,7 +922,7 @@
                 logoutBtn.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    fetch('{{ route('auth.logout') }}', {
+                    fetch('{{ route('frontend.auth.logout') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(

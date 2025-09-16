@@ -136,8 +136,8 @@ Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])-
 
 // Auth Routes
 Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');
-Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('auth.login');
-Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('auth.logout');
+Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name(name: 'auth.login');
+Route::post('/frontendlogout', [\App\Http\Controllers\Frontend\AuthController::class, 'frontendlogout'])->name('frontend.auth.logout');
 Route::get('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPasswordForm'])->name('password.reset');

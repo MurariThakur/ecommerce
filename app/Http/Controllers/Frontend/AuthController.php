@@ -115,7 +115,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout()
+    public function frontendlogout()
     {
         Auth::logout();
         return response()->json([
