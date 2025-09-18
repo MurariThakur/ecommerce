@@ -133,6 +133,7 @@ Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary']
 Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscount'])->name('checkout.apply.discount');
 Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
+Route::post('/order/place', [PaymentController::class, 'placeOrder'])->name('order.place');
 
 // Auth Routes
 Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');

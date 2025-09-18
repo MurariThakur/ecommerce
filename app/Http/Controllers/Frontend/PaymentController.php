@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\User;
 
 class PaymentController extends Controller
 {
@@ -395,6 +398,117 @@ class PaymentController extends Controller
             'message' => 'Discount removed',
             'new_total' => number_format(Cart::getTotal(), 2)
         ]);
+    }
+
+    /**
+     * Place order function
+     */
+    public function placeOrder(Request $request)
+    {
+        $cartContent = Cart::getContent();
+
+        if ($cartContent->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty');
+        }
+
+        // Create account if requested (before order creation)
+        $userId = auth()->id();
+        if ($request->password && !auth()->check()) {
+            // Check if email already exists
+            $existingUser = User::where('email', $request->email)->first();
+
+            if ($existingUser) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'email_exists' => true,
+                        'message' => 'Email already registered. Please use a different email or login to your account.'
+                    ]);
+                }
+                return back()->withErrors(['email' => 'Email already registered']);
+            }
+
+            try {
+                $user = User::create([
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'email' => $request->email,
+                    'password' => bcrypt($request->password),
+                ]);
+
+                // Login the user
+                auth()->login($user);
+                $userId = $user->id;
+            } catch (\Exception $e) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Error creating account. Please try again.'
+                    ]);
+                }
+                return back()->withErrors(['email' => 'Error creating account']);
+            }
+        }
+
+        // Calculate totals
+        $subtotal = Cart::getSubTotal();
+        $shippingCost = $request->shipping_cost ?? 0;
+        $discountAmount = $request->discount_amount ?? 0;
+        $total = $subtotal + $shippingCost - $discountAmount;
+
+        // Create order
+        $order = Order::create([
+            'order_number' => 'ORD-' . time() . '-' . rand(1000, 9999),
+            'user_id' => $userId,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'company' => $request->company,
+            'country' => $request->country,
+            'address_line_1' => $request->address_line_1,
+            'address_line_2' => $request->address_line_2,
+            'city' => $request->city,
+            'state' => $request->state,
+            'postal_code' => $request->postal_code,
+            'notes' => $request->notes,
+            'discount_id' => $request->discount_id,
+            'discount_name' => $request->discount_name,
+            'discount_amount' => $discountAmount,
+            'shipping_method' => $request->shipping_method,
+            'shipping_cost' => $shippingCost,
+            'total' => $total,
+            'payment_method' => $request->payment_method,
+        ]);
+
+        // Create order items
+        foreach ($cartContent as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item->attributes->product_id,
+                'color' => $item->attributes->color,
+                'size' => $item->attributes->size,
+                'price' => $item->price,
+                'size_additional_price' => $item->attributes->size_additional_price ?? 0,
+                'quantity' => $item->quantity,
+                'total' => $item->price * $item->quantity,
+            ]);
+        }
+
+
+
+        // Clear cart and discount session
+        Cart::clear();
+        session()->forget('applied_discount');
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Order placed successfully! Order number: ' . $order->order_number,
+                'redirect' => route('frontend.home')
+            ]);
+        }
+
+        return redirect()->route('frontend.home')->with('success', 'Order placed successfully! Order number: ' . $order->order_number);
     }
 
 }
