@@ -102,6 +102,26 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ url('admin/order') }}"
+                        class="nav-link {{ request()->is('admin/order*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p>
+                            Orders
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ url('admin/settings') }}"
+                        class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>
+                            Settings
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="#" class="nav-link" data-toggle="modal" data-target="#logoutModal">
                         <i class="nav-icon fas fa-sign-out-alt"></i>
                         <p>Logout</p>

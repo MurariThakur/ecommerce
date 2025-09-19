@@ -57,4 +57,61 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class);
+    }
+
+    // Scopes
+    public function scopeNotDeleted($query)
+    {
+        return $query->where('isdelete', false);
+    }
+
+    public function scopePaid($query)
+    {
+        return $query->where('is_payment', true);
+    }
+
+    public function scopeUnpaid($query)
+    {
+        return $query->where('is_payment', false);
+    }
+
+    public function scopeByStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    // Helper methods
+    public function softDelete()
+    {
+        $this->update(['isdelete' => true]);
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        $badges = [
+            'confirmed' => '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Confirmed</span>',
+            'processing' => '<span class="badge badge-info"><i class="fas fa-cog"></i> Processing</span>',
+            'shipped' => '<span class="badge badge-primary"><i class="fas fa-shipping-fast"></i> Shipped</span>',
+            'delivered' => '<span class="badge badge-success"><i class="fas fa-check"></i> Delivered</span>',
+            'cancelled' => '<span class="badge badge-danger"><i class="fas fa-ban"></i> Cancelled</span>',
+        ];
+
+        return $badges[$this->status] ?? '<span class="badge badge-secondary">Unknown</span>';
+    }
+
+    public function getPaymentStatusBadgeAttribute()
+    {
+        return $this->is_payment
+            ? '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Paid</span>'
+            : '<span class="badge badge-danger"><i class="fas fa-times-circle"></i> Unpaid</span>';
+    }
+
+    public function getCustomerNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }

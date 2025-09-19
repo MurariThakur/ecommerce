@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\ShippingController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
@@ -81,6 +82,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Settings management routes
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+
+    // Order management routes
+    Route::get('/admin/order', [OrderController::class, 'index'])->name('admin.order.index');
+    Route::get('/admin/order/view/{order}', [OrderController::class, 'show'])->name('admin.order.show');
+    Route::put('/admin/order/update/{order}', [OrderController::class, 'update'])->name('admin.order.update');
+    Route::delete('/admin/order/delete/{order}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
+    Route::post('/admin/order/toggle-payment/{order}', [OrderController::class, 'togglePaymentStatus'])->name('admin.order.toggle.payment');
 
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([

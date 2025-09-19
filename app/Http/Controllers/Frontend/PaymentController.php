@@ -408,6 +408,7 @@ class PaymentController extends Controller
      */
     public function placeOrder(Request $request)
     {
+
         $cartContent = Cart::getContent();
 
         if ($cartContent->isEmpty()) {
@@ -454,9 +455,31 @@ class PaymentController extends Controller
 
         // Calculate totals
         $subtotal = Cart::getSubTotal();
-        $shippingCost = $request->shipping_cost ?? 0;
-        $discountAmount = $request->discount_amount ?? 0;
+        $shippingCost = (float) ($request->shipping_cost ?? 0);
+
+        // Always use session discount as primary source (more reliable)
+        $discountAmount = 0;
+        $discountId = null;
+        $discountName = null;
+
+        if (session('applied_discount')) {
+            $sessionDiscount = session('applied_discount');
+            $discountAmount = (float) $sessionDiscount['amount'];
+            $discountId = $sessionDiscount['id'];
+            $discountName = $sessionDiscount['name'];
+        } else {
+            // Fallback to request data if no session
+            $discountAmount = (float) ($request->discount_amount ?? 0);
+            $discountId = $request->discount_id;
+            $discountName = $request->discount_name;
+        }
+
         $total = $subtotal + $shippingCost - $discountAmount;
+
+        // Ensure total is not negative
+        if ($total < 0) {
+            $total = 0;
+        }
 
         // Create order with pending status and expiration
         $order = Order::create([
@@ -474,15 +497,15 @@ class PaymentController extends Controller
             'state' => $request->state,
             'postal_code' => $request->postal_code,
             'notes' => $request->notes,
-            'discount_id' => $request->discount_id,
-            'discount_name' => $request->discount_name,
+            'discount_id' => $discountId,
+            'discount_name' => $discountName,
             'discount_amount' => $discountAmount,
             'shipping_method' => $request->shipping_method,
             'shipping_cost' => $shippingCost,
             'total' => $total,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
-            'expires_at' => now()->addMinutes(1),
+            'expires_at' => now()->addMinutes(15),
         ]);
 
         // Create order items
@@ -498,8 +521,6 @@ class PaymentController extends Controller
                 'total' => $item->price * $item->quantity,
             ]);
         }
-
-
 
         // Process payment directly based on method
         switch ($order->payment_method) {
@@ -542,6 +563,8 @@ class PaymentController extends Controller
             $provider->setApiCredentials(config('paypal'));
             $paypalToken = $provider->getAccessToken();
 
+            $paypalAmount = number_format($order->total, 2, '.', '');
+
             $response = $provider->createOrder([
                 "intent" => "CAPTURE",
                 "application_context" => [
@@ -552,7 +575,7 @@ class PaymentController extends Controller
                     [
                         "amount" => [
                             "currency_code" => "USD",
-                            "value" => number_format($order->total, 2, '.', '')
+                            "value" => $paypalAmount
                         ]
                     ]
                 ]
@@ -650,8 +673,6 @@ class PaymentController extends Controller
             $provider->getAccessToken();
 
             $response = $provider->capturePaymentOrder(request('token'));
-            dd($response);
-
             if (isset($response['status']) && $response['status'] == 'COMPLETED') {
                 $order->update([
                     'status' => 'confirmed',
