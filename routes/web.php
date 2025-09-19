@@ -136,6 +136,8 @@ Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])-
 Route::post('/order/place', [PaymentController::class, 'placeOrder'])->name('order.place');
 Route::get('/paypal/success/{order}', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
 Route::get('/paypal/cancel/{order}', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
+Route::get('/stripe/success/{order}', [PaymentController::class, 'stripeSuccess'])->name('stripe.success');
+Route::get('/stripe/cancel/{order}', [PaymentController::class, 'stripeCancel'])->name('stripe.cancel');
 
 // Auth Routes
 Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');

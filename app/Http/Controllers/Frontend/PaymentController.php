@@ -10,6 +10,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class PaymentController extends Controller
 {
@@ -456,7 +458,7 @@ class PaymentController extends Controller
         $discountAmount = $request->discount_amount ?? 0;
         $total = $subtotal + $shippingCost - $discountAmount;
 
-        // Create order
+        // Create order with pending status and expiration
         $order = Order::create([
             'order_number' => 'ORD-' . time() . '-' . rand(1000, 9999),
             'user_id' => $userId,
@@ -479,6 +481,8 @@ class PaymentController extends Controller
             'shipping_cost' => $shippingCost,
             'total' => $total,
             'payment_method' => $request->payment_method,
+            'status' => 'pending',
+            'expires_at' => now()->addMinutes(1),
         ]);
 
         // Create order items
@@ -519,7 +523,9 @@ class PaymentController extends Controller
     private function processCashPayment($order, $request)
     {
         $order->update([
-            'is_payment' => false, // COD - payment pending
+            'status' => 'confirmed',
+            'is_payment' => false,
+            'expires_at' => null,
             'payment_data' => ['method' => 'cash_on_delivery']
         ]);
 
@@ -568,12 +574,14 @@ class PaymentController extends Controller
                 }
             }
 
+            $order->delete();
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'PayPal payment failed']);
             }
             return redirect()->route('cart.index')->with('error', 'PayPal payment failed');
 
         } catch (\Exception $e) {
+            $order->delete();
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'PayPal error: ' . $e->getMessage()]);
             }
@@ -586,17 +594,46 @@ class PaymentController extends Controller
      */
     private function processStripePayment($order, $request)
     {
-        // Simulate Stripe payment success
-        $order->update([
-            'is_payment' => true,
-            'payment_data' => [
-                'method' => 'stripe',
-                'transaction_id' => 'ST_' . time(),
-                'status' => 'completed'
-            ]
-        ]);
+        try {
+            Stripe::setApiKey(config('services.stripe.secret', env('STRIPE_SECRET')));
 
-        return $this->completeOrder($order, $request);
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [
+                    [
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => 'Order #' . $order->order_number,
+                            ],
+                            'unit_amount' => $order->total * 100, // Convert to cents
+                        ],
+                        'quantity' => 1,
+                    ]
+                ],
+                'mode' => 'payment',
+                'success_url' => route('stripe.success', $order->id),
+                'cancel_url' => route('stripe.cancel', $order->id),
+                'metadata' => [
+                    'order_id' => $order->id
+                ]
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'redirect' => $session->url
+                ]);
+            }
+            return redirect($session->url);
+
+        } catch (\Exception $e) {
+            $order->delete();
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Stripe error: ' . $e->getMessage()]);
+            }
+            return redirect()->route('cart.index')->with('error', 'Stripe error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -617,7 +654,9 @@ class PaymentController extends Controller
 
             if (isset($response['status']) && $response['status'] == 'COMPLETED') {
                 $order->update([
+                    'status' => 'confirmed',
                     'is_payment' => true,
+                    'expires_at' => null,
                     'payment_data' => [
                         'method' => 'paypal',
                         'transaction_id' => $response['id'],
@@ -630,6 +669,7 @@ class PaymentController extends Controller
                 return $this->completeOrder($order);
             }
 
+            $order->delete();
             return redirect()->route('cart.index')->with('error', 'Payment verification failed');
 
         } catch (\Exception $e) {
@@ -641,6 +681,44 @@ class PaymentController extends Controller
      * PayPal cancel callback
      */
     public function paypalCancel($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->delete(); // Remove cancelled order
+        }
+        return redirect()->route('cart.index')->with('error', 'Payment was cancelled');
+    }
+
+    /**
+     * Stripe success callback
+     */
+    public function stripeSuccess($orderId)
+    {
+        try {
+            $order = Order::findOrFail($orderId);
+
+            $order->update([
+                'status' => 'confirmed',
+                'is_payment' => true,
+                'expires_at' => null,
+                'payment_data' => [
+                    'method' => 'stripe',
+                    'transaction_id' => request('session_id') ?? 'ST_' . time(),
+                    'status' => 'completed'
+                ]
+            ]);
+
+            return $this->completeOrder($order);
+
+        } catch (\Exception $e) {
+            return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Stripe cancel callback
+     */
+    public function stripeCancel($orderId)
     {
         $order = Order::find($orderId);
         if ($order) {

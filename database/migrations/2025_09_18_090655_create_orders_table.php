@@ -34,7 +34,8 @@ return new class extends Migration
             $table->boolean('is_payment')->default(false);
             $table->json('payment_data')->nullable();
             $table->boolean('isdelete')->default(false);
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
