@@ -165,4 +165,17 @@
 @endsection
 
 @section('scripts')
+<script>
+$(document).ready(function() {
+    // Show success message from URL parameter using existing toast system
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMessage = urlParams.get('success');
+    if (successMessage) {
+        CartManager.showToast(successMessage, 'success');
+        
+        // Clean URL by removing success parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
+</script>
 @endsection

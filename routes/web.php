@@ -134,6 +134,8 @@ Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscoun
 Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
 Route::post('/order/place', [PaymentController::class, 'placeOrder'])->name('order.place');
+Route::get('/paypal/success/{order}', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
+Route::get('/paypal/cancel/{order}', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
 
 // Auth Routes
 Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');

@@ -9,6 +9,7 @@ use Darryldecode\Cart\Facades\CartFacade as Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaymentController extends Controller
 {
@@ -496,19 +497,176 @@ class PaymentController extends Controller
 
 
 
-        // Clear cart and discount session
-        Cart::clear();
+        // Process payment directly based on method
+        switch ($order->payment_method) {
+            case 'cash':
+                return $this->processCashPayment($order, $request);
+            case 'paypal':
+                return $this->processPaypalPayment($order, $request);
+            case 'stripe':
+                return $this->processStripePayment($order, $request);
+            default:
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'Invalid payment method']);
+                }
+                return redirect()->route('cart.index')->with('error', 'Invalid payment method');
+        }
+    }
+
+    /**
+     * Process cash on delivery payment
+     */
+    private function processCashPayment($order, $request)
+    {
+        $order->update([
+            'is_payment' => false, // COD - payment pending
+            'payment_data' => ['method' => 'cash_on_delivery']
+        ]);
+
+        return $this->completeOrder($order, $request);
+    }
+
+    /**
+     * Process PayPal payment
+     */
+    private function processPaypalPayment($order, $request)
+    {
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $paypalToken = $provider->getAccessToken();
+
+            $response = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "application_context" => [
+                    "return_url" => route('paypal.success', $order->id),
+                    "cancel_url" => route('paypal.cancel', $order->id),
+                ],
+                "purchase_units" => [
+                    [
+                        "amount" => [
+                            "currency_code" => "USD",
+                            "value" => number_format($order->total, 2, '.', '')
+                        ]
+                    ]
+                ]
+            ]);
+
+            if (isset($response['id']) && $response['id'] != null) {
+                foreach ($response['links'] as $links) {
+                    if ($links['rel'] == 'approve') {
+                        session(['paypal_order_id' => $order->id]);
+
+                        if ($request->ajax()) {
+                            return response()->json([
+                                'success' => true,
+                                'redirect' => $links['href']
+                            ]);
+                        }
+                        return redirect()->away($links['href']);
+                    }
+                }
+            }
+
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'PayPal payment failed']);
+            }
+            return redirect()->route('cart.index')->with('error', 'PayPal payment failed');
+
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'PayPal error: ' . $e->getMessage()]);
+            }
+            return redirect()->route('cart.index')->with('error', 'PayPal error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Process Stripe payment
+     */
+    private function processStripePayment($order, $request)
+    {
+        // Simulate Stripe payment success
+        $order->update([
+            'is_payment' => true,
+            'payment_data' => [
+                'method' => 'stripe',
+                'transaction_id' => 'ST_' . time(),
+                'status' => 'completed'
+            ]
+        ]);
+
+        return $this->completeOrder($order, $request);
+    }
+
+    /**
+     * PayPal success callback
+     */
+    public function paypalSuccess($orderId)
+    {
+
+        try {
+            $order = Order::findOrFail($orderId);
+
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
+
+            $response = $provider->capturePaymentOrder(request('token'));
+            dd($response);
+
+            if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+                $order->update([
+                    'is_payment' => true,
+                    'payment_data' => [
+                        'method' => 'paypal',
+                        'transaction_id' => $response['id'],
+                        'status' => 'completed',
+                        'payer_id' => $response['payer']['payer_id'] ?? null,
+                        'payment_status' => $response['status']
+                    ]
+                ]);
+
+                return $this->completeOrder($order);
+            }
+
+            return redirect()->route('cart.index')->with('error', 'Payment verification failed');
+
+        } catch (\Exception $e) {
+            return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * PayPal cancel callback
+     */
+    public function paypalCancel($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->delete(); // Remove cancelled order
+        }
+        return redirect()->route('cart.index')->with('error', 'Payment was cancelled');
+    }
+
+    /**
+     * Complete order and redirect to success
+     */
+    private function completeOrder($order, $request = null)
+    {
+        // Clear cart and sessions
+        // Cart::clear();
         session()->forget('applied_discount');
 
-        if ($request->ajax()) {
+        if ($request && $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Order placed successfully! Order number: ' . $order->order_number,
-                'redirect' => route('frontend.home')
+                'redirect' => route('cart.index') . '?success=' . urlencode('Order placed successfully! Order number: ' . $order->order_number)
             ]);
         }
 
-        return redirect()->route('frontend.home')->with('success', 'Order placed successfully! Order number: ' . $order->order_number);
+        return redirect()->route('cart.index')->with('success', 'Order placed successfully! Order number: ' . $order->order_number);
     }
 
 }
