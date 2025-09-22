@@ -26,6 +26,75 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Discounts</h3>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="{{ route('admin.discount.index') }}" class="row g-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="search"
+                                            placeholder="Search by discount name..." value="{{ request('search') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="status">
+                                            <option value="">All Status</option>
+                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="type">
+                                            <option value="">All Types</option>
+                                            <option value="percentage"
+                                                {{ request('type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                            <option value="fixed" {{ request('type') == 'fixed' ? 'selected' : '' }}>Fixed
+                                                Amount</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="expiry_status">
+                                            <option value="">All Expiry</option>
+                                            <option value="active"
+                                                {{ request('expiry_status') == 'active' ? 'selected' : '' }}>Not Expired
+                                            </option>
+                                            <option value="expired"
+                                                {{ request('expiry_status') == 'expired' ? 'selected' : '' }}>Expired
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="usage_status">
+                                            <option value="">All Usage</option>
+                                            <option value="available"
+                                                {{ request('usage_status') == 'available' ? 'selected' : '' }}>Available
+                                            </option>
+                                            <option value="exhausted"
+                                                {{ request('usage_status') == 'exhausted' ? 'selected' : '' }}>Exhausted
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="d-flex">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            @if (request()->hasAny(['search', 'status', 'type', 'expiry_status', 'usage_status']))
+                                                <a href="{{ route('admin.discount.index') }}"
+                                                    class="btn btn-secondary ml-1">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Discounts Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Discounts</h3>
@@ -108,7 +177,8 @@
                                                 <td colspan="7" class="text-center text-muted py-4">
                                                     <i class="fas fa-tags fa-3x mb-3"></i>
                                                     <p>No discounts found.</p>
-                                                    <a href="{{ route('admin.discount.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('admin.discount.create') }}"
+                                                        class="btn btn-primary">
                                                         <i class="fas fa-plus"></i> Create First Discount
                                                     </a>
                                                 </td>
@@ -127,6 +197,9 @@
                                             Showing {{ $discounts->firstItem() ?? 0 }} to
                                             {{ $discounts->lastItem() ?? 0 }}
                                             of {{ $discounts->total() }} results
+                                            @if (request()->hasAny(['search', 'status', 'type', 'expiry_status', 'usage_status']))
+                                                (filtered)
+                                            @endif
                                         </small>
                                     </div>
                                 </div>

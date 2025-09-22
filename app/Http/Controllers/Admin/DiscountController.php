@@ -9,10 +9,51 @@ use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $discounts = Discount::latest()
-            ->paginate(10);
+        $query = Discount::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Expiry status filter
+        if ($request->filled('expiry_status')) {
+            if ($request->expiry_status === 'active') {
+                $query->where('expire_date', '>=', now());
+            } elseif ($request->expiry_status === 'expired') {
+                $query->where('expire_date', '<', now());
+            }
+        }
+
+        // Usage limit filter
+        if ($request->filled('usage_status')) {
+            if ($request->usage_status === 'available') {
+                $query->where(function ($q) {
+                    $q->whereNull('usage_limit')
+                        ->orWhereRaw('used_count < usage_limit');
+                });
+            } elseif ($request->usage_status === 'exhausted') {
+                $query->whereNotNull('usage_limit')
+                    ->whereRaw('used_count >= usage_limit');
+            }
+        }
+
+
+
+        $discounts = $query->latest()->paginate(10)->appends($request->query());
         return view('admin.discount.index', compact('discounts'));
     }
 

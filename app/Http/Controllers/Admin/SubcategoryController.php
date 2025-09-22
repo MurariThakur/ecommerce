@@ -6,18 +6,45 @@ use App\Http\Controllers\Controller;
 use App\Models\Subcategory;
 use App\Http\Requests\SubcategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class SubcategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $subcategories = Subcategory::with('category')
-                        ->notDeleted()
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10);
+        $query = Subcategory::with('category')->notDeleted();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                        $categoryQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $subcategories = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
         return view('admin.subcategory.index', compact('subcategories'));
     }
 

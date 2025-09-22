@@ -12,11 +12,31 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $brands = Brand::notDeleted()
-            ->latest()
-            ->paginate(10);
+        $query = Brand::notDeleted();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $brands = $query->latest()->paginate(10)->appends($request->query());
         return view('admin.brand.index', compact('brands'));
     }
 
@@ -71,20 +91,20 @@ class BrandController extends Controller
     {
         // Get product count for success message
         $productCount = $brand->products()->count();
-        
+
         // Soft delete all products first (if applicable)
         if ($productCount > 0) {
             $brand->products()->update(['is_deleted' => true]);
         }
-        
+
         // Then soft delete the brand
         $brand->softDelete();
-        
+
         $message = 'Brand deleted successfully.';
         if ($productCount > 0) {
             $message .= " {$productCount} associated product(s) were also deleted.";
         }
-        
+
         return redirect()->route('admin.brand.index')->with('success', $message);
     }
 

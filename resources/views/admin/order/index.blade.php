@@ -26,11 +26,73 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Orders</h3>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="{{ route('admin.order.index') }}" class="row g-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="search"
+                                            placeholder="Search by order number, customer name, email, phone..."
+                                            value="{{ request('search') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="status">
+                                            <option value="">All Status</option>
+                                            <option value="confirmed"
+                                                {{ request('status') == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                            <option value="processing"
+                                                {{ request('status') == 'processing' ? 'selected' : '' }}>Processing
+                                            </option>
+                                            <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>
+                                                Shipped</option>
+                                            <option value="delivered"
+                                                {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                            <option value="cancelled"
+                                                {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="payment_status">
+                                            <option value="">All Payment Status</option>
+                                            <option value="paid"
+                                                {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="unpaid"
+                                                {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Unpaid
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" class="form-control" name="date_from" placeholder="From Date"
+                                            value="{{ request('date_from') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" class="form-control" name="date_to" placeholder="To Date"
+                                            value="{{ request('date_to') }}">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="d-flex">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            @if (request()->hasAny(['search', 'status', 'payment_status', 'date_from', 'date_to']))
+                                                <a href="{{ route('admin.order.index') }}" class="btn btn-secondary ml-1">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Orders Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Orders</h3>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
@@ -170,6 +232,9 @@
                                             <small class="text-muted">
                                                 Showing {{ $orders->firstItem() ?? 0 }} to {{ $orders->lastItem() ?? 0 }}
                                                 of {{ $orders->total() }} results
+                                                @if (request()->hasAny(['search', 'status', 'payment_status', 'date_from', 'date_to']))
+                                                    (filtered)
+                                                @endif
                                             </small>
                                         </div>
                                     </div>

@@ -26,6 +26,52 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Shipping Methods</h3>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="{{ route('admin.shipping.index') }}" class="row g-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="search"
+                                            placeholder="Search by shipping method name..." value="{{ request('search') }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" name="status">
+                                            <option value="">All Status</option>
+                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" class="form-control" name="date_from" placeholder="From Date"
+                                            value="{{ request('date_from') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" class="form-control" name="date_to" placeholder="To Date"
+                                            value="{{ request('date_to') }}">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="d-flex">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                                                <a href="{{ route('admin.shipping.index') }}"
+                                                    class="btn btn-secondary ml-1">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Methods Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Shipping Methods</h3>
@@ -82,7 +128,8 @@
                                                             title="{{ $shipping->status ? 'Deactivate' : 'Activate' }}"
                                                             data-toggle="modal"
                                                             data-target="#statusModal{{ $shipping->id }}">
-                                                            <i class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
+                                                            <i
+                                                                class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-danger btn-sm ml-1"
                                                             title="Delete" data-toggle="modal"
@@ -101,9 +148,21 @@
                                 </table>
                             </div>
                             <!-- /.card-body -->
-                            @if($shippings->hasPages())
+                            @if ($shippings->hasPages())
                                 <div class="card-footer clearfix">
-                                    {{ $shippings->links() }}
+                                    <div class="float-right">
+                                        {{ $shippings->links() }}
+                                    </div>
+                                    <div class="float-left">
+                                        <small class="text-muted">
+                                            Showing {{ $shippings->firstItem() ?? 0 }} to
+                                            {{ $shippings->lastItem() ?? 0 }}
+                                            of {{ $shippings->total() }} results
+                                            @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                                                (filtered)
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -115,7 +174,7 @@
     </div>
 
     <!-- Status Change Modals -->
-    @foreach($shippings as $shipping)
+    @foreach ($shippings as $shipping)
         <div class="modal fade" id="statusModal{{ $shipping->id }}" tabindex="-1" role="dialog"
             aria-labelledby="statusModalLabel{{ $shipping->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -136,8 +195,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <form action="{{ route('admin.shipping.toggle.status', $shipping) }}" method="POST">
                             @csrf
-                            <button type="submit"
-                                class="btn {{ $shipping->status ? 'btn-warning' : 'btn-success' }}">
+                            <button type="submit" class="btn {{ $shipping->status ? 'btn-warning' : 'btn-success' }}">
                                 {{ $shipping->status ? 'Deactivate' : 'Activate' }}
                             </button>
                         </form>

@@ -20,13 +20,74 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'subcategory'])
-            ->notDeleted()
-            ->latest()
-            ->paginate(10);
-        return view('admin.product.index', compact('products'));
+        $query = Product::with(['category', 'subcategory', 'brand'])->notDeleted();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                        $categoryQuery->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('subcategory', function ($subcategoryQuery) use ($search) {
+                        $subcategoryQuery->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('brand', function ($brandQuery) use ($search) {
+                        $brandQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Brand filter
+        if ($request->filled('brand')) {
+            $query->where('brand_id', $request->brand);
+        }
+
+        // Subcategory filter
+        if ($request->filled('subcategory')) {
+            $query->where('subcategory_id', $request->subcategory);
+        }
+
+        // Stock status filter
+        if ($request->filled('stock_status')) {
+            if ($request->stock_status === 'in_stock') {
+                $query->where('stock_quantity', '>', 0);
+            } elseif ($request->stock_status === 'out_of_stock') {
+                $query->where('stock_quantity', '<=', 0);
+            }
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $products = $query->latest()->paginate(10)->appends($request->query());
+
+        // Get filter options
+        $categories = Category::active()->pluck('name', 'id');
+        $brands = Brand::active()->pluck('name', 'id');
+        $subcategories = Subcategory::active()->pluck('name', 'id');
+
+        return view('admin.product.index', compact('products', 'categories', 'brands', 'subcategories'));
     }
 
     /**
@@ -288,7 +349,7 @@ class ProductController extends Controller
 
                     // Generate a unique filename
                     $filename = uniqid('product_') . '_' . time() . '.' . $this->getExtensionFromMimeType($imageData['mime_type']);
-                    $path = 'products/'. $filename;
+                    $path = 'products/' . $filename;
 
                     // Store the file
                     Storage::disk('public')->put($path, $imageContent);

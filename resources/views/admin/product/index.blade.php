@@ -26,6 +26,101 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Products</h3>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="{{ route('admin.product.index') }}" class="row">
+                                    <div class="col-md-11">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" name="search"
+                                                    placeholder="Search by name, SKU, category, brand..."
+                                                    value="{{ request('search') }}">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <select class="form-control" name="status">
+                                                    <option value="">All Status</option>
+                                                    <option value="active"
+                                                        {{ request('status') == 'active' ? 'selected' : '' }}>Active
+                                                    </option>
+                                                    <option value="inactive"
+                                                        {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" name="category">
+                                                    <option value="">All Categories</option>
+                                                    @foreach ($categories as $id => $name)
+                                                        <option value="{{ $id }}"
+                                                            {{ request('category') == $id ? 'selected' : '' }}>
+                                                            {{ $name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" name="subcategory">
+                                                    <option value="">All Subcategories</option>
+                                                    @foreach ($subcategories as $id => $name)
+                                                        <option value="{{ $id }}"
+                                                            {{ request('subcategory') == $id ? 'selected' : '' }}>
+                                                            {{ $name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <select class="form-control" name="brand">
+                                                    <option value="">All Brands</option>
+                                                    @foreach ($brands as $id => $name)
+                                                        <option value="{{ $id }}"
+                                                            {{ request('brand') == $id ? 'selected' : '' }}>
+                                                            {{ $name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" name="stock_status">
+                                                    <option value="">All Stock</option>
+                                                    <option value="in_stock"
+                                                        {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>In
+                                                        Stock</option>
+                                                    <option value="out_of_stock"
+                                                        {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>
+                                                        Out of Stock</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="date" class="form-control" name="date_from"
+                                                    placeholder="From Date" value="{{ request('date_from') }}">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="date" class="form-control" name="date_to"
+                                                    placeholder="To Date" value="{{ request('date_to') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                        <div class="d-flex flex-column">
+                                            <button type="submit" class="btn btn-primary mb-2">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            @if (request()->hasAny(['search', 'status', 'category', 'subcategory', 'brand', 'stock_status', 'date_from', 'date_to']))
+                                                <a href="{{ route('admin.product.index') }}" class="btn btn-secondary">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Products Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Products</h3>
@@ -129,7 +224,8 @@
                                                 <td colspan="7" class="text-center text-muted py-4">
                                                     <i class="fas fa-shopping-cart fa-3x mb-3"></i>
                                                     <p>No products found.</p>
-                                                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('admin.product.create') }}"
+                                                        class="btn btn-primary">
                                                         <i class="fas fa-plus"></i> Create First Product
                                                     </a>
                                                 </td>
@@ -148,6 +244,9 @@
                                         <small class="text-muted">
                                             Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }}
                                             of {{ $products->total() }} results
+                                            @if (request()->hasAny(['search', 'status', 'category', 'subcategory', 'brand', 'stock_status', 'date_from', 'date_to']))
+                                                (filtered)
+                                            @endif
                                         </small>
                                     </div>
                                 </div>
@@ -192,7 +291,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4"><strong>Category:</strong></div>
-                                    <div class="col-sm-8">{{ $product->category ? $product->category->name : 'N/A' }}</div>
+                                    <div class="col-sm-8">{{ $product->category ? $product->category->name : 'N/A' }}
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4"><strong>Price:</strong></div>

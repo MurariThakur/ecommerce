@@ -12,11 +12,31 @@ class ColorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $colors = Color::notDeleted()
-            ->latest()
-            ->paginate(10);
+        $query = Color::notDeleted();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $colors = $query->latest()->paginate(10)->appends($request->query());
         return view('admin.color.index', compact('colors'));
     }
 
@@ -71,20 +91,20 @@ class ColorController extends Controller
     {
         // Get product count for success message
         $productCount = $color->products()->count();
-        
+
         // Soft delete all products first (if applicable)
         if ($productCount > 0) {
             $color->products()->update(['is_deleted' => true]);
         }
-        
+
         // Then soft delete the color
         $color->softDelete();
-        
+
         $message = 'Color deleted successfully.';
         if ($productCount > 0) {
             $message .= " {$productCount} associated product(s) were also deleted.";
         }
-        
+
         return redirect()->route('admin.color.index')->with('success', $message);
     }
 
