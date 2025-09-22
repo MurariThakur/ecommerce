@@ -90,6 +90,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/order/delete/{order}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
     Route::post('/admin/order/toggle-payment/{order}', [OrderController::class, 'togglePaymentStatus'])->name('admin.order.toggle.payment');
 
+    // Customer management routes
+    Route::get('/admin/customer', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customer.index');
+    Route::get('/admin/customer/view/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customer.show');
+    Route::delete('/admin/customer/delete/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('admin.customer.destroy');
+    Route::post('/admin/customer/toggle-status/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleStatus'])->name('admin.customer.toggle.status');
+
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
         'index' => 'admin.brand.index',
