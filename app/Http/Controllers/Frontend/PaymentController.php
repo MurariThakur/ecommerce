@@ -12,6 +12,8 @@ use App\Models\User;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -411,12 +413,12 @@ class PaymentController extends Controller
         // Generate or get idempotency token
         $idempotencyToken = $request->idempotency_token ?? session('order_token', uniqid('order_', true));
         session(['order_token' => $idempotencyToken]);
-        
+
         // Check for duplicate order
         $existingOrder = Order::where('idempotency_token', $idempotencyToken)
             ->where('status', '!=', 'pending')
             ->first();
-            
+
         if ($existingOrder) {
             if ($request->ajax()) {
                 return response()->json([
@@ -772,6 +774,16 @@ class PaymentController extends Controller
      */
     private function completeOrder($order, $request = null)
     {
+        // Load order relationships for email
+        $order->load(['orderItems.product']);
+
+        // Queue order confirmation email
+        try {
+            Mail::to($order->email)->queue(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            \Log::error('Failed to queue order confirmation email: ' . $e->getMessage());
+        }
+
         // Clear cart and sessions
         Cart::clear();
         session()->forget(['applied_discount', 'order_token']);

@@ -32,10 +32,10 @@ class AuthController extends Controller
                     ['id' => $user->id, 'hash' => sha1($user->email)]
                 );
 
-                Mail::to($user->email)->send(new RegisterMail($user, $verificationUrl));
+                Mail::to($user->email)->queue(new RegisterMail($user, $verificationUrl));
             } catch (\Exception $mailError) {
                 // Log mail error but don't fail registration
-                \Log::error('Mail sending failed: ' . $mailError->getMessage());
+                \Log::error('Mail queueing failed: ' . $mailError->getMessage());
             }
 
             return response()->json([
@@ -96,9 +96,9 @@ class AuthController extends Controller
                     now()->addMinutes(60),
                     ['id' => $user->id, 'hash' => sha1($user->email)]
                 );
-                Mail::to($user->email)->send(new RegisterMail($user, $verificationUrl));
+                Mail::to($user->email)->queue(new RegisterMail($user, $verificationUrl));
             } catch (\Exception $e) {
-                \Log::error('Verification email failed: ' . $e->getMessage());
+                \Log::error('Verification email queueing failed: ' . $e->getMessage());
             }
 
             return response()->json([
@@ -144,9 +144,9 @@ class AuthController extends Controller
             $resetUrl = route('password.reset', ['email' => $user->email, 'token' => $token]);
 
             try {
-                Mail::to($user->email)->send(new ResetPasswordMail($user, $resetUrl));
+                Mail::to($user->email)->queue(new ResetPasswordMail($user, $resetUrl));
             } catch (\Exception $mailError) {
-                \Log::error('Reset password mail failed: ' . $mailError->getMessage());
+                \Log::error('Reset password mail queueing failed: ' . $mailError->getMessage());
             }
 
             return back()->with('status', 'We have sent your password reset link to your email!');
@@ -183,11 +183,11 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        // Send success email
+        // Queue success email
         try {
-            Mail::to($user->email)->send(new PasswordResetSuccessMail($user));
+            Mail::to($user->email)->queue(new PasswordResetSuccessMail($user));
         } catch (\Exception $mailError) {
-            \Log::error('Password reset success mail failed: ' . $mailError->getMessage());
+            \Log::error('Password reset success mail queueing failed: ' . $mailError->getMessage());
         }
 
         return redirect('/')->with('success', 'Your password has been reset successfully! You can now sign in.');

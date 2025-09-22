@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Mail\OrderStatusUpdateMail;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -87,12 +89,23 @@ class OrderController extends Controller
             'status' => 'required|in:confirmed,processing,shipped,delivered,cancelled'
         ]);
 
+        $oldStatus = $order->status;
+
         // If cancelling a paid PayPal order, process refund
         if ($request->status === 'cancelled' && $order->is_payment && $order->payment_method === 'paypal') {
             $this->processPayPalRefund($order);
         }
 
         $order->update(['status' => $request->status]);
+
+        // Queue status update email if status changed
+        if ($oldStatus !== $request->status) {
+            try {
+                Mail::to($order->email)->queue(new OrderStatusUpdateMail($order, $oldStatus));
+            } catch (\Exception $e) {
+                \Log::error('Failed to queue order status update email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.order.index')->with('success', 'Order status updated successfully.');
     }

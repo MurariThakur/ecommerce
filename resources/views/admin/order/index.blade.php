@@ -405,7 +405,7 @@
 
         <!-- Payment Status Toggle Modals (Only for COD) -->
         @foreach ($orders as $order)
-            @if ($order->payment_method == 'cod')
+            @if ($order->payment_method == 'cash')
                 <div class="modal fade" id="paymentModal{{ $order->id }}" tabindex="-1" role="dialog"
                     aria-labelledby="paymentModalLabel{{ $order->id }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">
