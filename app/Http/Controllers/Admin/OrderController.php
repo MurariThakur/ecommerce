@@ -90,16 +90,23 @@ class OrderController extends Controller
         ]);
 
         $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        // Validate status transitions
+        if (!$this->isValidStatusTransition($oldStatus, $newStatus)) {
+            return redirect()->route('admin.order.index')
+                ->with('error', "Cannot change order status from '{$oldStatus}' to '{$newStatus}'.");
+        }
 
         // If cancelling a paid PayPal order, process refund
-        if ($request->status === 'cancelled' && $order->is_payment && $order->payment_method === 'paypal') {
+        if ($newStatus === 'cancelled' && $order->is_payment && $order->payment_method === 'paypal') {
             $this->processPayPalRefund($order);
         }
 
-        $order->update(['status' => $request->status]);
+        $order->update(['status' => $newStatus]);
 
         // Queue status update email if status changed
-        if ($oldStatus !== $request->status) {
+        if ($oldStatus !== $newStatus) {
             try {
                 Mail::to($order->email)->queue(new OrderStatusUpdateMail($order, $oldStatus));
             } catch (\Exception $e) {
@@ -127,6 +134,27 @@ class OrderController extends Controller
     {
         $order->update(['is_payment' => !$order->is_payment]);
         return back()->with('success', 'Order payment status updated successfully.');
+    }
+
+    /**
+     * Validate status transitions
+     */
+    private function isValidStatusTransition($oldStatus, $newStatus)
+    {
+        // Same status is always valid
+        if ($oldStatus === $newStatus) {
+            return true;
+        }
+
+        $validTransitions = [
+            'confirmed' => ['processing', 'cancelled'],
+            'processing' => ['shipped', 'cancelled'],
+            'shipped' => ['delivered', 'cancelled'],
+            'delivered' => [], // No transitions allowed from delivered
+            'cancelled' => [] // No transitions allowed from cancelled
+        ];
+
+        return in_array($newStatus, $validTransitions[$oldStatus] ?? []);
     }
 
     /**
