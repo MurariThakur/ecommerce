@@ -30,64 +30,80 @@
                         <div class="card mb-3">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-search"></i> Search Discounts</h3>
+                                <div class="card-tools d-md-none">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form method="GET" action="{{ route('admin.discount.index') }}" class="row g-3">
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" name="search"
-                                            placeholder="Search by discount name..." value="{{ request('search') }}">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select class="form-control" name="status">
-                                            <option value="">All Status</option>
-                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                                                Active</option>
-                                            <option value="inactive"
-                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select class="form-control" name="type">
-                                            <option value="">All Types</option>
-                                            <option value="percentage"
-                                                {{ request('type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
-                                            <option value="fixed" {{ request('type') == 'fixed' ? 'selected' : '' }}>Fixed
-                                                Amount</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select class="form-control" name="expiry_status">
-                                            <option value="">All Expiry</option>
-                                            <option value="active"
-                                                {{ request('expiry_status') == 'active' ? 'selected' : '' }}>Not Expired
-                                            </option>
-                                            <option value="expired"
-                                                {{ request('expiry_status') == 'expired' ? 'selected' : '' }}>Expired
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select class="form-control" name="usage_status">
-                                            <option value="">All Usage</option>
-                                            <option value="available"
-                                                {{ request('usage_status') == 'available' ? 'selected' : '' }}>Available
-                                            </option>
-                                            <option value="exhausted"
-                                                {{ request('usage_status') == 'exhausted' ? 'selected' : '' }}>Exhausted
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="d-flex">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                            @if (request()->hasAny(['search', 'status', 'type', 'expiry_status', 'usage_status']))
-                                                <a href="{{ route('admin.discount.index') }}"
-                                                    class="btn btn-secondary ml-1">
-                                                    <i class="fas fa-times"></i>
-                                                </a>
-                                            @endif
+                            <div class="card-body" id="searchCardBody">
+                                <form method="GET" action="{{ route('admin.discount.index') }}">
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-10">
+                                            <div class="row mb-3">
+                                                <div class="col-lg-3 col-md-6 col-12 mb-2">
+                                                    <input type="text" class="form-control" name="search"
+                                                        placeholder="Search discounts..." value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="status">
+                                                        <option value="">Status</option>
+                                                        <option value="active"
+                                                            {{ request('status') == 'active' ? 'selected' : '' }}>Active
+                                                        </option>
+                                                        <option value="inactive"
+                                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="type">
+                                                        <option value="">Type</option>
+                                                        <option value="percentage"
+                                                            {{ request('type') == 'percentage' ? 'selected' : '' }}>
+                                                            Percentage</option>
+                                                        <option value="fixed"
+                                                            {{ request('type') == 'fixed' ? 'selected' : '' }}>Fixed
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="expiry_status">
+                                                        <option value="">Expiry</option>
+                                                        <option value="active"
+                                                            {{ request('expiry_status') == 'active' ? 'selected' : '' }}>Not
+                                                            Expired</option>
+                                                        <option value="expired"
+                                                            {{ request('expiry_status') == 'expired' ? 'selected' : '' }}>
+                                                            Expired</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="usage_status">
+                                                        <option value="">Usage</option>
+                                                        <option value="available"
+                                                            {{ request('usage_status') == 'available' ? 'selected' : '' }}>
+                                                            Available</option>
+                                                        <option value="exhausted"
+                                                            {{ request('usage_status') == 'exhausted' ? 'selected' : '' }}>
+                                                            Exhausted</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-lg-1 col-md-2 col-12 d-flex align-items-lg-start align-items-center justify-content-center">
+                                            <div class="d-flex flex-row justify-content-center">
+                                                <button type="submit" class="btn btn-primary mr-2">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                                @if (request()->hasAny(['search', 'status', 'type', 'expiry_status', 'usage_status']))
+                                                    <a href="{{ route('admin.discount.index') }}"
+                                                        class="btn btn-secondary">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -345,3 +361,30 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            if ($(window).width() < 768) {
+                $('#searchCardBody').hide();
+                $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus').addClass(
+                    'fa-plus');
+            }
+
+            $(window).resize(function() {
+                if ($(window).width() >= 768) {
+                    $('#searchCardBody').show();
+                    $('#searchCardBody').closest('.card').removeClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-plus')
+                        .addClass('fa-minus');
+                } else {
+                    $('#searchCardBody').hide();
+                    $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus')
+                        .addClass('fa-plus');
+                }
+            });
+        });
+    </script>
+@endpush

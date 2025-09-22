@@ -30,41 +30,55 @@
                         <div class="card mb-3">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-search"></i> Search Categories</h3>
+                                <div class="card-tools d-md-none">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form method="GET" action="{{ route('admin.category.index') }}" class="row g-3">
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" name="search"
-                                            placeholder="Search by category name..." value="{{ request('search') }}">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select class="form-control" name="status">
-                                            <option value="">All Status</option>
-                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                                                Active</option>
-                                            <option value="inactive"
-                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input type="date" class="form-control" name="date_from" placeholder="From Date"
-                                            value="{{ request('date_from') }}">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input type="date" class="form-control" name="date_to" placeholder="To Date"
-                                            value="{{ request('date_to') }}">
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="d-flex">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                            @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
-                                                <a href="{{ route('admin.category.index') }}"
-                                                    class="btn btn-secondary ml-1">
-                                                    <i class="fas fa-times"></i>
-                                                </a>
-                                            @endif
+                            <div class="card-body" id="searchCardBody">
+                                <form method="GET" action="{{ route('admin.category.index') }}">
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-10">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                                                    <input type="text" class="form-control" name="search"
+                                                        placeholder="Search by category name..."
+                                                        value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="status">
+                                                        <option value="">All Status</option>
+                                                        <option value="active"
+                                                            {{ request('status') == 'active' ? 'selected' : '' }}>Active
+                                                        </option>
+                                                        <option value="inactive"
+                                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_from"
+                                                        value="{{ request('date_from') }}">
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_to"
+                                                        value="{{ request('date_to') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-lg-1 col-md-2 col-12 d-flex align-items-lg-start align-items-center justify-content-center">
+                                            <div class="d-flex flex-row justify-content-center">
+                                                <button type="submit" class="btn btn-primary mr-2">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                                @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                                                    <a href="{{ route('admin.category.index') }}" class="btn btn-secondary">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -156,7 +170,8 @@
                                                 <td colspan="5" class="text-center text-muted py-4">
                                                     <i class="fas fa-tags fa-3x mb-3"></i>
                                                     <p>No categories found.</p>
-                                                    <a href="{{ route('admin.category.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('admin.category.create') }}"
+                                                        class="btn btn-primary">
                                                         <i class="fas fa-plus"></i> Create First Category
                                                     </a>
                                                 </td>
@@ -384,3 +399,30 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            if ($(window).width() < 768) {
+                $('#searchCardBody').hide();
+                $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus').addClass(
+                    'fa-plus');
+            }
+
+            $(window).resize(function() {
+                if ($(window).width() >= 768) {
+                    $('#searchCardBody').show();
+                    $('#searchCardBody').closest('.card').removeClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-plus')
+                        .addClass('fa-minus');
+                } else {
+                    $('#searchCardBody').hide();
+                    $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus')
+                        .addClass('fa-plus');
+                }
+            });
+        });
+    </script>
+@endpush
