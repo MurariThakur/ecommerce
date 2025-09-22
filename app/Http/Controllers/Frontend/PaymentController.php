@@ -408,6 +408,24 @@ class PaymentController extends Controller
      */
     public function placeOrder(Request $request)
     {
+        // Generate or get idempotency token
+        $idempotencyToken = $request->idempotency_token ?? session('order_token', uniqid('order_', true));
+        session(['order_token' => $idempotencyToken]);
+        
+        // Check for duplicate order
+        $existingOrder = Order::where('idempotency_token', $idempotencyToken)
+            ->where('status', '!=', 'pending')
+            ->first();
+            
+        if ($existingOrder) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
+                ]);
+            }
+            return redirect()->route('cart.index')->with('error', 'Order already processed.');
+        }
 
         $cartContent = Cart::getContent();
 
@@ -506,6 +524,7 @@ class PaymentController extends Controller
             'payment_method' => $request->payment_method,
             'status' => 'pending',
             'expires_at' => now()->addMinutes(15),
+            'idempotency_token' => $idempotencyToken,
         ]);
 
         // Create order items
@@ -754,8 +773,8 @@ class PaymentController extends Controller
     private function completeOrder($order, $request = null)
     {
         // Clear cart and sessions
-        // Cart::clear();
-        session()->forget('applied_discount');
+        Cart::clear();
+        session()->forget(['applied_discount', 'order_token']);
 
         if ($request && $request->ajax()) {
             return response()->json([

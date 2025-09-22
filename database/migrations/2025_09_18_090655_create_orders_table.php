@@ -36,6 +36,7 @@ return new class extends Migration
             $table->boolean('isdelete')->default(false);
             $table->enum('status', ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->timestamp('expires_at')->nullable();
+            $table->string('idempotency_token')->nullable()->unique();
             $table->timestamps();
         });
     }

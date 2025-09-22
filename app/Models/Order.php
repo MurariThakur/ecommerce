@@ -35,7 +35,8 @@ class Order extends Model
         'payment_data',
         'isdelete',
         'status',
-        'expires_at'
+        'expires_at',
+        'idempotency_token'
     ];
 
     protected $casts = [
