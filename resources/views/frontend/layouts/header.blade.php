@@ -34,7 +34,7 @@
                              <li><a href="{{ asset('about.html') }}">About Us</a></li>
                              <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
                              @auth
-                                 <li><a href="#" id="logout-btn"><i class="icon-user"></i>Logout</a></li>
+                                 <li><a href="{{ route('user.dashboard') }}"><i class="icon-user"></i>Dashboard</a></li>
                              @else
                                  <li><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
                              @endauth
@@ -144,7 +144,7 @@
                      </a>
 
                      <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">
-                        @include('frontend.layouts.cart_dropdown')
+                         @include('frontend.layouts.cart_dropdown')
                      </div><!-- End .dropdown-menu -->
                  </div>
              </div><!-- End .container -->

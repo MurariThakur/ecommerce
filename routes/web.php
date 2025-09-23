@@ -11,10 +11,12 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\ShippingController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
+use App\Http\Controllers\Frontend\UserDashboardController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -82,6 +84,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
+    // Order management routes
+    Route::get('/admin/order', [OrderController::class, 'index'])->name('admin.order.index');
+    Route::get('/admin/order/view/{order}', [OrderController::class, 'show'])->name('admin.order.show');
+    Route::put('/admin/order/update/{order}', [OrderController::class, 'update'])->name('admin.order.update');
+    Route::delete('/admin/order/delete/{order}', [OrderController::class, 'destroy'])->name('admin.order.destroy');
+    Route::post('/admin/order/toggle-payment/{order}', [OrderController::class, 'togglePaymentStatus'])->name('admin.order.toggle.payment');
+
+    // Customer management routes
+    Route::get('/admin/customer', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customer.index');
+    Route::get('/admin/customer/view/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customer.show');
+    Route::delete('/admin/customer/delete/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('admin.customer.destroy');
+    Route::post('/admin/customer/toggle-status/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleStatus'])->name('admin.customer.toggle.status');
+
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
         'index' => 'admin.brand.index',
@@ -133,17 +148,32 @@ Route::get('/checkout/summary', [PaymentController::class, 'getCheckoutSummary']
 Route::post('/checkout/apply-discount', [PaymentController::class, 'applyDiscount'])->name('checkout.apply.discount');
 Route::post('/checkout/remove-discount', [PaymentController::class, 'removeDiscount'])->name('checkout.remove.discount');
 Route::post('/checkout/process', [PaymentController::class, 'processCheckout'])->name('checkout.process');
+Route::post('/order/place', [PaymentController::class, 'placeOrder'])->name('order.place');
+Route::get('/paypal/success/{order}', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
+Route::get('/paypal/cancel/{order}', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
+Route::get('/stripe/success/{order}', [PaymentController::class, 'stripeSuccess'])->name('stripe.success');
+Route::get('/stripe/cancel/{order}', [PaymentController::class, 'stripeCancel'])->name('stripe.cancel');
 
 // Auth Routes
 Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');
-Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('auth.login');
-Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('auth.logout');
+Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name(name: 'auth.login');
+Route::post('/frontendlogout', [\App\Http\Controllers\Frontend\AuthController::class, 'frontendlogout'])->name('frontend.auth.logout');
 Route::get('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
 Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
 
+// User Dashboard Routes (require authentication)
+Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/orders', [UserDashboardController::class, 'orders'])->name('orders');
+    Route::get('/order/{id}', [UserDashboardController::class, 'orderDetails'])->name('order.details');
+    Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
+    Route::post('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/change-password', [UserDashboardController::class, 'changePassword'])->name('change-password');
+    Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('change-password.update');
+});
 
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');

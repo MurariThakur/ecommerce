@@ -26,6 +26,108 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Products</h3>
+                                <div class="card-tools d-md-none">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body" id="searchCardBody">
+                                <form method="GET" action="{{ route('admin.product.index') }}">
+                                    <div class="row">
+                                        <div class="col-lg-10 col-md-10">
+                                            <div class="row mb-3">
+                                                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                                                    <input type="text" class="form-control" name="search"
+                                                        placeholder="Search products..." value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="status">
+                                                        <option value="">Status</option>
+                                                        <option value="active"
+                                                            {{ request('status') == 'active' ? 'selected' : '' }}>Active
+                                                        </option>
+                                                        <option value="inactive"
+                                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="category">
+                                                        <option value="">Category</option>
+                                                        @foreach ($categories as $id => $name)
+                                                            <option value="{{ $id }}"
+                                                                {{ request('category') == $id ? 'selected' : '' }}>
+                                                                {{ $name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="subcategory">
+                                                        <option value="">Subcategory</option>
+                                                        @foreach ($subcategories as $id => $name)
+                                                            <option value="{{ $id }}"
+                                                                {{ request('subcategory') == $id ? 'selected' : '' }}>
+                                                                {{ $name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="brand">
+                                                        <option value="">Brand</option>
+                                                        @foreach ($brands as $id => $name)
+                                                            <option value="{{ $id }}"
+                                                                {{ request('brand') == $id ? 'selected' : '' }}>
+                                                                {{ $name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="stock_status">
+                                                        <option value="">Stock</option>
+                                                        <option value="in_stock"
+                                                            {{ request('stock_status') == 'in_stock' ? 'selected' : '' }}>
+                                                            In Stock</option>
+                                                        <option value="out_of_stock"
+                                                            {{ request('stock_status') == 'out_of_stock' ? 'selected' : '' }}>
+                                                            Out of Stock</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_from"
+                                                        value="{{ request('date_from') }}">
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_to"
+                                                        value="{{ request('date_to') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-lg-2 col-md-2 col-12 d-flex align-items-center justify-content-center">
+                                            <div class="d-flex flex-row justify-content-center">
+                                                <button type="submit" class="btn btn-primary mr-2">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                                @if (request()->hasAny(['search', 'status', 'category', 'subcategory', 'brand', 'stock_status', 'date_from', 'date_to']))
+                                                    <a href="{{ route('admin.product.index') }}" class="btn btn-secondary">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Products Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Products</h3>
@@ -129,7 +231,8 @@
                                                 <td colspan="7" class="text-center text-muted py-4">
                                                     <i class="fas fa-shopping-cart fa-3x mb-3"></i>
                                                     <p>No products found.</p>
-                                                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('admin.product.create') }}"
+                                                        class="btn btn-primary">
                                                         <i class="fas fa-plus"></i> Create First Product
                                                     </a>
                                                 </td>
@@ -148,6 +251,9 @@
                                         <small class="text-muted">
                                             Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }}
                                             of {{ $products->total() }} results
+                                            @if (request()->hasAny(['search', 'status', 'category', 'subcategory', 'brand', 'stock_status', 'date_from', 'date_to']))
+                                                (filtered)
+                                            @endif
                                         </small>
                                     </div>
                                 </div>
@@ -192,7 +298,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4"><strong>Category:</strong></div>
-                                    <div class="col-sm-8">{{ $product->category ? $product->category->name : 'N/A' }}</div>
+                                    <div class="col-sm-8">{{ $product->category ? $product->category->name : 'N/A' }}
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4"><strong>Price:</strong></div>
@@ -308,3 +415,32 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // Hide search form on mobile by default and set collapsed state
+            if ($(window).width() < 768) {
+                $('#searchCardBody').hide();
+                $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus').addClass(
+                    'fa-plus');
+            }
+
+            // Show/hide on window resize
+            $(window).resize(function() {
+                if ($(window).width() >= 768) {
+                    $('#searchCardBody').show();
+                    $('#searchCardBody').closest('.card').removeClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-plus')
+                        .addClass('fa-minus');
+                } else {
+                    $('#searchCardBody').hide();
+                    $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus')
+                        .addClass('fa-plus');
+                }
+            });
+        });
+    </script>
+@endpush

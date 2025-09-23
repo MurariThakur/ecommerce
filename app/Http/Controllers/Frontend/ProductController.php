@@ -576,11 +576,6 @@ class ProductController extends Controller
 
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('Product details error: ' . $e->getMessage(), [
-                'category_slug' => $category_slug,
-                'subcategory_slug' => $subcategory_slug,
-                'product_slug' => $product_slug
-            ]);
 
             abort(500, 'An error occurred while loading the product');
         }

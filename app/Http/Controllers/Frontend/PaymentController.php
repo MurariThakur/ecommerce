@@ -6,6 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\User;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -395,6 +403,400 @@ class PaymentController extends Controller
             'message' => 'Discount removed',
             'new_total' => number_format(Cart::getTotal(), 2)
         ]);
+    }
+
+    /**
+     * Place order function
+     */
+    public function placeOrder(Request $request)
+    {
+        // Generate or get idempotency token
+        $idempotencyToken = $request->idempotency_token ?? session('order_token', uniqid('order_', true));
+        session(['order_token' => $idempotencyToken]);
+
+        // Check for duplicate order
+        $existingOrder = Order::where('idempotency_token', $idempotencyToken)
+            ->where('status', '!=', 'pending')
+            ->first();
+
+        if ($existingOrder) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
+                ]);
+            }
+            return redirect()->route('cart.index')->with('error', 'Order already processed.');
+        }
+
+        $cartContent = Cart::getContent();
+
+        if ($cartContent->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty');
+        }
+
+        // Create account if requested (before order creation)
+        $userId = auth()->id();
+        if ($request->password && !auth()->check()) {
+            // Check if email already exists
+            $existingUser = User::where('email', $request->email)->first();
+
+            if ($existingUser) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'email_exists' => true,
+                        'message' => 'Email already registered. Please use a different email or login to your account.'
+                    ]);
+                }
+                return back()->withErrors(['email' => 'Email already registered']);
+            }
+
+            try {
+                $user = User::create([
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'email' => $request->email,
+                    'password' => bcrypt($request->password),
+                ]);
+
+                // Login the user
+                auth()->login($user);
+                $userId = $user->id;
+            } catch (\Exception $e) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Error creating account. Please try again.'
+                    ]);
+                }
+                return back()->withErrors(['email' => 'Error creating account']);
+            }
+        }
+
+        // Calculate totals
+        $subtotal = Cart::getSubTotal();
+        $shippingCost = (float) ($request->shipping_cost ?? 0);
+
+        // Always use session discount as primary source (more reliable)
+        $discountAmount = 0;
+        $discountId = null;
+        $discountName = null;
+
+        if (session('applied_discount')) {
+            $sessionDiscount = session('applied_discount');
+            $discountAmount = (float) $sessionDiscount['amount'];
+            $discountId = $sessionDiscount['id'];
+            $discountName = $sessionDiscount['name'];
+        } else {
+            // Fallback to request data if no session
+            $discountAmount = (float) ($request->discount_amount ?? 0);
+            $discountId = $request->discount_id;
+            $discountName = $request->discount_name;
+        }
+
+        $total = $subtotal + $shippingCost - $discountAmount;
+
+        // Ensure total is not negative
+        if ($total < 0) {
+            $total = 0;
+        }
+
+        // Create order with pending status and expiration
+        $order = Order::create([
+            'order_number' => 'ORD-' . time() . '-' . rand(1000, 9999),
+            'user_id' => $userId,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'company' => $request->company,
+            'country' => $request->country,
+            'address_line_1' => $request->address_line_1,
+            'address_line_2' => $request->address_line_2,
+            'city' => $request->city,
+            'state' => $request->state,
+            'postal_code' => $request->postal_code,
+            'notes' => $request->notes,
+            'discount_id' => $discountId,
+            'discount_name' => $discountName,
+            'discount_amount' => $discountAmount,
+            'shipping_method' => $request->shipping_method,
+            'shipping_cost' => $shippingCost,
+            'total' => $total,
+            'payment_method' => $request->payment_method,
+            'status' => 'pending',
+            'expires_at' => now()->addMinutes(15),
+            'idempotency_token' => $idempotencyToken,
+        ]);
+
+        // Create order items
+        foreach ($cartContent as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item->attributes->product_id,
+                'color' => $item->attributes->color,
+                'size' => $item->attributes->size,
+                'price' => $item->price,
+                'size_additional_price' => $item->attributes->size_additional_price ?? 0,
+                'quantity' => $item->quantity,
+                'total' => $item->price * $item->quantity,
+            ]);
+        }
+
+        // Process payment directly based on method
+        switch ($order->payment_method) {
+            case 'cash':
+                return $this->processCashPayment($order, $request);
+            case 'paypal':
+                return $this->processPaypalPayment($order, $request);
+            case 'stripe':
+                return $this->processStripePayment($order, $request);
+            default:
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'Invalid payment method']);
+                }
+                return redirect()->route('cart.index')->with('error', 'Invalid payment method');
+        }
+    }
+
+    /**
+     * Process cash on delivery payment
+     */
+    private function processCashPayment($order, $request)
+    {
+        $order->update([
+            'status' => 'confirmed',
+            'is_payment' => false,
+            'expires_at' => null,
+            'payment_data' => ['method' => 'cash_on_delivery']
+        ]);
+
+        return $this->completeOrder($order, $request);
+    }
+
+    /**
+     * Process PayPal payment
+     */
+    private function processPaypalPayment($order, $request)
+    {
+        try {
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $paypalToken = $provider->getAccessToken();
+
+            $paypalAmount = number_format($order->total, 2, '.', '');
+
+            $response = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "application_context" => [
+                    "return_url" => route('paypal.success', $order->id),
+                    "cancel_url" => route('paypal.cancel', $order->id),
+                ],
+                "purchase_units" => [
+                    [
+                        "amount" => [
+                            "currency_code" => "USD",
+                            "value" => $paypalAmount
+                        ]
+                    ]
+                ]
+            ]);
+
+            if (isset($response['id']) && $response['id'] != null) {
+                foreach ($response['links'] as $links) {
+                    if ($links['rel'] == 'approve') {
+                        session(['paypal_order_id' => $order->id]);
+
+                        if ($request->ajax()) {
+                            return response()->json([
+                                'success' => true,
+                                'redirect' => $links['href']
+                            ]);
+                        }
+                        return redirect()->away($links['href']);
+                    }
+                }
+            }
+
+            $order->delete();
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'PayPal payment failed']);
+            }
+            return redirect()->route('cart.index')->with('error', 'PayPal payment failed');
+
+        } catch (\Exception $e) {
+            $order->delete();
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'PayPal error: ' . $e->getMessage()]);
+            }
+            return redirect()->route('cart.index')->with('error', 'PayPal error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Process Stripe payment
+     */
+    private function processStripePayment($order, $request)
+    {
+        try {
+            Stripe::setApiKey(config('services.stripe.secret', env('STRIPE_SECRET')));
+
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [
+                    [
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => 'Order #' . $order->order_number,
+                            ],
+                            'unit_amount' => $order->total * 100, // Convert to cents
+                        ],
+                        'quantity' => 1,
+                    ]
+                ],
+                'mode' => 'payment',
+                'success_url' => route('stripe.success', $order->id),
+                'cancel_url' => route('stripe.cancel', $order->id),
+                'metadata' => [
+                    'order_id' => $order->id
+                ]
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'redirect' => $session->url
+                ]);
+            }
+            return redirect($session->url);
+
+        } catch (\Exception $e) {
+            $order->delete();
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Stripe error: ' . $e->getMessage()]);
+            }
+            return redirect()->route('cart.index')->with('error', 'Stripe error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * PayPal success callback
+     */
+    public function paypalSuccess($orderId)
+    {
+
+        try {
+            $order = Order::findOrFail($orderId);
+
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
+
+            $response = $provider->capturePaymentOrder(request('token'));
+            if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+                $order->update([
+                    'status' => 'confirmed',
+                    'is_payment' => true,
+                    'expires_at' => null,
+                    'payment_data' => [
+                        'method' => 'paypal',
+                        'transaction_id' => $response['id'],
+                        'status' => 'completed',
+                        'payer_id' => $response['payer']['payer_id'] ?? null,
+                        'payment_status' => $response['status']
+                    ]
+                ]);
+
+                return $this->completeOrder($order);
+            }
+
+            $order->delete();
+            return redirect()->route('cart.index')->with('error', 'Payment verification failed');
+
+        } catch (\Exception $e) {
+            return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * PayPal cancel callback
+     */
+    public function paypalCancel($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->delete(); // Remove cancelled order
+        }
+        return redirect()->route('cart.index')->with('error', 'Payment was cancelled');
+    }
+
+    /**
+     * Stripe success callback
+     */
+    public function stripeSuccess($orderId)
+    {
+        try {
+            $order = Order::findOrFail($orderId);
+
+            $order->update([
+                'status' => 'confirmed',
+                'is_payment' => true,
+                'expires_at' => null,
+                'payment_data' => [
+                    'method' => 'stripe',
+                    'transaction_id' => request('session_id') ?? 'ST_' . time(),
+                    'status' => 'completed'
+                ]
+            ]);
+
+            return $this->completeOrder($order);
+
+        } catch (\Exception $e) {
+            return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Stripe cancel callback
+     */
+    public function stripeCancel($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->delete(); // Remove cancelled order
+        }
+        return redirect()->route('cart.index')->with('error', 'Payment was cancelled');
+    }
+
+    /**
+     * Complete order and redirect to success
+     */
+    private function completeOrder($order, $request = null)
+    {
+        // Load order relationships for email
+        $order->load(['orderItems.product']);
+
+        // Queue order confirmation email
+        try {
+            Mail::to($order->email)->queue(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            \Log::error('Failed to queue order confirmation email: ' . $e->getMessage());
+        }
+
+        // Clear cart and sessions
+        Cart::clear();
+        session()->forget(['applied_discount', 'order_token']);
+
+        if ($request && $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Order placed successfully! Order number: ' . $order->order_number,
+                'redirect' => route('cart.index') . '?success=' . urlencode('Order placed successfully! Order number: ' . $order->order_number)
+            ]);
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Order placed successfully! Order number: ' . $order->order_number);
     }
 
 }

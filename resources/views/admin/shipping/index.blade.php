@@ -26,6 +26,66 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        <!-- Search Card -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-search"></i> Search Shipping Methods</h3>
+                                <div class="card-tools d-md-none">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body" id="searchCardBody">
+                                <form method="GET" action="{{ route('admin.shipping.index') }}">
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-10">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                                                    <input type="text" class="form-control" name="search"
+                                                        placeholder="Search shipping methods..."
+                                                        value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <select class="form-control" name="status">
+                                                        <option value="">All Status</option>
+                                                        <option value="active"
+                                                            {{ request('status') == 'active' ? 'selected' : '' }}>Active
+                                                        </option>
+                                                        <option value="inactive"
+                                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_from"
+                                                        value="{{ request('date_from') }}">
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 col-6 mb-2">
+                                                    <input type="date" class="form-control" name="date_to"
+                                                        value="{{ request('date_to') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-lg-1 col-md-2 col-12 d-flex align-items-lg-start align-items-center justify-content-center">
+                                            <div class="d-flex flex-row justify-content-center">
+                                                <button type="submit" class="btn btn-primary mr-2">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                                @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                                                    <a href="{{ route('admin.shipping.index') }}" class="btn btn-secondary">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Methods Table Card -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Shipping Methods</h3>
@@ -82,7 +142,8 @@
                                                             title="{{ $shipping->status ? 'Deactivate' : 'Activate' }}"
                                                             data-toggle="modal"
                                                             data-target="#statusModal{{ $shipping->id }}">
-                                                            <i class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
+                                                            <i
+                                                                class="fas fa-{{ $shipping->status ? 'ban' : 'check' }}"></i>
                                                         </button>
                                                         <button type="button" class="btn btn-danger btn-sm ml-1"
                                                             title="Delete" data-toggle="modal"
@@ -101,9 +162,21 @@
                                 </table>
                             </div>
                             <!-- /.card-body -->
-                            @if($shippings->hasPages())
+                            @if ($shippings->hasPages())
                                 <div class="card-footer clearfix">
-                                    {{ $shippings->links() }}
+                                    <div class="float-right">
+                                        {{ $shippings->links() }}
+                                    </div>
+                                    <div class="float-left">
+                                        <small class="text-muted">
+                                            Showing {{ $shippings->firstItem() ?? 0 }} to
+                                            {{ $shippings->lastItem() ?? 0 }}
+                                            of {{ $shippings->total() }} results
+                                            @if (request()->hasAny(['search', 'status', 'date_from', 'date_to']))
+                                                (filtered)
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -115,7 +188,7 @@
     </div>
 
     <!-- Status Change Modals -->
-    @foreach($shippings as $shipping)
+    @foreach ($shippings as $shipping)
         <div class="modal fade" id="statusModal{{ $shipping->id }}" tabindex="-1" role="dialog"
             aria-labelledby="statusModalLabel{{ $shipping->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -136,8 +209,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <form action="{{ route('admin.shipping.toggle.status', $shipping) }}" method="POST">
                             @csrf
-                            <button type="submit"
-                                class="btn {{ $shipping->status ? 'btn-warning' : 'btn-success' }}">
+                            <button type="submit" class="btn {{ $shipping->status ? 'btn-warning' : 'btn-success' }}">
                                 {{ $shipping->status ? 'Deactivate' : 'Activate' }}
                             </button>
                         </form>
@@ -174,3 +246,30 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            if ($(window).width() < 768) {
+                $('#searchCardBody').hide();
+                $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus').addClass(
+                    'fa-plus');
+            }
+
+            $(window).resize(function() {
+                if ($(window).width() >= 768) {
+                    $('#searchCardBody').show();
+                    $('#searchCardBody').closest('.card').removeClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-plus')
+                        .addClass('fa-minus');
+                } else {
+                    $('#searchCardBody').hide();
+                    $('#searchCardBody').closest('.card').addClass('collapsed-card');
+                    $('#searchCardBody').closest('.card').find('.card-tools i').removeClass('fa-minus')
+                        .addClass('fa-plus');
+                }
+            });
+        });
+    </script>
+@endpush

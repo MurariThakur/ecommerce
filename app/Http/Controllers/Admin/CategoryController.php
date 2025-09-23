@@ -12,14 +12,36 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with(['subcategories' => function($query) {
+        $query = Category::with([
+            'subcategories' => function ($query) {
                 $query->notDeleted();
-            }])
-            ->notDeleted()
-            ->latest()
-            ->paginate(10);
+            }
+        ])
+            ->notDeleted();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $categories = $query->latest()->paginate(10)->appends($request->query());
         return view('admin.category.index', compact('categories'));
     }
 
@@ -75,18 +97,18 @@ class CategoryController extends Controller
     {
         // Get subcategory count for success message
         $subcategoryCount = $category->subcategories()->count();
-        
+
         // Soft delete all subcategories first
         $category->subcategories()->update(['isdelete' => true]);
-        
+
         // Then soft delete the category
         $category->softDelete();
-        
+
         $message = 'Category deleted successfully.';
         if ($subcategoryCount > 0) {
             $message .= " {$subcategoryCount} associated subcategory(ies) were also deleted.";
         }
-        
+
         return redirect()->route('admin.category.index')->with('success', $message);
     }
 
