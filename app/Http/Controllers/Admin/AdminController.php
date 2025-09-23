@@ -9,12 +9,38 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Admin Management';
 
-        $admins = User::orderBy('created_at', 'desc')
-                     ->paginate(10);
+        $query = User::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        // Date filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $admins = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
 
         return view('admin.admin.index', compact('title', 'admins'));
     }
@@ -42,7 +68,7 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.index')
-                        ->with('success', 'Admin created successfully!');
+            ->with('success', 'Admin created successfully!');
     }
 
     /**
@@ -93,7 +119,7 @@ class AdminController extends Controller
         $admin->update($data);
 
         return redirect()->route('admin.index')
-                        ->with('success', 'Admin updated successfully!');
+            ->with('success', 'Admin updated successfully!');
     }
 
     /**
@@ -111,7 +137,7 @@ class AdminController extends Controller
         $admin->delete();
 
         return redirect()->route('admin.index')
-                        ->with('success', 'Admin deleted successfully!');
+            ->with('success', 'Admin deleted successfully!');
     }
 
     /**
@@ -133,6 +159,6 @@ class AdminController extends Controller
         $status = $admin->is_active ? 'activated' : 'deactivated';
 
         return redirect()->route('admin.index')
-                        ->with('success', "Admin {$status} successfully!");
+            ->with('success', "Admin {$status} successfully!");
     }
 }

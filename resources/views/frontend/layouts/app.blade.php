@@ -808,19 +808,19 @@
             initializeAuth();
 
             // Check for session messages and show toast
-            @if(session('success'))
+            @if (session('success'))
                 CartManager.showToast('{{ session('success') }}', 'success');
             @endif
 
-            @if(session('error'))
+            @if (session('error'))
                 CartManager.showToast('{{ session('error') }}', 'error');
             @endif
 
-            @if(session('warning'))
+            @if (session('warning'))
                 CartManager.showToast('{{ session('warning') }}', 'warning');
             @endif
 
-            @if(session('info'))
+            @if (session('info'))
                 CartManager.showToast('{{ session('info') }}', 'info');
             @endif
         });
@@ -922,7 +922,7 @@
                 logoutBtn.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    fetch('{{ route('auth.logout') }}', {
+                    fetch('{{ route('frontend.auth.logout') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
@@ -932,7 +932,7 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                location.reload();
+                                window.location.href = data.redirect || '/';
                             }
                         })
                         .catch(error => {

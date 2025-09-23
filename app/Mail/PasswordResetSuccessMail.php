@@ -3,11 +3,12 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class PasswordResetSuccessMail extends Mailable
+class PasswordResetSuccessMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
