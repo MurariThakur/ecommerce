@@ -42,6 +42,73 @@
         .review-form {
             background-color: #f8f9fa;
         }
+
+        @media (max-width: 768px) {
+            .product-details-top .row {
+                margin: 0;
+            }
+
+            .product-details {
+                padding: 1rem 0;
+            }
+
+            .product-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .product-price {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .details-filter-row {
+                margin-bottom: 1rem;
+            }
+
+            .product-details-action {
+                margin-top: 1.5rem;
+            }
+
+            .btn-product {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .details-action-wrapper {
+                margin-top: 0.5rem;
+            }
+
+            .details-action-wrapper .btn-product {
+                width: 100%;
+            }
+
+            .product-details-footer {
+                margin-top: 2rem;
+                padding-top: 1rem;
+            }
+
+            .review-form {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .review {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .review-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
     </style>
 @endsection
 
@@ -918,6 +985,32 @@
                     heartIcon.className = 'icon-heart-o';
                     heartIcon.style.color = '';
                 }
+            }
+        }
+
+        // Check if we should show review tab (for pagination or direct link)
+        const urlParams = new URLSearchParams(window.location.search);
+        const hash = window.location.hash;
+
+        if (urlParams.has('page') || hash === '#product-review-tab') {
+            // Activate review tab
+            const reviewTab = document.getElementById('product-review-link');
+            const reviewTabPane = document.getElementById('product-review-tab');
+            const descTab = document.getElementById('product-desc-link');
+            const descTabPane = document.getElementById('product-desc-tab');
+
+            if (reviewTab && reviewTabPane && descTab && descTabPane) {
+                // Remove active from description tab
+                descTab.classList.remove('active');
+                descTabPane.classList.remove('show', 'active');
+
+                // Add active to review tab
+                reviewTab.classList.add('active');
+                reviewTabPane.classList.add('show', 'active');
+
+                // Update aria attributes
+                descTab.setAttribute('aria-selected', 'false');
+                reviewTab.setAttribute('aria-selected', 'true');
             }
         }
 
