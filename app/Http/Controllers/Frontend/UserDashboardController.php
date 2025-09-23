@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Order;
+use App\Models\Review;
 
 class UserDashboardController extends Controller
 {
@@ -37,6 +38,17 @@ class UserDashboardController extends Controller
             ->with('orderItems.product')
             ->latest()
             ->paginate(10);
+
+        // Add review status for delivered orders
+        foreach ($orders as $order) {
+            if ($order->status === 'delivered') {
+                foreach ($order->orderItems as $item) {
+                    $item->has_review = Review::where('user_id', Auth::id())
+                        ->where('product_id', $item->product_id)
+                        ->exists();
+                }
+            }
+        }
 
         return view('frontend.user.orders', compact('orders'));
     }

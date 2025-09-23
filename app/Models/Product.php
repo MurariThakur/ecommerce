@@ -87,6 +87,21 @@ class Product extends Model
         return $this->hasMany(ProductSize::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating') ?: 0;
+    }
+
+    public function reviewsCount()
+    {
+        return $this->reviews()->count();
+    }
+
     /**
      * Direct relationship with ProductImage
      */

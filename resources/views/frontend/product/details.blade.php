@@ -2,9 +2,45 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
     <style>
-        .btn-wishlist-add:before {
-            content: '\f233';
-            color: #c96;
+        .btn-wishlist.btn-wishlist-add:before {
+            content: '\f234' !important;
+            color: rgb(204, 153, 102) !important;
+        }
+
+        .related-wishlist-btn.btn-wishlist-add:before {
+            content: '\f234' !important;
+            color: rgb(204, 153, 102) !important;
+        }
+
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating-input input {
+            display: none;
+        }
+
+        .rating-input label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .rating-input input:checked~label,
+        .rating-input label:hover,
+        .rating-input label:hover~label {
+            color: #ffc107;
+        }
+
+        .review-avatar {
+            min-width: 50px;
+        }
+
+        .review-form {
+            background-color: #f8f9fa;
         }
     </style>
 @endsection
@@ -79,9 +115,11 @@
 
                                 <div class="ratings-container">
                                     <div class="ratings">
-                                        <div class="ratings-val" style="width: 80%;"></div>
+                                        <div class="ratings-val" style="width: {{ $product->averageRating() * 20 }}%;">
+                                        </div>
                                     </div>
-                                    <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
+                                    <a class="ratings-text" href="#product-review-link" id="review-link">(
+                                        {{ $product->reviewsCount() }} Reviews )</a>
                                 </div>
 
                                 <div class="product-price" data-base-price="{{ $product->price }}">
@@ -215,7 +253,8 @@
                         @endif
                         <li class="nav-item">
                             <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab"
-                                role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (2)</a>
+                                role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews
+                                ({{ $product->reviewsCount() }})</a>
                         </li>
                     </ul>
                 </div><!-- End .container -->
@@ -266,38 +305,94 @@
                         aria-labelledby="product-review-link">
                         <div class="reviews">
                             <div class="container">
-                                <h3>Reviews (2)</h3>
-                                <!-- Static reviews for now - you can make this dynamic later -->
-                                <div class="review">
-                                    <div class="row no-gutters">
-                                        <div class="col-auto">
-                                            <h4><a href="#">Samanta J.</a></h4>
-                                            <div class="ratings-container">
-                                                <div class="ratings">
-                                                    <div class="ratings-val" style="width: 80%;"></div>
-                                                    <!-- End .ratings-val -->
-                                                </div><!-- End .ratings -->
-                                            </div><!-- End .rating-container -->
-                                            <span class="review-date">6 days ago</span>
-                                        </div><!-- End .col -->
-                                        <div class="col">
-                                            <h4>Good, perfect size</h4>
-                                            <div class="review-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus cum
-                                                    dolores assumenda asperiores facilis porro reprehenderit animi culpa
-                                                    atque blanditiis commodi perspiciatis doloremque, possimus, explicabo,
-                                                    autem fugit beatae quae voluptas!</p>
-                                            </div><!-- End .review-content -->
-                                            <div class="review-action">
-                                                <a href="#"><i class="icon-thumbs-up"></i>Helpful (2)</a>
-                                                <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                            </div><!-- End .review-action -->
-                                        </div><!-- End .col-auto -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .review -->
-                            </div><!-- End .container -->
-                        </div><!-- End .reviews -->
-                    </div><!-- .End .tab-pane -->
+                                <h3>Reviews ({{ $product->reviewsCount() }})</h3>
+
+                                @auth
+                                    @if ($hasPurchased && !$hasReviewed)
+                                        <div class="review-form mb-4 p-3 border rounded">
+                                            <h4 class="mb-3">Write a Review</h4>
+                                            <form id="review-form">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <div class="form-group">
+                                                    <label>Rating:</label>
+                                                    <div class="rating-input">
+                                                        @for ($i = 5; $i >= 1; $i--)
+                                                            <input type="radio" name="rating" value="{{ $i }}"
+                                                                id="star{{ $i }}" required>
+                                                            <label for="star{{ $i }}">★</label>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="comment">Comment:</label>
+                                                    <textarea name="comment" id="comment" class="form-control" rows="4" placeholder="Share your experience..."
+                                                        required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                            </form>
+                                        </div>
+                                    @elseif(!$hasPurchased)
+                                        <div class="text-center py-3 mb-4">
+                                            <p class="text-muted mb-0">Only verified buyers can write reviews</p>
+                                        </div>
+                                    @elseif($hasReviewed)
+                                        <div class="text-center py-3 mb-4">
+                                            <p class="text-success mb-0">✓ You have reviewed this product</p>
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="text-center py-3 mb-4">
+                                        <p class="mb-0"><a href="#signin-modal" data-toggle="modal">Login</a> to write a
+                                            review</p>
+                                    </div>
+                                @endauth
+
+                                @if ($reviews->count() > 0)
+                                    @foreach ($reviews as $review)
+                                        <div class="review border-bottom pb-3 mb-3">
+                                            <div class="row no-gutters">
+                                                <div class="col-auto pr-3">
+                                                    <div class="review-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                        style="width: 50px; height: 50px; font-size: 1.2rem; font-weight: bold;">
+                                                        {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h5 class="mb-1">{{ $review->user->name }}</h5>
+                                                            <div class="ratings-container mb-1">
+                                                                <div class="ratings">
+                                                                    <div class="ratings-val"
+                                                                        style="width: {{ $review->rating * 20 }}%;"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <small
+                                                            class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                                    </div>
+                                                    <div class="review-content">
+                                                        <p class="mb-0">{{ $review->comment }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <div class="d-flex justify-content-center mt-4">
+                                        {{ $reviews->links() }}
+                                    </div>
+                                @else
+                                    <div class="text-center py-5">
+                                        <i class="icon-star-o fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">No reviews yet</h5>
+                                        <p class="text-muted">Be the first to review this product!</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div><!-- End .tab-content -->
             </div><!-- End .product-details-tab -->
 
@@ -824,6 +919,42 @@
                     heartIcon.style.color = '';
                 }
             }
+        }
+
+        // Review form functionality
+        const reviewForm = document.getElementById('review-form');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(reviewForm);
+                const formObject = {};
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                fetch('{{ route('review.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(formObject)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error submitting review');
+                    });
+            });
         }
         });
     </script>

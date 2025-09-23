@@ -11,6 +11,9 @@ use App\Models\ProductImage;
 use App\Models\ProductSize;
 use App\Models\Color;
 use App\Models\Brand;
+use App\Models\Order;
+use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -545,6 +548,13 @@ class ProductController extends Controller
                 abort(404, 'Product not found');
             }
 
+            // Get paginated reviews
+            $reviews = Review::where('product_id', $product->id)
+                ->where('is_approved', true)
+                ->with('user')
+                ->latest()
+                ->paginate(1);
+
             // Get related products from same subcategory
             $relatedProducts = Product::where('subcategory_id', $subcategory->id)
                 ->where('id', '!=', $product->id)
@@ -559,6 +569,22 @@ class ProductController extends Controller
                 ->limit(10)
                 ->get();
 
+            // Check if user has purchased this product
+            $hasPurchased = false;
+            $hasReviewed = false;
+            if (Auth::check()) {
+                $hasPurchased = Order::where('user_id', Auth::id())
+                    ->where('status', 'delivered')
+                    ->whereHas('orderItems', function ($query) use ($product) {
+                        $query->where('product_id', $product->id);
+                    })
+                    ->exists();
+
+                $hasReviewed = Review::where('user_id', Auth::id())
+                    ->where('product_id', $product->id)
+                    ->exists();
+            }
+
             // Meta tags for SEO
             $meta_title = $product->title . ' - ' . $subcategory->name . ' - ' . $category->name;
             $meta_description = $product->short_description ?: 'Buy ' . $product->title . ' online';
@@ -569,6 +595,9 @@ class ProductController extends Controller
                 'category',
                 'subcategory',
                 'relatedProducts',
+                'reviews',
+                'hasPurchased',
+                'hasReviewed',
                 'meta_title',
                 'meta_description',
                 'meta_keyword'

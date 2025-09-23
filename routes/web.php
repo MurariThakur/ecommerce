@@ -170,6 +170,9 @@ Route::post('/wishlist/toggle', [\App\Http\Controllers\Frontend\WishlistControll
 Route::post('/wishlist/remove', [\App\Http\Controllers\Frontend\WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/count', [\App\Http\Controllers\Frontend\WishlistController::class, 'getCount'])->name('wishlist.count');
 
+// Review Routes
+Route::post('/review/store', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])->name('review.store');
+
 // User Dashboard Routes (require authentication)
 Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');

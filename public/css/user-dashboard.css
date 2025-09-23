@@ -213,6 +213,21 @@
     color: #222;
 }
 
+.order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.order-actions .btn {
+    white-space: nowrap;
+    font-size: 1.2rem;
+}
+
+.order-actions .review-btn {
+    font-size: 1.2rem;
+}
+
 .profile-section {
     display: flex;
     flex-direction: column;
