@@ -25,6 +25,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_login',
         'locked_until',
         'is_active',
+        'phone',
+        'company',
+        'country',
+        'address_line_1',
+        'address_line_2',
+        'city',
+        'state',
+        'postal_code',
     ];
 
     protected $attributes = [
@@ -161,11 +169,11 @@ class User extends Authenticatable implements MustVerifyEmail
         if (!$this->is_active) {
             return 'Inactive';
         }
-        
+
         if ($this->isLocked()) {
             return 'Locked';
         }
-        
+
         return 'Active';
     }
 

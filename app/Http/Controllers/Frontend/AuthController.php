@@ -120,7 +120,8 @@ class AuthController extends Controller
         Auth::logout();
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully!'
+            'message' => 'Logged out successfully!',
+            'redirect' => route('frontend.home')
         ]);
     }
 

@@ -16,6 +16,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
+use App\Http\Controllers\Frontend\UserDashboardController;
 
 // Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -163,6 +164,16 @@ Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\Au
 Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
 Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
 
+// User Dashboard Routes (require authentication)
+Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/orders', [UserDashboardController::class, 'orders'])->name('orders');
+    Route::get('/order/{id}', [UserDashboardController::class, 'orderDetails'])->name('order.details');
+    Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
+    Route::post('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/change-password', [UserDashboardController::class, 'changePassword'])->name('change-password');
+    Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('change-password.update');
+});
 
 // Frontend Routes (no authentication required)
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');

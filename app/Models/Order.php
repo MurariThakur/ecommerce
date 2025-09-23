@@ -64,6 +64,11 @@ class Order extends Model
         return $this->belongsTo(Discount::class);
     }
 
+    public function shipping()
+    {
+        return $this->belongsTo(Shipping::class, 'shipping_method', 'id');
+    }
+
     // Scopes
     public function scopeNotDeleted($query)
     {
