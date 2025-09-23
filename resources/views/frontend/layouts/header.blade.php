@@ -29,8 +29,12 @@
                          <a href="#">Links</a>
                          <ul>
                              <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
-                             <li><a href="{{ asset('wishlist.html') }}"><i class="icon-heart-o"></i>My Wishlist
-                                     <span>(3)</span></a></li>
+                             <li><a href="{{ auth()->check() ? route('wishlist.index') : '#signin-modal' }}"
+                                     {{ !auth()->check() ? 'data-toggle=modal' : '' }}><i class="icon-heart-o"
+                                         id="header-wishlist-icon"></i>My Wishlist
+                                     <span
+                                         id="wishlist-count">({{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }})</span></a>
+                             </li>
                              <li><a href="{{ asset('about.html') }}">About Us</a></li>
                              <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
                              @auth

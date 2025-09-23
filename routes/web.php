@@ -164,6 +164,12 @@ Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\Au
 Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
 Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
 
+// Wishlist Routes (AJAX)
+Route::get('/wishlist', [\App\Http\Controllers\Frontend\WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/toggle', [\App\Http\Controllers\Frontend\WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::post('/wishlist/remove', [\App\Http\Controllers\Frontend\WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::get('/wishlist/count', [\App\Http\Controllers\Frontend\WishlistController::class, 'getCount'])->name('wishlist.count');
+
 // User Dashboard Routes (require authentication)
 Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
