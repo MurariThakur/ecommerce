@@ -121,6 +121,16 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ url('admin/refunds') }}"
+                    class="nav-link {{ request()->is('admin/refund*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-undo"></i>
+                    <p>
+                        Refunds
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ url('admin/settings') }}"
                     class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cog"></i>

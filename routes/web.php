@@ -97,6 +97,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/customer/delete/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('admin.customer.destroy');
     Route::post('/admin/customer/toggle-status/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleStatus'])->name('admin.customer.toggle.status');
 
+    // Refund management routes
+    Route::get('/admin/refunds', [\App\Http\Controllers\Admin\RefundController::class, 'index'])->name('admin.refunds.index');
+    Route::get('/admin/refund/view/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'show'])->name('admin.refunds.show');
+    Route::post('/admin/refund/approve/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'approve'])->name('admin.refunds.approve');
+    Route::post('/admin/refund/process/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'process'])->name('admin.refunds.process');
+    Route::post('/admin/refund/reject/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'reject'])->name('admin.refunds.reject');
+
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
         'index' => 'admin.brand.index',
@@ -183,6 +190,7 @@ Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/change-password', [UserDashboardController::class, 'changePassword'])->name('change-password');
     Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('change-password.update');
     Route::post('/order/{id}/cancel', [UserDashboardController::class, 'cancelOrder'])->name('order.cancel');
+    Route::post('/order/{id}/return', [UserDashboardController::class, 'returnOrder'])->name('order.return');
 });
 
 // Frontend Routes (no authentication required)
@@ -192,3 +200,5 @@ Route::get('{slug?}/{subslug?}', [FrontendProductController::class, 'getCategory
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
 
 
+Route::post('/stripe/webhook', [WebhookController::class, 'stripeWebhook'])->name('stripe.webhook');
+Route::post('/paypal/webhook', [WebhookController::class, 'paypalWebhook'])->name('paypal.webhook');

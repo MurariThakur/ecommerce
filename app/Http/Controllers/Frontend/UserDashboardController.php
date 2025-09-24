@@ -61,7 +61,7 @@ class UserDashboardController extends Controller
             ->where('id', $id)
             ->where('isdelete', false)
             ->where('status', '!=', 'pending')
-            ->with(['orderItems.product', 'shipping'])
+            ->with(['orderItems.product', 'shipping', 'refunds'])
             ->firstOrFail();
 
         return view('frontend.user.order-details', compact('order'));
@@ -139,8 +139,62 @@ class UserDashboardController extends Controller
             return redirect()->back()->with('error', 'Cannot cancel delivered orders.');
         }
 
-        $order->update(['status' => 'cancelled']);
+        // Create refund record if payment was made
+        if ($order->is_payment) {
+            $refund = \App\Models\Refund::create([
+                'order_id' => $order->id,
+                'refund_number' => 'REF-' . time() . '-' . rand(1000, 9999),
+                'amount' => $order->total,
+                'type' => 'cancellation',
+                'payment_method' => $order->payment_method,
+                'reason' => 'Order cancelled by customer',
+                'status' => 'approved',
+                'approved_at' => now(),
+                'estimated_days' => $order->payment_method === 'cod' ? 10 : 5
+            ]);
 
-        return redirect()->back()->with('success', 'Order cancelled successfully.');
+            // Auto-process refund for cancellations
+            $refundService = new \App\Services\RefundService();
+            $refundService->processRefund($refund);
+
+            // Order status will be updated by RefundService to 'refunded'
+        } else {
+            $order->update(['status' => 'cancelled']);
+        }
+
+        $message = $order->is_payment
+            ? 'Order cancelled successfully. Refund will be processed within 3-5 business days.'
+            : 'Order cancelled successfully.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function returnOrder(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:500'
+        ]);
+
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->where('isdelete', false)
+            ->where('status', 'delivered')
+            ->firstOrFail();
+
+        // Create refund record
+        $refund = \App\Models\Refund::create([
+            'order_id' => $order->id,
+            'refund_number' => 'REF-' . time() . '-' . rand(1000, 9999),
+            'amount' => $order->total,
+            'type' => 'return',
+            'payment_method' => $order->payment_method,
+            'reason' => $request->reason,
+            'status' => 'initiated',
+            'estimated_days' => 7
+        ]);
+
+        $order->update(['status' => 'return_requested']);
+
+        return redirect()->back()->with('success', 'Return request submitted successfully. We will review and process within 24-48 hours.');
     }
 }

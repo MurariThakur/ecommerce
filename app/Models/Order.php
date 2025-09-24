@@ -69,6 +69,11 @@ class Order extends Model
         return $this->belongsTo(Shipping::class, 'shipping_method', 'id');
     }
 
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class);
+    }
+
     // Scopes
     public function scopeNotDeleted($query)
     {
@@ -104,6 +109,7 @@ class Order extends Model
             'shipped' => '<span class="badge badge-primary"><i class="fas fa-shipping-fast"></i> Shipped</span>',
             'delivered' => '<span class="badge badge-success"><i class="fas fa-check"></i> Delivered</span>',
             'cancelled' => '<span class="badge badge-danger"><i class="fas fa-ban"></i> Cancelled</span>',
+            'return_requested' => '<span class="badge badge-warning"><i class="fas fa-undo"></i> Return Requested</span>',
         ];
 
         return $badges[$this->status] ?? '<span class="badge badge-secondary">Unknown</span>';

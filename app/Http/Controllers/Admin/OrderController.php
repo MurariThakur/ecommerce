@@ -98,9 +98,17 @@ class OrderController extends Controller
                 ->with('error', "Cannot change order status from '{$oldStatus}' to '{$newStatus}'.");
         }
 
-        // If cancelling a paid PayPal order, process refund
-        if ($newStatus === 'cancelled' && $order->is_payment && $order->payment_method === 'paypal') {
-            $this->processPayPalRefund($order);
+        // Create refund record if cancelling a paid order
+        if ($newStatus === 'cancelled' && $order->is_payment) {
+            \App\Models\Refund::create([
+                'order_id' => $order->id,
+                'refund_number' => 'REF-' . time() . '-' . rand(1000, 9999),
+                'amount' => $order->total,
+                'type' => 'cancellation',
+                'payment_method' => $order->payment_method,
+                'reason' => 'Order cancelled by admin',
+                'status' => 'pending'
+            ]);
         }
 
         $order->update(['status' => $newStatus]);
