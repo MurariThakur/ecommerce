@@ -375,6 +375,13 @@
                 document.getElementById('discount-amount').textContent = discountAmount;
                 document.getElementById('discount-row').style.display = 'table-row';
                 document.getElementById('discount_code').value = '';
+                
+                // Update the hidden form field
+                const formDiscountField = document.getElementById('form-discount-name');
+                if (formDiscountField) {
+                    formDiscountField.value = discountName;
+                }
+                
                 this.hideDiscountMessages();
                 this.updateCheckoutTotal(newTotal);
             },
@@ -436,6 +443,13 @@
             clearAppliedDiscount: function() {
                 document.getElementById('discount-row').style.display = 'none';
                 document.getElementById('discount_code').value = '';
+                
+                // Clear the hidden form field
+                const formDiscountField = document.getElementById('form-discount-name');
+                if (formDiscountField) {
+                    formDiscountField.value = '';
+                }
+                
                 this.hideDiscountMessages();
 
                 fetch('{{ route('checkout.remove.discount') }}', {

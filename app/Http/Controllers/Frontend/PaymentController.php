@@ -374,16 +374,7 @@ class PaymentController extends Controller
 
         $newTotal = $cartSubTotal - $discountAmount;
 
-        // Store discount in session
-        session([
-            'applied_discount' => [
-                'id' => $discount->id,
-                'name' => $discount->name,
-                'type' => $discount->type,
-                'value' => $discount->value,
-                'amount' => $discountAmount
-            ]
-        ]);
+        // No session storage needed - discount will be passed via form
 
         return response()->json([
             'success' => true,
@@ -396,8 +387,6 @@ class PaymentController extends Controller
 
     public function removeDiscount()
     {
-        session()->forget('applied_discount');
-
         return response()->json([
             'success' => true,
             'message' => 'Discount removed',
@@ -414,19 +403,79 @@ class PaymentController extends Controller
         $idempotencyToken = $request->idempotency_token ?? session('order_token', uniqid('order_', true));
         session(['order_token' => $idempotencyToken]);
 
-        // Check for duplicate order
-        $existingOrder = Order::where('idempotency_token', $idempotencyToken)
-            ->where('status', '!=', 'pending')
-            ->first();
+        // Check for existing orders
+        $existingOrder = Order::where('idempotency_token', $idempotencyToken)->first();
 
         if ($existingOrder) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
-                ]);
+            // If order is already confirmed/completed, prevent duplicate
+            if ($existingOrder->status !== 'pending') {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
+                    ]);
+                }
+                return redirect()->route('cart.index')->with('error', 'Order already processed.');
             }
-            return redirect()->route('cart.index')->with('error', 'Order already processed.');
+
+            // Calculate current discount from request
+            $currentDiscount = 0;
+            $discountCode = $request->input('discount_name');
+            // dd($discountCode    );
+            if (!empty($discountCode) && trim($discountCode) !== '') {
+                $discount = \App\Models\Discount::where('name', trim($discountCode))
+                    ->where('status', true)
+                    ->whereDate('expire_date', '>=', now())
+                    ->first();
+                if ($discount) {
+                    $cartSubTotal = Cart::getSubTotal();
+                    if ($discount->type === 'percentage') {
+                        $currentDiscount = ($cartSubTotal * $discount->value) / 100;
+                        if ($discount->max_discount_amount && $currentDiscount > $discount->max_discount_amount) {
+                            $currentDiscount = $discount->max_discount_amount;
+                        }
+                    } else {
+                        $currentDiscount = $discount->value;
+                    }
+                    if ($currentDiscount > $cartSubTotal) {
+                        $currentDiscount = $cartSubTotal;
+                    }
+                }
+            }
+
+            // If pending order exists, check if order details have changed
+            $currentSubtotal = Cart::getSubTotal();
+            $currentShipping = (float) ($request->shipping_cost ?? 0);
+
+            $currentTotal = $currentSubtotal + $currentShipping - $currentDiscount;
+
+            $orderNeedsUpdate = abs($existingOrder->total - $currentTotal) > 0.01 ||
+                abs($existingOrder->shipping_cost - $currentShipping) > 0.01 ||
+                abs($existingOrder->discount_amount - $currentDiscount) > 0.01;
+
+            if ($existingOrder->payment_method === $request->payment_method && !$orderNeedsUpdate) {
+                // Same payment method and cart unchanged, reuse existing order
+                $order = $existingOrder;
+
+                // Process payment directly without creating new order
+                switch ($order->payment_method) {
+                    case 'cash':
+                        return $this->processCashPayment($order, $request);
+                    case 'paypal':
+                        return $this->processPaypalPayment($order, $request);
+                    case 'stripe':
+                        return $this->processStripePayment($order, $request);
+                    default:
+                        if ($request->ajax()) {
+                            return response()->json(['success' => false, 'message' => 'Invalid payment method']);
+                        }
+                        return redirect()->route('cart.index')->with('error', 'Invalid payment method');
+                }
+            } else {
+                // Cart changed or different payment method, delete old order and create new one
+                $existingOrder->orderItems()->delete();
+                $existingOrder->delete();
+            }
         }
 
         $cartContent = Cart::getContent();
@@ -477,21 +526,30 @@ class PaymentController extends Controller
         $subtotal = Cart::getSubTotal();
         $shippingCost = (float) ($request->shipping_cost ?? 0);
 
-        // Always use session discount as primary source (more reliable)
+        // Calculate discount amount from request
         $discountAmount = 0;
         $discountId = null;
-        $discountName = null;
-
-        if (session('applied_discount')) {
-            $sessionDiscount = session('applied_discount');
-            $discountAmount = (float) $sessionDiscount['amount'];
-            $discountId = $sessionDiscount['id'];
-            $discountName = $sessionDiscount['name'];
-        } else {
-            // Fallback to request data if no session
-            $discountAmount = (float) ($request->discount_amount ?? 0);
-            $discountId = $request->discount_id;
-            $discountName = $request->discount_name;
+        $discountName = $request->input('discount_name');
+        if (!empty($discountName) && trim($discountName) !== '') {
+            $discount = \App\Models\Discount::where('name', trim($discountName))
+                ->where('status', true)
+                ->whereDate('expire_date', '>=', now())
+                ->first();
+            if ($discount) {
+                $discountId = $discount->id;
+                $cartSubTotal = Cart::getSubTotal();
+                if ($discount->type === 'percentage') {
+                    $discountAmount = ($cartSubTotal * $discount->value) / 100;
+                    if ($discount->max_discount_amount && $discountAmount > $discount->max_discount_amount) {
+                        $discountAmount = $discount->max_discount_amount;
+                    }
+                } else {
+                    $discountAmount = $discount->value;
+                }
+                if ($discountAmount > $cartSubTotal) {
+                    $discountAmount = $cartSubTotal;
+                }
+            }
         }
 
         $total = $subtotal + $shippingCost - $discountAmount;
@@ -525,7 +583,7 @@ class PaymentController extends Controller
             'total' => $total,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
-            'expires_at' => now()->addMinutes(15),
+            'expires_at' => now()->addMinutes(2),
             'idempotency_token' => $idempotencyToken,
         ]);
 
@@ -603,6 +661,15 @@ class PaymentController extends Controller
             ]);
 
             if (isset($response['id']) && $response['id'] != null) {
+                // Store PayPal data and extend expiration for payment processing
+                $order->update([
+                    'payment_data' => json_encode([
+                        'paypal_order_id' => $response['id'],
+                        'status' => 'redirected_to_gateway'
+                    ]),
+                    'expires_at' => now()->addMinutes(1) // Extend to 30 minutes for payment
+                ]);
+
                 foreach ($response['links'] as $links) {
                     if ($links['rel'] == 'approve') {
                         session(['paypal_order_id' => $order->id]);
@@ -661,6 +728,15 @@ class PaymentController extends Controller
                 'metadata' => [
                     'order_id' => $order->id
                 ]
+            ]);
+
+            // Store Stripe data and extend expiration for payment processing
+            $order->update([
+                'payment_data' => json_encode([
+                    'stripe_session_id' => $session->id,
+                    'status' => 'redirected_to_gateway'
+                ]),
+                'expires_at' => now()->addMinutes(1) // Extend to 30 minutes for payment
             ]);
 
             if ($request->ajax()) {
@@ -785,7 +861,7 @@ class PaymentController extends Controller
         }
 
         // Clear cart and sessions
-        Cart::clear();
+        // Cart::clear();
         session()->forget(['applied_discount', 'order_token']);
 
         if ($request && $request->ajax()) {

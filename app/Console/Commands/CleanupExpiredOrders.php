@@ -14,16 +14,22 @@ class CleanupExpiredOrders extends Command
     {
         $expiredOrders = Order::where('status', 'pending')
             ->where('expires_at', '<', now())
+            ->where(function ($query) {
+                // Only expire orders that haven't been sent to payment gateway
+                $query->where('payment_method', 'cash')
+                    ->orWhereNull('payment_data')
+                    ->orWhere('payment_data', '{}');
+            })
             ->get();
 
         $count = $expiredOrders->count();
-        
+
         foreach ($expiredOrders as $order) {
             $order->orderItems()->delete();
             $order->delete();
         }
 
-        $this->info("Cleaned up {$count} expired orders.");
+        $this->info("Deleted {$count} expired orders.");
         return 0;
     }
 }

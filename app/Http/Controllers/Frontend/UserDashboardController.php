@@ -16,7 +16,7 @@ class UserDashboardController extends Controller
         $user = Auth::user();
 
         $stats = [
-            'total_orders' => Order::where('user_id', $user->id)->where('isdelete', false)->count(),
+            'total_orders' => Order::where('user_id', $user->id)->where('isdelete', false)->where('status', '!=', 'pending')->count(),
             'pending_orders' => Order::where('user_id', $user->id)->where('status', 'confirmed')->where('isdelete', false)->count(),
             'delivered_orders' => Order::where('user_id', $user->id)->where('status', 'delivered')->where('isdelete', false)->count(),
             'total_spent' => Order::where('user_id', $user->id)->where('status', 'delivered')->where('isdelete', false)->sum('total'),
@@ -24,6 +24,7 @@ class UserDashboardController extends Controller
 
         $recentOrders = Order::where('user_id', $user->id)
             ->where('isdelete', false)
+            ->where('status', '!=', 'pending')
             ->latest()
             ->take(5)
             ->get();
@@ -35,6 +36,7 @@ class UserDashboardController extends Controller
     {
         $orders = Order::where('user_id', Auth::id())
             ->where('isdelete', false)
+            ->where('status', '!=', 'pending')
             ->with('orderItems.product')
             ->latest()
             ->paginate(10);
@@ -58,6 +60,7 @@ class UserDashboardController extends Controller
         $order = Order::where('user_id', Auth::id())
             ->where('id', $id)
             ->where('isdelete', false)
+            ->where('status', '!=', 'pending')
             ->with(['orderItems.product', 'shipping'])
             ->firstOrFail();
 
