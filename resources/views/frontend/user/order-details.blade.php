@@ -193,11 +193,13 @@
                                     <a href="{{ route('user.orders') }}" class="btn btn-outline-primary-2">
                                         <i class="icon-arrow-left"></i> Back to Orders
                                     </a>
-                                    @if ($order->status !== 'cancelled' && $order->status !== 'delivered')
-                                        <button class="btn btn-outline-danger ml-2"
-                                            onclick="alert('Contact support to cancel order')">
-                                            Cancel Order
-                                        </button>
+                                    @if (in_array($order->status, ['confirmed', 'processing', 'shipped']))
+                                        <form action="{{ route('user.order.cancel', $order->id) }}" method="POST"
+                                            class="d-inline ml-2"
+                                            onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger">Cancel Order</button>
+                                        </form>
                                     @endif
                                 </div>
                             </div>

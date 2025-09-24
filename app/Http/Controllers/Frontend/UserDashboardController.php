@@ -125,4 +125,22 @@ class UserDashboardController extends Controller
 
         return redirect()->route('user.change-password')->with('success', 'Password updated successfully!');
     }
+
+    public function cancelOrder($id)
+    {
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->where('isdelete', false)
+            ->whereIn('status', ['confirmed', 'processing', 'shipped'])
+            ->firstOrFail();
+
+        // Prevent cancellation of delivered orders
+        if ($order->status === 'delivered') {
+            return redirect()->back()->with('error', 'Cannot cancel delivered orders.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return redirect()->back()->with('success', 'Order cancelled successfully.');
+    }
 }

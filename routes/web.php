@@ -182,6 +182,7 @@ Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
     Route::post('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
     Route::get('/change-password', [UserDashboardController::class, 'changePassword'])->name('change-password');
     Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('change-password.update');
+    Route::post('/order/{id}/cancel', [UserDashboardController::class, 'cancelOrder'])->name('order.cancel');
 });
 
 // Frontend Routes (no authentication required)

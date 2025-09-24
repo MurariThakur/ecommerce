@@ -57,6 +57,15 @@
                                                         <a href="{{ route('user.order.details', $order->id) }}"
                                                             class="btn btn-outline-primary-2 btn-sm">View
                                                             Details</a>
+                                                        @if (in_array($order->status, ['confirmed', 'processing', 'shipped']))
+                                                            <form action="{{ route('user.order.cancel', $order->id) }}"
+                                                                method="POST" class="d-inline ml-1"
+                                                                onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-danger btn-sm">Cancel
+                                                                    Order</button>
+                                                            </form>
+                                                        @endif
                                                         @if ($order->status === 'delivered')
                                                             @foreach ($order->orderItems as $item)
                                                                 @if ($item->product && !$item->has_review)
