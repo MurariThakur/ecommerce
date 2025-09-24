@@ -29,6 +29,7 @@ class SettingController extends Controller
             'twitter_link' => Setting::firstOrCreate(['key' => 'twitter_link'], ['value' => '']),
             'youtube_link' => Setting::firstOrCreate(['key' => 'youtube_link'], ['value' => '']),
             'pinterest_link' => Setting::firstOrCreate(['key' => 'pinterest_link'], ['value' => '']),
+            'turnstile_site_key' => Setting::firstOrCreate(['key' => 'turnstile_site_key'], ['value' => '']),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -67,6 +68,7 @@ class SettingController extends Controller
             'twitter_link' => $request->twitter_link,
             'youtube_link' => $request->youtube_link,
             'pinterest_link' => $request->pinterest_link,
+            'turnstile_site_key' => $request->turnstile_site_key,
         ];
 
         foreach ($settingsData as $key => $value) {

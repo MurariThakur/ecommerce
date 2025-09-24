@@ -213,6 +213,14 @@
                                             value="{{ old('pinterest_link', $settings['pinterest_link']->value) }}">
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="turnstile_site_key">Turnstile Site Key</label>
+                                        <input type="text" class="form-control" id="turnstile_site_key" name="turnstile_site_key" 
+                                               value="{{ old('turnstile_site_key', $settings['turnstile_site_key']->value) }}" 
+                                               placeholder="Cloudflare Turnstile Site Key">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

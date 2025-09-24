@@ -1,5 +1,5 @@
 @extends('frontend.layouts.app')
-@section('title', 'About Us')
+@section('title', 'Contact Us')
 @section('content')
     <main class="main">
         <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -98,30 +98,65 @@
                                 sed, urna.</p>
                         </div><!-- End .text-center -->
 
-                        <form action="#" class="contact-form mb-2">
+                        <!-- Debug: Turnstile Site Key = {{ env('TURNSTILE_SITE_KEY', 'NOT_SET') }} -->
+                        <form action="{{ route('contact.store') }}" method="POST" class="contact-form mb-2">
+                            @csrf
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="cname" class="sr-only">Name</label>
-                                    <input type="text" class="form-control" id="cname" placeholder="Name *" required>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                        id="cname" name="name" placeholder="Name *" value="{{ old('name') }}"
+                                        required>
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!-- End .col-sm-4 -->
 
                                 <div class="col-sm-4">
-                                    <label for="cemail" class="sr-only">Name</label>
-                                    <input type="email" class="form-control" id="cemail" placeholder="Email *"
+                                    <label for="cemail" class="sr-only">Email</label>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                        id="cemail" name="email" placeholder="Email *" value="{{ old('email') }}"
                                         required>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!-- End .col-sm-4 -->
 
                                 <div class="col-sm-4">
                                     <label for="cphone" class="sr-only">Phone</label>
-                                    <input type="tel" class="form-control" id="cphone" placeholder="Phone">
+                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror"
+                                        id="cphone" name="phone" placeholder="Phone" value="{{ old('phone') }}">
+                                    @error('phone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!-- End .col-sm-4 -->
                             </div><!-- End .row -->
 
                             <label for="csubject" class="sr-only">Subject</label>
-                            <input type="text" class="form-control" id="csubject" placeholder="Subject">
+                            <input type="text" class="form-control @error('subject') is-invalid @enderror"
+                                id="csubject" name="subject" placeholder="Subject" value="{{ old('subject') }}">
+                            @error('subject')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
 
                             <label for="cmessage" class="sr-only">Message</label>
-                            <textarea class="form-control" cols="30" rows="4" id="cmessage" required placeholder="Message *"></textarea>
+                            <textarea class="form-control @error('message') is-invalid @enderror" cols="30" rows="4" id="cmessage"
+                                name="message" required placeholder="Message *">{{ old('message') }}</textarea>
+                            @error('message')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            @php
+                                // dd(env('TURNSTILE_SITE_KEY'))
+                            @endphp
+                            <div class="form-group mt-3">
+                                <div class="cf-turnstile"
+                                    data-sitekey="{{ \App\Models\Setting::where('key', 'turnstile_site_key')->value('value') ?: env('TURNSTILE_SITE_KEY', '0x4AAAAAAB3Iy57TrSk_p0q4') }}"
+                                    data-callback="onTurnstileCallback"></div>
+                                <input type="hidden" name="cf-turnstile-response" value="">
+                                @error('cf-turnstile-response')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                             <div class="text-center">
                                 <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
@@ -135,4 +170,13 @@
             </div><!-- End .container -->
         </div><!-- End .page-content -->
     </main><!-- End .main -->
+@endsection
+
+@section('scripts')
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script>
+        function onTurnstileCallback(token) {
+            document.querySelector('input[name="cf-turnstile-response"]').value = token;
+        }
+    </script>
 @endsection

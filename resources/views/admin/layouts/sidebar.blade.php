@@ -131,6 +131,16 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ url('admin/contact') }}"
+                    class="nav-link {{ request()->is('admin/contact*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-envelope"></i>
+                    <p>
+                        Contact Messages
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ url('admin/settings') }}"
                     class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cog"></i>

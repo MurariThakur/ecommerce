@@ -84,6 +84,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
+    // Contact management routes
+    Route::get('/admin/contact', [\App\Http\Controllers\Admin\ContactController::class, 'index'])->name('admin.contact.index');
+    Route::get('/admin/contact/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'show'])->name('admin.contact.show');
+    Route::delete('/admin/contact/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('admin.contact.destroy');
+    Route::post('/admin/contact/{contact}/toggle-status', [\App\Http\Controllers\Admin\ContactController::class, 'toggleStatus'])->name('admin.contact.toggle.status');
+
     // Order management routes
     Route::get('/admin/order', [OrderController::class, 'index'])->name('admin.order.index');
     Route::get('/admin/order/view/{order}', [OrderController::class, 'show'])->name('admin.order.show');
@@ -182,6 +188,7 @@ Route::post('/review/store', [\App\Http\Controllers\Frontend\ReviewController::c
 
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\Frontend\ContactController::class, 'store'])->name('contact.store');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/payment-methods', [HomeController::class, 'paymentMethods'])->name('payment.methods');
 Route::get('/returns', [HomeController::class, 'returns'])->name('returns');
