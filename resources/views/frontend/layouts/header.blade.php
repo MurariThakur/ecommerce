@@ -28,15 +28,18 @@
                      <li>
                          <a href="#">Links</a>
                          <ul>
-                             <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
+                             <li><a href="tel:{{ \App\Models\Setting::where('key', 'mobile')->value('value') ?? '#' }}"><i
+                                         class="icon-phone"></i>Call:
+                                     {{ \App\Models\Setting::where('key', 'mobile')->value('value') ?? '+0123 456 789' }}</a>
+                             </li>
                              <li><a href="{{ auth()->check() ? route('wishlist.index') : '#signin-modal' }}"
                                      {{ !auth()->check() ? 'data-toggle=modal' : '' }}><i class="icon-heart-o"
                                          id="header-wishlist-icon"></i>My Wishlist
                                      <span
                                          id="wishlist-count">({{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }})</span></a>
                              </li>
-                             <li><a href="{{ asset('about.html') }}">About Us</a></li>
-                             <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
+                             <li><a href="{{ route('about') }}">About Us</a></li>
+                             <li><a href="{{ route('contact') }}">Contact Us</a></li>
                              @auth
                                  <li><a href="{{ route('user.dashboard') }}"><i class="icon-user"></i>Dashboard</a></li>
                              @else
@@ -57,8 +60,9 @@
                  </button>
 
                  <a href="{{ url('') }}" class="logo">
-                     <img src="{{ asset('frontend/assets/images/logo.png') }}" alt="Molla Logo" width="105"
-                         height="25">
+                     <img src="{{ \App\Models\Setting::where('key', 'website_logo')->value('value') ? asset('storage/' . \App\Models\Setting::where('key', 'website_logo')->value('value')) : asset('frontend/assets/images/logo.png') }}"
+                         alt="{{ \App\Models\Setting::where('key', 'website_name')->value('value') ?? 'Ecommerce' }}"
+                         width="105" height="25">
                  </a>
 
                  <nav class="main-nav">

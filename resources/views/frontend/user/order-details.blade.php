@@ -336,30 +336,57 @@
 
         <!-- Return Request Modal -->
         <div class="modal fade" id="returnModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Request Return</h5>
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content return-modal">
+                    <div class="modal-header return-modal-header">
+                        <div class="return-modal-icon">
+                            <i class="icon-refresh"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title">Request Return</h5>
+                            <p class="modal-subtitle">Order #{{ $order->order_number }}</p>
+                        </div>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
                         </button>
                     </div>
                     <form action="{{ route('user.order.return', $order->id) }}" method="POST">
                         @csrf
-                        <div class="modal-body">
+                        <div class="modal-body return-modal-body">
                             <div class="form-group">
                                 <label for="reason">Reason for Return *</label>
+                                <select name="return_type" class="form-control mb-3">
+                                    <option value="">Select reason...</option>
+                                    <option value="defective">Defective/Damaged item</option>
+                                    <option value="wrong_item">Wrong item received</option>
+                                    <option value="not_as_described">Not as described</option>
+                                    <option value="size_issue">Size/Fit issue</option>
+                                    <option value="quality_issue">Quality not satisfactory</option>
+                                    <option value="other">Other</option>
+                                </select>
                                 <textarea name="reason" id="reason" class="form-control" rows="4"
-                                    placeholder="Please explain why you want to return this order..." required></textarea>
+                                    placeholder="Please provide additional details about your return request..." required></textarea>
                             </div>
-                            <div class="alert alert-info">
-                                <small>Once submitted, your return request will be reviewed. Refund will be processed within
-                                    3-5 business days after approval.</small>
+
+                            <div class="return-summary">
+                                <div class="summary-item">
+                                    <span>Order Total:</span>
+                                    <span class="font-weight-bold">${{ number_format($order->total, 2) }}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Refund Amount:</span>
+                                    <span
+                                        class="font-weight-bold text-success">${{ number_format($order->total, 2) }}</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-warning">Submit Return Request</button>
+                        <div class="modal-footer return-modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                <i class="icon-close"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn btn-warning return-submit-btn">
+                                <i class="icon-refresh"></i> Submit Return Request
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -675,6 +702,26 @@
             border-top: 1px solid #eee;
         }
 
+        @media (max-width: 768px) {
+            .order-actions-bottom {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                text-align: stretch;
+            }
+
+            .order-actions-bottom .btn {
+                width: 100%;
+                padding: 0.875rem 1.5rem;
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+
+            .order-actions-bottom form {
+                margin: 0 !important;
+            }
+        }
+
         .refund-info h4 {
             margin-bottom: 1rem;
             color: #000000;
@@ -733,38 +780,172 @@
             font-size: 1.4rem;
         }
 
-        .modal-content {
-            border-radius: 8px;
+        .return-modal {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .modal-header {
-            border-bottom: 1px solid #dee2e6;
+        .return-modal-header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .modal-title {
-            color: #000000;
-            font-size: 1.25rem;
+        .return-modal-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
         }
 
-        .modal-body .form-group label {
-            color: #000000;
+        .return-modal-header .modal-title {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .return-modal-header .modal-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin: 0;
             font-weight: 500;
-            margin-bottom: 0.5rem;
         }
 
-        .modal-body .form-control {
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            padding: 0.75rem;
+        .return-modal-header .close {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+            margin-left: auto;
         }
 
-        .modal-body .alert-info {
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-            color: #0c5460;
-            border-radius: 4px;
-            padding: 0.75rem;
-            margin-top: 1rem;
+        .return-modal-header .close:hover {
+            opacity: 1;
+        }
+
+        .return-modal-body {
+            padding: 2rem;
+        }
+
+
+
+        .return-modal-body .form-group label {
+            color: #212529;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .return-modal-body .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            color: #212529;
+            font-weight: 500;
+            transition: border-color 0.3s ease;
+        }
+
+        .return-modal-body .form-control:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        }
+
+        .return-summary {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .summary-item:last-child {
+            margin-bottom: 0;
+            padding-top: 0.75rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .return-modal-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 1.5rem 2rem;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .return-submit-btn {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .return-submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #495057;
+            color: #495057;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #495057;
+            color: white;
+        }
+
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+
+            .return-modal-body {
+                padding: 1.5rem;
+            }
+
+            .return-modal-footer {
+                padding: 1.25rem 1.5rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .return-submit-btn,
+            .btn-outline-secondary {
+                width: 100%;
+                padding: 0.875rem 1.5rem;
+            }
         }
 
         @media (max-width: 768px) {

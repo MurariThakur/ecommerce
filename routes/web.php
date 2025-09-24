@@ -82,7 +82,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Settings management routes
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
-    Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+    Route::post('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 
     // Order management routes
     Route::get('/admin/order', [OrderController::class, 'index'])->name('admin.order.index');
@@ -179,6 +179,15 @@ Route::get('/wishlist/count', [\App\Http\Controllers\Frontend\WishlistController
 
 // Review Routes
 Route::post('/review/store', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])->name('review.store');
+
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/payment-methods', [HomeController::class, 'paymentMethods'])->name('payment.methods');
+Route::get('/returns', [HomeController::class, 'returns'])->name('returns');
+Route::get('/shipping', [HomeController::class, 'shipping'])->name('shipping');
+Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 
 // User Dashboard Routes (require authentication)
 Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {

@@ -5,31 +5,88 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
     public function index()
     {
-        $freeShippingSetting = Setting::firstOrCreate(
-            ['key' => 'free_shipping_threshold'],
-            ['value' => '100', 'status' => false]
-        );
+        $settings = [
+            'free_shipping_threshold' => Setting::firstOrCreate(['key' => 'free_shipping_threshold'], ['value' => '100', 'status' => false]),
+            'website_name' => Setting::firstOrCreate(['key' => 'website_name'], ['value' => 'Ecommerce Store']),
+            'website_logo' => Setting::firstOrCreate(['key' => 'website_logo'], ['value' => '']),
+            'favicon' => Setting::firstOrCreate(['key' => 'favicon'], ['value' => '']),
+            'footer_description' => Setting::firstOrCreate(['key' => 'footer_description'], ['value' => '']),
+            'footer_payment_icon' => Setting::firstOrCreate(['key' => 'footer_payment_icon'], ['value' => '']),
+            'office_address' => Setting::firstOrCreate(['key' => 'office_address'], ['value' => '']),
+            'mobile' => Setting::firstOrCreate(['key' => 'mobile'], ['value' => '']),
+            'alternative_mobile' => Setting::firstOrCreate(['key' => 'alternative_mobile'], ['value' => '']),
+            'email' => Setting::firstOrCreate(['key' => 'email'], ['value' => '']),
+            'alternative_email' => Setting::firstOrCreate(['key' => 'alternative_email'], ['value' => '']),
+            'working_hours' => Setting::firstOrCreate(['key' => 'working_hours'], ['value' => '']),
+            'facebook_link' => Setting::firstOrCreate(['key' => 'facebook_link'], ['value' => '']),
+            'instagram_link' => Setting::firstOrCreate(['key' => 'instagram_link'], ['value' => '']),
+            'twitter_link' => Setting::firstOrCreate(['key' => 'twitter_link'], ['value' => '']),
+            'youtube_link' => Setting::firstOrCreate(['key' => 'youtube_link'], ['value' => '']),
+            'pinterest_link' => Setting::firstOrCreate(['key' => 'pinterest_link'], ['value' => '']),
+        ];
 
-        return view('admin.settings.index', compact('freeShippingSetting'));
+        return view('admin.settings.index', compact('settings'));
     }
 
     public function update(Request $request)
     {
+        // Debug: Check if files are being received
+        if ($request->hasFile('website_logo')) {
+            \Log::info('Website logo file received: ' . $request->file('website_logo')->getClientOriginalName());
+        }
+
         $request->validate([
-            'value' => 'required|numeric|min:0'
+            'free_shipping_threshold' => 'required|numeric|min:0',
+            'website_name' => 'required|string|max:255',
+            'website_logo' => 'nullable|image|max:2048',
+            'favicon' => 'nullable|image|max:1024',
+            'footer_payment_icon' => 'nullable|image|max:2048',
+            'email' => 'nullable|email',
+            'alternative_email' => 'nullable|email',
         ]);
 
-        $freeShippingSetting = Setting::where('key', 'free_shipping_threshold')->first();
-        $freeShippingSetting->update([
-            'value' => $request->value,
-            'status' => $request->has('status')
-        ]);
+        // Update all settings
+        $settingsData = [
+            'free_shipping_threshold' => $request->free_shipping_threshold,
+            'website_name' => $request->website_name,
+            'footer_description' => $request->footer_description,
+            'office_address' => $request->office_address,
+            'mobile' => $request->mobile,
+            'alternative_mobile' => $request->alternative_mobile,
+            'email' => $request->email,
+            'alternative_email' => $request->alternative_email,
+            'working_hours' => $request->working_hours,
+            'facebook_link' => $request->facebook_link,
+            'instagram_link' => $request->instagram_link,
+            'twitter_link' => $request->twitter_link,
+            'youtube_link' => $request->youtube_link,
+            'pinterest_link' => $request->pinterest_link,
+        ];
 
-        return redirect()->back()->with('success', 'Free shipping settings updated successfully');
+        foreach ($settingsData as $key => $value) {
+            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        }
+
+        // Handle file uploads
+        $uploads = ['website_logo', 'favicon', 'footer_payment_icon'];
+        foreach ($uploads as $field) {
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+                $filename = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                $path = $file->store('settings', 'public');
+                Setting::updateOrCreate(['key' => $field], ['value' => $path]);
+            }
+        }
+
+        // Update free shipping status
+        Setting::where('key', 'free_shipping_threshold')->update(['status' => $request->has('free_shipping_status')]);
+
+        return redirect()->back()->with('success', 'Settings updated successfully');
     }
 }
