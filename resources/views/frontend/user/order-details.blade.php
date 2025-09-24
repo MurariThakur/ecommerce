@@ -775,7 +775,8 @@
                 position: relative;
             }
 
-            .tracking-steps::before {
+            .tracking-steps.cancelled-flow::before,
+            .tracking-steps.normal-flow::before {
                 content: '';
                 position: absolute;
                 top: 25px;
@@ -786,7 +787,28 @@
                 z-index: 1;
             }
 
-            .tracking-steps::after {
+            .tracking-steps.cancelled-flow::after {
+                content: '';
+                position: absolute;
+                top: 25px;
+                left: 25px;
+                width: 2px;
+                background: #28a745;
+                z-index: 2;
+                transition: height 0.3s ease;
+
+                height: @if ($order->status === 'cancelled')
+                    50%;
+                @elseif($order->status === 'refund_processing')
+                    75%;
+                @elseif($order->status === 'refunded')
+                    100%;
+                @else
+                    25%;
+                @endif
+            }
+
+            .tracking-steps.normal-flow::after {
                 content: '';
                 position: absolute;
                 top: 25px;
@@ -804,8 +826,6 @@
                     75%;
                 @elseif($order->status === 'delivered')
                     85%;
-                @elseif($order->status === 'cancelled')
-                    50%;
                 @elseif($order->status === 'return_requested')
                     90%;
                 @elseif($order->status === 'return_approved')
@@ -815,7 +835,7 @@
                 @elseif($order->status === 'refund_processing')
                     95%;
                 @elseif($order->status === 'refunded')
-                    95%;
+                    100%;
                 @else
                     0%;
                 @endif
