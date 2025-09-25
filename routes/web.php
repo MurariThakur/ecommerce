@@ -169,6 +169,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/product/toggle-status/{product}', [ProductController::class, 'toggleStatus'])->name('admin.product.toggle.status');
     Route::get('/admin/product/subcategories', [ProductController::class, 'getSubcategories'])->name('admin.product.subcategories');
 
+    // Blog Category management routes
+    Route::resource('admin/blog-category', \App\Http\Controllers\Admin\BlogCategoryController::class)->names([
+        'index' => 'admin.blog-category.index',
+        'create' => 'admin.blog-category.create',
+        'store' => 'admin.blog-category.store',
+        'show' => 'admin.blog-category.show',
+        'edit' => 'admin.blog-category.edit',
+        'update' => 'admin.blog-category.update',
+        'destroy' => 'admin.blog-category.destroy',
+    ]);
+    Route::post('admin/blog-category/{blog_category}/toggle-status', [\App\Http\Controllers\Admin\BlogCategoryController::class, 'toggleStatus'])->name('admin.blog-category.toggle.status');
+
+    // Blog management routes
+    Route::resource('admin/blog', \App\Http\Controllers\Admin\BlogController::class)->names([
+        'index' => 'admin.blog.index',
+        'create' => 'admin.blog.create',
+        'store' => 'admin.blog.store',
+        'show' => 'admin.blog.show',
+        'edit' => 'admin.blog.edit',
+        'update' => 'admin.blog.update',
+        'destroy' => 'admin.blog.destroy',
+    ]);
+    Route::post('admin/blog/{blog}/toggle-status', [\App\Http\Controllers\Admin\BlogController::class, 'toggleStatus'])->name('admin.blog.toggle.status');
+
 });
 
 Route::post('/cart/add', [PaymentController::class, 'addToCart'])->name('cart.add');
@@ -211,6 +235,9 @@ Route::get('/wishlist/count', [\App\Http\Controllers\Frontend\WishlistController
 Route::post('/review/store', [\App\Http\Controllers\Frontend\ReviewController::class, 'store'])->name('review.store');
 
 Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/blog', [HomeController::class, 'blog'])->name('frontend.blog');
+Route::get('/blog/{slug}', [HomeController::class, 'blogDetail'])->name('frontend.blog.detail');
+Route::post('/blog/{slug}/comment', [HomeController::class, 'storeComment'])->name('frontend.blog.comment')->middleware('user');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact', [\App\Http\Controllers\Frontend\ContactController::class, 'store'])->name('contact.store');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');

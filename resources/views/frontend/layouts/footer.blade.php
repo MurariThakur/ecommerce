@@ -46,6 +46,7 @@
                         <ul class="widget-list">
                             <li><a href="{{ route('frontend.home') }}">Home</a></li>
                             <li><a href="{{ route('about') }}">About Us</a></li>
+                            <li><a href="{{ route('frontend.blog') }}">Blog</a></li>
                             <li><a href="{{ route('faq') }}">FAQ</a></li>
                             <li><a href="{{ route('contact') }}">Contact us</a></li>
                             <li><a href="#signin-modal" data-toggle="modal">Log in</a></li>

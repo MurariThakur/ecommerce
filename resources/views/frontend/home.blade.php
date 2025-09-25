@@ -168,7 +168,7 @@
                 </div><!-- End .tab-content -->
             </div><!-- End .container -->
         @endif
-        
+
 
         @if ($homeCategories->count() > 0)
             <div class="container categories pt-6">
@@ -216,8 +216,8 @@
 
                 <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab"
-                            role="tab" aria-controls="top-all-tab" aria-selected="true">All</a>
+                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab" role="tab"
+                            aria-controls="top-all-tab" aria-selected="true">All</a>
                     </li>
                     @foreach ($navCategories as $category)
                         <li class="nav-item">
@@ -332,10 +332,10 @@
         </div><!-- .End .tab-pane -->
         </div><!-- End .tab-content -->
         <!-- <div class="more-container text-center">
-                    <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
-                        <span>Load more products</span><i class="icon-long-arrow-down"></i>
-                    </button>
-                </div><!-- End .more-container -->
+                        <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
+                            <span>Load more products</span><i class="icon-long-arrow-down"></i>
+                        </button>
+                    </div><!-- End .more-container -->
         </div><!-- End .container -->
 
         <div class="container">
@@ -384,8 +384,9 @@
             <div class="container">
                 <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
 
-                <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
-                    data-owl-options='{
+                @if ($homeBlogs->count() > 0)
+                    <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
+                        data-owl-options='{
                             "nav": false,
                             "dots": true,
                             "items": 3,
@@ -403,84 +404,47 @@
                                 }
                             }
                         }'>
-                    <article class="entry entry-display">
-                        <figure class="entry-media">
-                            <a href="single.html">
-                                <img src="{{ asset('frontend/assets/images/blog/home/post-1.jpg') }}" alt="image desc">
-                            </a>
-                        </figure><!-- End .entry-media -->
+                        @foreach ($homeBlogs as $blog)
+                            <article class="entry entry-display">
+                                <figure class="entry-media">
+                                    <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
+                                        <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}"
+                                            alt="{{ $blog->title }}">
+                                    </a>
+                                </figure>
 
-                        <div class="entry-body pb-4 text-center">
-                            <div class="entry-meta">
-                                <a href="#">Nov 22, 2018</a>, 0 Comments
-                            </div><!-- End .entry-meta -->
+                                <div class="entry-body pb-4 text-center">
+                                    <div class="entry-meta">
+                                        <a href="#">{{ $blog->created_at->format('M d, Y') }}</a>,
+                                        {{ $blog->comments->where('status', true)->count() }} Comments
+                                    </div>
 
-                            <h3 class="entry-title">
-                                <a href="single.html">Sed adipiscing ornare.</a>
-                            </h3><!-- End .entry-title -->
+                                    <h3 class="entry-title">
+                                        <a
+                                            href="{{ route('frontend.blog.detail', $blog->slug) }}">{{ Str::limit($blog->title, 30) }}</a>
+                                    </h3>
 
-                            <div class="entry-content">
-                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus
-                                    hendrerit.<br>Pelletesque aliquet nibh necurna. </p>
-                                <a href="single.html" class="read-more">Read More</a>
-                            </div><!-- End .entry-content -->
-                        </div><!-- End .entry-body -->
-                    </article><!-- End .entry -->
-
-                    <article class="entry entry-display">
-                        <figure class="entry-media">
-                            <a href="single.html">
-                                <img src="{{ asset('frontend/assets/images/blog/home/post-2.jpg') }}" alt="image desc">
-                            </a>
-                        </figure><!-- End .entry-media -->
-
-                        <div class="entry-body pb-4 text-center">
-                            <div class="entry-meta">
-                                <a href="#">Dec 12, 2018</a>, 0 Comments
-                            </div><!-- End .entry-meta -->
-
-                            <h3 class="entry-title">
-                                <a href="single.html">Fusce lacinia arcuet nulla.</a>
-                            </h3><!-- End .entry-title -->
-
-                            <div class="entry-content">
-                                <p>Sed pretium, ligula sollicitudin laoreet<br>viverra, tortor libero sodales leo,
-                                    eget blandit nunc tortor eu nibh. Nullam mollis justo. </p>
-                                <a href="single.html" class="read-more">Read More</a>
-                            </div><!-- End .entry-content -->
-                        </div><!-- End .entry-body -->
-                    </article><!-- End .entry -->
-
-                    <article class="entry entry-display">
-                        <figure class="entry-media">
-                            <a href="single.html">
-                                <img src="{{ asset('frontend/assets/images/blog/home/post-3.jpg') }}" alt="image desc">
-                            </a>
-                        </figure><!-- End .entry-media -->
-
-                        <div class="entry-body pb-4 text-center">
-                            <div class="entry-meta">
-                                <a href="#">Dec 19, 2018</a>, 2 Comments
-                            </div><!-- End .entry-meta -->
-
-                            <h3 class="entry-title">
-                                <a href="single.html">Quisque volutpat mattis eros.</a>
-                            </h3><!-- End .entry-title -->
-
-                            <div class="entry-content">
-                                <p>Suspendisse potenti. Sed egestas, ante et vulputate volutpat, eros pede semper
-                                    est, vitae luctus metus libero eu augue. </p>
-                                <a href="single.html" class="read-more">Read More</a>
-                            </div><!-- End .entry-content -->
-                        </div><!-- End .entry-body -->
-                    </article><!-- End .entry -->
-                </div><!-- End .owl-carousel -->
+                                    <div class="entry-content">
+                                        <p>{{ Str::limit(strip_tags($blog->short_description ?: $blog->description), 80) }}
+                                        </p>
+                                        <a href="{{ route('frontend.blog.detail', $blog->slug) }}" class="read-more">Read
+                                            More</a>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center">
+                        <p>No blog posts available.</p>
+                    </div>
+                @endif
             </div><!-- container -->
 
             <div class="more-container text-center mb-0 mt-3">
-                <a href="{{ asset('blog.html') }}" class="btn btn-outline-darker btn-more"><span>View more
+                <a href="{{ route('frontend.blog') }}" class="btn btn-outline-darker btn-more"><span>View more
                         articles</span><i class="icon-long-arrow-right"></i></a>
-            </div><!-- End .more-container -->
+            </div>
         </div>
         <div class="cta cta-display bg-image pt-4 pb-4"
             style="background-image: url({{ asset('frontend/assets/images/backgrounds/cta/bg-6.jpg') }});">

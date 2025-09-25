@@ -7,7 +7,11 @@ use App\Models\Slider;
 use App\Models\Partner;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Blog;
+use App\Models\BlogCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Models\BlogComment;
 
 class HomeController extends Controller
 {
@@ -70,7 +74,15 @@ class HomeController extends Controller
             ->limit(8)
             ->get();
 
-        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword', 'sliders', 'partners', 'homeCategories', 'navCategories', 'allProducts', 'categoryProducts', 'trendyProducts'));
+        // Get recent blogs for home page
+        $homeBlogs = Blog::with('blogCategory')
+            ->where('status', true)
+            ->where('isdelete', false)
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword', 'sliders', 'partners', 'homeCategories', 'navCategories', 'allProducts', 'categoryProducts', 'trendyProducts', 'homeBlogs'));
     }
 
 
@@ -146,4 +158,103 @@ class HomeController extends Controller
 
         return view('frontend.pages.privacy', compact('meta_title', 'meta_description', 'meta_keyword'));
     }
+
+    public function blog(Request $request)
+    {
+        $meta_title = 'Blog - Ecommerce';
+        $meta_description = 'Read our latest blog posts and stay updated with industry news and insights.';
+        $meta_keyword = 'blog, news, articles, insights';
+
+        $query = Blog::with('blogCategory')
+            ->where('status', true)
+            ->where('isdelete', false);
+
+        // Search filter
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('blog_category_id', $request->category);
+        }
+
+        $blogs = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        $categories = BlogCategory::where('status', true)
+            ->where('isdelete', false)
+            ->withCount([
+                'blogs' => function ($q) {
+                    $q->where('status', true)->where('isdelete', false);
+                }
+            ])
+            ->orderBy('name')
+            ->get();
+
+        $recentBlogs = Blog::where('status', true)
+            ->where('isdelete', false)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('frontend.pages.blog', compact('meta_title', 'meta_description', 'meta_keyword', 'blogs', 'categories', 'recentBlogs'));
+    }
+
+    public function blogDetail($slug)
+    {
+        $blog = Blog::with(['blogCategory', 'comments.user'])
+            ->where('slug', $slug)
+            ->where('status', true)
+            ->where('isdelete', false)
+            ->firstOrFail();
+
+        $meta_title = $blog->meta_title ?: $blog->title . ' - Blog';
+        $meta_description = $blog->meta_description ?: Str::limit(strip_tags($blog->content), 160);
+        $meta_keyword = $blog->meta_keyword ?: 'blog, article';
+
+        $recentBlogs = Blog::where('status', true)
+            ->where('isdelete', false)
+            ->where('id', '!=', $blog->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $relatedBlogs = Blog::where('status', true)
+            ->where('isdelete', false)
+            ->where('id', '!=', $blog->id)
+            ->where('blog_category_id', $blog->blog_category_id)
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $categories = BlogCategory::where('status', true)
+            ->where('isdelete', false)
+            ->withCount([
+                'blogs' => function ($q) {
+                    $q->where('status', true)->where('isdelete', false);
+                }
+            ])
+            ->orderBy('name')
+            ->get();
+
+        return view('frontend.pages.blog-detail', compact('meta_title', 'meta_description', 'meta_keyword', 'blog', 'recentBlogs', 'categories', 'relatedBlogs'));
+    }
+
+    public function storeComment(Request $request, $slug)
+    {
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+
+        $request->validate([
+            'comment' => 'required|string|max:1000'
+        ]);
+
+        BlogComment::create([
+            'blog_id' => $blog->id,
+            'user_id' => auth()->id(),
+            'comment' => $request->comment
+        ]);
+
+        return redirect()->route('frontend.blog.detail', $slug)->with('success', 'Comment posted successfully!');
+    }
 }
+
