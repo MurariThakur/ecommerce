@@ -172,7 +172,8 @@ class UserDashboardController extends Controller
     public function returnOrder(Request $request, $id)
     {
         $request->validate([
-            'reason' => 'required|string|max:500'
+            'return_type' => 'required|string',
+            'reason' => 'nullable|string|max:500'
         ]);
 
         $order = Order::where('user_id', Auth::id())
@@ -181,6 +182,21 @@ class UserDashboardController extends Controller
             ->where('status', 'delivered')
             ->firstOrFail();
 
+        // Combine dropdown reason with additional text
+        $returnReasons = [
+            'defective' => 'Defective/Damaged item',
+            'wrong_item' => 'Wrong item received',
+            'not_as_described' => 'Not as described',
+            'size_issue' => 'Size/Fit issue',
+            'quality_issue' => 'Quality not satisfactory',
+            'other' => 'Other'
+        ];
+
+        $reason = $returnReasons[$request->return_type] ?? $request->return_type;
+        if ($request->filled('reason')) {
+            $reason .= ' - ' . $request->reason;
+        }
+
         // Create refund record
         $refund = \App\Models\Refund::create([
             'order_id' => $order->id,
@@ -188,7 +204,7 @@ class UserDashboardController extends Controller
             'amount' => $order->total,
             'type' => 'return',
             'payment_method' => $order->payment_method,
-            'reason' => $request->reason,
+            'reason' => $reason,
             'status' => 'initiated',
             'estimated_days' => 7
         ]);

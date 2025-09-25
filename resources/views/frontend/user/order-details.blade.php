@@ -365,7 +365,7 @@
                                     <option value="other">Other</option>
                                 </select>
                                 <textarea name="reason" id="reason" class="form-control" rows="4"
-                                    placeholder="Please provide additional details about your return request..." required></textarea>
+                                    placeholder="Please provide additional details about your return request..."></textarea>
                             </div>
 
                             <div class="return-summary">

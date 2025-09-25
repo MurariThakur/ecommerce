@@ -131,6 +131,26 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ url('admin/sliders') }}"
+                    class="nav-link {{ request()->is('admin/slider*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-images"></i>
+                    <p>
+                        Sliders
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/partners') }}"
+                    class="nav-link {{ request()->is('admin/partner*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-handshake"></i>
+                    <p>
+                        Partners
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ url('admin/contact') }}"
                     class="nav-link {{ request()->is('admin/contact*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-envelope"></i>

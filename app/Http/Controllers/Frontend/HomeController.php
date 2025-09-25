@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Slider;
+use App\Models\Partner;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -17,7 +20,20 @@ class HomeController extends Controller
         $meta_description = 'Welcome to our ecommerce store. Find the best products at great prices.';
         $meta_keyword = 'ecommerce, online shopping, products';
 
-        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword'));
+        // Get active sliders
+        $sliders = Slider::where('status', true)->orderBy('created_at', 'desc')->get();
+
+        // Get active partners
+        $partners = Partner::where('status', true)->orderBy('created_at', 'desc')->get();
+        
+        // Get categories for home page
+        $homeCategories = Category::where('status', true)
+            ->where('isdelete', false)
+            ->where('is_home', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword', 'sliders', 'partners', 'homeCategories'));
     }
 
     public function contact()

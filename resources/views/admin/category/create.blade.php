@@ -31,7 +31,7 @@
                             <h3 class="card-title">Create Category</h3>
                         </div>
                         <!-- /.card-header -->
-                        <form action="{{ route('admin.category.store') }}" method="POST">
+                        <form action="{{ route('admin.category.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
                                 <div class="form-group">
@@ -52,6 +52,37 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="image">Category Image</label>
+                                    <input type="file" class="form-control-file @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+                                    @error('image')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="button_name">Button Name</label>
+                                    <input type="text" class="form-control @error('button_name') is-invalid @enderror" id="button_name" name="button_name" value="{{ old('button_name') }}">
+                                    @error('button_name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="is_home">Show on Home Page</label>
+                                    <div class="custom-control custom-switch">
+                                        <input type="hidden" name="is_home" value="0">
+                                        <input type="checkbox" class="custom-control-input" id="is_home" name="is_home" value="1" {{ old('is_home') ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="is_home">
+                                            Display on Home Page
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">

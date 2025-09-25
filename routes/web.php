@@ -110,6 +110,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/refund/process/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'process'])->name('admin.refunds.process');
     Route::post('/admin/refund/reject/{refund}', [\App\Http\Controllers\Admin\RefundController::class, 'reject'])->name('admin.refunds.reject');
 
+    // Slider management routes
+    Route::resource('admin/sliders', \App\Http\Controllers\Admin\SliderController::class)->names([
+        'index' => 'admin.sliders.index',
+        'create' => 'admin.sliders.create',
+        'store' => 'admin.sliders.store',
+        'show' => 'admin.sliders.show',
+        'edit' => 'admin.sliders.edit',
+        'update' => 'admin.sliders.update',
+        'destroy' => 'admin.sliders.destroy',
+    ]);
+    Route::post('admin/sliders/{slider}/toggle-status', [\App\Http\Controllers\Admin\SliderController::class, 'toggleStatus'])->name('admin.sliders.toggle.status');
+
+    // Partner management routes
+    Route::resource('admin/partners', \App\Http\Controllers\Admin\PartnerController::class)->names([
+        'index' => 'admin.partners.index',
+        'create' => 'admin.partners.create',
+        'store' => 'admin.partners.store',
+        'show' => 'admin.partners.show',
+        'edit' => 'admin.partners.edit',
+        'update' => 'admin.partners.update',
+        'destroy' => 'admin.partners.destroy',
+    ]);
+    Route::post('admin/partners/{partner}/toggle-status', [\App\Http\Controllers\Admin\PartnerController::class, 'toggleStatus'])->name('admin.partners.toggle.status');
+
     // Brand management routes
     Route::resource('admin/brand', BrandController::class)->names([
         'index' => 'admin.brand.index',
