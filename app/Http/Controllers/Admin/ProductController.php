@@ -11,6 +11,7 @@ use App\Models\Color;
 use App\Models\ProductColor;
 use App\Models\ProductSize;
 use App\Models\ProductImage;
+use App\Models\Notification;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -113,6 +114,16 @@ class ProductController extends Controller
         unset($productData['colors'], $productData['sizes'], $productData['images']); // Remove colors, sizes, and images from product data
 
         $product = Product::create($productData);
+
+        Notification::createNotification(
+            'product',
+            'New Product Added',
+            'Product "' . $product->title . '" has been added to inventory',
+            route('product.detail', $product->slug),
+            null,
+            'fas fa-box',
+            'success'
+        );
 
         // Store colors if provided
         if ($request->has('colors') && !empty($request->colors)) {

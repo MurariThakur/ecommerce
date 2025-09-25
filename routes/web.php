@@ -193,6 +193,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     ]);
     Route::post('admin/blog/{blog}/toggle-status', [\App\Http\Controllers\Admin\BlogController::class, 'toggleStatus'])->name('admin.blog.toggle.status');
 
+    // Notification routes
+    Route::get('admin/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('admin/notifications/{notification}/read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+    Route::post('admin/notifications/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
+    Route::get('admin/notifications/unread-count', [\App\Http\Controllers\Admin\NotificationController::class, 'getUnreadCount'])->name('admin.notifications.unread-count');
+    Route::get('admin/notifications/recent', [\App\Http\Controllers\Admin\NotificationController::class, 'getRecent'])->name('admin.notifications.recent');
+
 });
 
 Route::post('/cart/add', [PaymentController::class, 'addToCart'])->name('cart.add');

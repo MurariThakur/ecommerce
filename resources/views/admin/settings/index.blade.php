@@ -272,6 +272,94 @@
                         </div>
                     </div>
 
+                    <!-- SMTP Configuration -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">SMTP Configuration</h3>
+                            <div class="card-tools">
+                                @if (isset($settings['mail_mailer']) && $settings['mail_mailer']->value === 'smtp')
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check-circle"></i> SMTP Enabled
+                                    </span>
+                                @else
+                                    <span class="badge badge-secondary">
+                                        <i class="fas fa-times-circle"></i> SMTP Disabled
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_mailer">Mail Driver</label>
+                                        <select class="form-control" id="mail_mailer" name="mail_mailer">
+                                            <option value="log"
+                                                {{ isset($settings['mail_mailer']) && $settings['mail_mailer']->value === 'log' ? 'selected' : '' }}>
+                                                Log (Development)</option>
+                                            <option value="smtp"
+                                                {{ isset($settings['mail_mailer']) && $settings['mail_mailer']->value === 'smtp' ? 'selected' : '' }}>
+                                                SMTP</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_host">SMTP Host</label>
+                                        <input type="text" class="form-control" id="mail_host" name="mail_host"
+                                            value="{{ old('mail_host', isset($settings['mail_host']) ? $settings['mail_host']->value : '') }}"
+                                            placeholder="smtp.gmail.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_port">SMTP Port</label>
+                                        <input type="number" class="form-control" id="mail_port" name="mail_port"
+                                            value="{{ old('mail_port', isset($settings['mail_port']) ? $settings['mail_port']->value : '') }}"
+                                            placeholder="587">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_username">SMTP Username</label>
+                                        <input type="text" class="form-control" id="mail_username"
+                                            name="mail_username"
+                                            value="{{ old('mail_username', isset($settings['mail_username']) ? $settings['mail_username']->value : '') }}"
+                                            placeholder="your-email@gmail.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_password">SMTP Password</label>
+                                        <input type="password" class="form-control" id="mail_password"
+                                            name="mail_password"
+                                            value="{{ old('mail_password', isset($settings['mail_password']) ? $settings['mail_password']->value : '') }}"
+                                            placeholder="App Password">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="mail_from_address">From Email Address</label>
+                                        <input type="email" class="form-control" id="mail_from_address"
+                                            name="mail_from_address"
+                                            value="{{ old('mail_from_address', isset($settings['mail_from_address']) ? $settings['mail_from_address']->value : '') }}"
+                                            placeholder="noreply@yoursite.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mail_from_name">From Name</label>
+                                <input type="text" class="form-control" id="mail_from_name" name="mail_from_name"
+                                    value="{{ old('mail_from_name', isset($settings['mail_from_name']) ? $settings['mail_from_name']->value : '') }}"
+                                    placeholder="Your Website Name">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Payment Gateway Settings -->
                     <div class="card">
                         <div class="card-header">

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Order;
 use App\Models\Review;
+use App\Models\Notification;
 
 class UserDashboardController extends Controller
 {
@@ -162,6 +163,16 @@ class UserDashboardController extends Controller
             $order->update(['status' => 'cancelled']);
         }
 
+        Notification::createNotification(
+            'order_cancel',
+            'Order Cancelled',
+            'Order #' . $order->order_number . ' cancelled by customer ' . Auth::user()->name,
+            route('admin.order.show', $order->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number],
+            'fas fa-times-circle',
+            'warning'
+        );
+
         $message = $order->is_payment
             ? 'Order cancelled successfully. Refund will be processed within 3-5 business days.'
             : 'Order cancelled successfully.';
@@ -210,6 +221,16 @@ class UserDashboardController extends Controller
         ]);
 
         $order->update(['status' => 'return_requested']);
+
+        Notification::createNotification(
+            'return_request',
+            'Return Request Submitted',
+            'Return request for Order #' . $order->order_number . ' by ' . Auth::user()->name . ' - Reason: ' . $request->return_type,
+            route('admin.refunds.show', $refund->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number, 'refund_id' => $refund->id],
+            'fas fa-undo',
+            'info'
+        );
 
         return redirect()->back()->with('success', 'Return request submitted successfully. We will review and process within 24-48 hours.');
     }

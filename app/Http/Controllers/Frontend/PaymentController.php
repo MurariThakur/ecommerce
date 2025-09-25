@@ -9,6 +9,7 @@ use Darryldecode\Cart\Facades\CartFacade as Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Models\Notification;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -935,8 +936,19 @@ class PaymentController extends Controller
             \Log::error('Failed to queue order confirmation email: ' . $e->getMessage());
         }
 
+        // Create notification for new order
+        Notification::createNotification(
+            'order',
+            'New Order Placed',
+            'Order #' . $order->order_number . ' placed by ' . $order->first_name . ' ' . $order->last_name . ' - $' . number_format($order->total, 2),
+            route('admin.order.show', $order->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number, 'total' => $order->total],
+            'fas fa-shopping-cart',
+            'success'
+        );
+
         // Clear cart and sessions
-        // Cart::clear();
+        Cart::clear();
         session()->forget(['applied_discount', 'order_token']);
 
         if ($request && $request->ajax()) {

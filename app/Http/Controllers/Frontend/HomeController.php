@@ -9,9 +9,10 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\BlogComment;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\BlogComment;
 
 class HomeController extends Controller
 {
@@ -248,11 +249,21 @@ class HomeController extends Controller
             'comment' => 'required|string|max:1000'
         ]);
 
-        BlogComment::create([
+        $comment = BlogComment::create([
             'blog_id' => $blog->id,
             'user_id' => auth()->id(),
             'comment' => $request->comment
         ]);
+
+        Notification::createNotification(
+            'comment',
+            'New Blog Comment',
+            'New comment on blog "' . $blog->title . '" by ' . auth()->user()->name,
+            route('frontend.blog.detail', $blog->slug),
+            null,
+            'fas fa-comment',
+            'info'
+        );
 
         return redirect()->route('frontend.blog.detail', $slug)->with('success', 'Comment posted successfully!');
     }

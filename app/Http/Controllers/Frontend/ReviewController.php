@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
@@ -52,13 +53,24 @@ class ReviewController extends Controller
             ]);
         }
 
-        Review::create([
+        $review = Review::create([
             'user_id' => Auth::id(),
             'product_id' => $request->product_id,
             'rating' => $request->rating,
             'comment' => $request->comment,
             'is_approved' => true
         ]);
+
+        $product = Product::find($request->product_id);
+        Notification::createNotification(
+            'review',
+            'New Product Review',
+            'New ' . $request->rating . '-star review for "' . $product->title . '" by ' . Auth::user()->name,
+            route('product.detail', $product->slug),
+            ['review_id' => $review->id, 'product_id' => $product->id, 'rating' => $request->rating],
+            'fas fa-star',
+            'info'
+        );
 
         return response()->json([
             'success' => true,

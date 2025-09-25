@@ -146,9 +146,9 @@
 
                  <div class="dropdown cart-dropdown" id="cart-dropdown">
                      <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                         aria-haspopup="true" aria-expanded="false" data-display="static">
+                         aria-haspopup="true" aria-expanded="false" data-display="static" style="position: relative;">
                          <i class="icon-shopping-cart"></i>
-                         <span class="cart-count" id="header-cart-count">{{ Cart::getTotalQuantity() }}</span>
+                         <span class="cart-count" id="header-cart-count" style="position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-width: 18px;">{{ Cart::getTotalQuantity() }}</span>
                      </a>
 
                      <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">

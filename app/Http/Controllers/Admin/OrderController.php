@@ -16,8 +16,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = Order::with(['user', 'orderItems'])
-            ->where('isdelete', false)
-            ->whereIn('status', ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled']);
+            ->where('isdelete', false);
 
         // Search functionality
         if ($request->filled('search')) {
@@ -86,7 +85,7 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:confirmed,processing,shipped,delivered,cancelled'
+            'status' => 'required|in:pending,confirmed,processing,shipped,delivered,cancelled,return_requested,return_processing,return_approved,return_rejected,refunded'
         ]);
 
         $oldStatus = $order->status;
@@ -155,11 +154,17 @@ class OrderController extends Controller
         }
 
         $validTransitions = [
+            'pending' => ['confirmed', 'cancelled'],
             'confirmed' => ['processing', 'cancelled'],
             'processing' => ['shipped', 'cancelled'],
             'shipped' => ['delivered', 'cancelled'],
-            'delivered' => [], // No transitions allowed from delivered
-            'cancelled' => [] // No transitions allowed from cancelled
+            'delivered' => ['return_requested'], // Allow return requests from delivered
+            'cancelled' => ['refunded'], // Allow refunded status from cancelled
+            'return_requested' => ['return_processing', 'return_rejected'], // Admin can process or reject return
+            'return_processing' => ['return_approved', 'return_rejected'], // Processing can go to approved or rejected
+            'return_approved' => ['refunded'], // Approved returns can be refunded
+            'return_rejected' => ['delivered'], // Rejected returns go back to delivered
+            'refunded' => [] // No transitions allowed from refunded
         ];
 
         return in_array($newStatus, $validTransitions[$oldStatus] ?? []);

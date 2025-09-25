@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\Notification;
 use App\Mail\ContactFormMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -22,6 +23,16 @@ class ContactController extends Controller
         ]);
 
         $contact = Contact::create($request->only(['name', 'email', 'phone', 'subject', 'message']));
+
+        Notification::createNotification(
+            'contact',
+            'New Contact Form Submission',
+            'New message from ' . $contact->name . ': ' . ($contact->subject ?: 'No subject'),
+            route('admin.contact.index'),
+            ['contact_id' => $contact->id, 'email' => $contact->email],
+            'fas fa-envelope',
+            'info'
+        );
 
         Mail::to(config('mail.from.address'))->queue(new ContactFormMail($contact));
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\Notification;
 use App\Http\Requests\BlogRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +57,17 @@ class BlogController extends Controller
             $data['image'] = $request->file('image')->store('blogs', 'public');
         }
 
-        Blog::create($data);
+        $blog = Blog::create($data);
+
+        Notification::createNotification(
+            'blog',
+            'New Blog Created',
+            'Blog "' . $blog->title . '" has been created',
+            route('frontend.blog.detail', $blog->slug),
+            null,
+            'fas fa-blog',
+            'success'
+        );
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog created successfully.');

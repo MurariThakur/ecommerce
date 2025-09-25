@@ -39,6 +39,13 @@ class SettingController extends Controller
             'razorpay_key_id' => Setting::firstOrCreate(['key' => 'razorpay_key_id'], ['value' => '']),
             'razorpay_key_secret' => Setting::firstOrCreate(['key' => 'razorpay_key_secret'], ['value' => '']),
             'razorpay_status' => Setting::firstOrCreate(['key' => 'razorpay_status'], ['value' => '', 'status' => false]),
+            'mail_mailer' => Setting::firstOrCreate(['key' => 'mail_mailer'], ['value' => 'log']),
+            'mail_host' => Setting::firstOrCreate(['key' => 'mail_host'], ['value' => '']),
+            'mail_port' => Setting::firstOrCreate(['key' => 'mail_port'], ['value' => '587']),
+            'mail_username' => Setting::firstOrCreate(['key' => 'mail_username'], ['value' => '']),
+            'mail_password' => Setting::firstOrCreate(['key' => 'mail_password'], ['value' => '']),
+            'mail_from_address' => Setting::firstOrCreate(['key' => 'mail_from_address'], ['value' => '']),
+            'mail_from_name' => Setting::firstOrCreate(['key' => 'mail_from_name'], ['value' => '']),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -84,6 +91,13 @@ class SettingController extends Controller
             'paypal_client_secret' => $request->paypal_client_secret,
             'razorpay_key_id' => $request->razorpay_key_id,
             'razorpay_key_secret' => $request->razorpay_key_secret,
+            'mail_mailer' => $request->mail_mailer,
+            'mail_host' => $request->mail_host,
+            'mail_port' => $request->mail_port,
+            'mail_username' => $request->mail_username,
+            'mail_password' => $request->mail_password,
+            'mail_from_address' => $request->mail_from_address,
+            'mail_from_name' => $request->mail_from_name,
         ];
 
         foreach ($settingsData as $key => $value) {

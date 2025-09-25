@@ -168,7 +168,7 @@
                 </div><!-- End .tab-content -->
             </div><!-- End .container -->
         @endif
-
+        
 
         @if ($homeCategories->count() > 0)
             <div class="container categories pt-6">
@@ -216,8 +216,8 @@
 
                 <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab" role="tab"
-                            aria-controls="top-all-tab" aria-selected="true">All</a>
+                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab"
+                            role="tab" aria-controls="top-all-tab" aria-selected="true">All</a>
                     </li>
                     @foreach ($navCategories as $category)
                         <li class="nav-item">
@@ -332,10 +332,10 @@
         </div><!-- .End .tab-pane -->
         </div><!-- End .tab-content -->
         <!-- <div class="more-container text-center">
-                        <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
-                            <span>Load more products</span><i class="icon-long-arrow-down"></i>
-                        </button>
-                    </div><!-- End .more-container -->
+                    <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
+                        <span>Load more products</span><i class="icon-long-arrow-down"></i>
+                    </button>
+                </div><!-- End .more-container -->
         </div><!-- End .container -->
 
         <div class="container">
@@ -384,9 +384,9 @@
             <div class="container">
                 <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
 
-                @if ($homeBlogs->count() > 0)
-                    <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
-                        data-owl-options='{
+@if($homeBlogs->count() > 0)
+                <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
+                    data-owl-options='{
                             "nav": false,
                             "dots": true,
                             "items": 3,
@@ -404,40 +404,35 @@
                                 }
                             }
                         }'>
-                        @foreach ($homeBlogs as $blog)
-                            <article class="entry entry-display">
-                                <figure class="entry-media">
-                                    <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
-                                        <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}"
-                                            alt="{{ $blog->title }}">
-                                    </a>
-                                </figure>
+                    @foreach($homeBlogs as $blog)
+                    <article class="entry entry-display">
+                        <figure class="entry-media">
+                            <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
+                                <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}" alt="{{ $blog->title }}">
+                            </a>
+                        </figure>
 
-                                <div class="entry-body pb-4 text-center">
-                                    <div class="entry-meta">
-                                        <a href="#">{{ $blog->created_at->format('M d, Y') }}</a>,
-                                        {{ $blog->comments->where('status', true)->count() }} Comments
-                                    </div>
+                        <div class="entry-body pb-4 text-center">
+                            <div class="entry-meta">
+                                <a href="#">{{ $blog->created_at->format('M d, Y') }}</a>, {{ $blog->comments->where('status', true)->count() }} Comments
+                            </div>
 
-                                    <h3 class="entry-title">
-                                        <a
-                                            href="{{ route('frontend.blog.detail', $blog->slug) }}">{{ Str::limit($blog->title, 30) }}</a>
-                                    </h3>
+                            <h3 class="entry-title">
+                                <a href="{{ route('frontend.blog.detail', $blog->slug) }}">{{ Str::limit($blog->title, 30) }}</a>
+                            </h3>
 
-                                    <div class="entry-content">
-                                        <p>{{ Str::limit(strip_tags($blog->short_description ?: $blog->description), 80) }}
-                                        </p>
-                                        <a href="{{ route('frontend.blog.detail', $blog->slug) }}" class="read-more">Read
-                                            More</a>
-                                    </div>
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
+                            <div class="entry-content">
+                                <p>{{ Str::limit(strip_tags($blog->short_description ?: $blog->description), 80) }}</p>
+                                <a href="{{ route('frontend.blog.detail', $blog->slug) }}" class="read-more">Read More</a>
+                            </div>
+                        </div>
+                    </article>
+                    @endforeach
+                </div>
                 @else
-                    <div class="text-center">
-                        <p>No blog posts available.</p>
-                    </div>
+                <div class="text-center">
+                    <p>No blog posts available.</p>
+                </div>
                 @endif
             </div><!-- container -->
 

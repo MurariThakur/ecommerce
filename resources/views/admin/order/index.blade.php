@@ -48,6 +48,9 @@
                                                 <div class="col-lg-2 col-md-6 col-6 mb-2">
                                                     <select class="form-control" name="status">
                                                         <option value="">Status</option>
+                                                        <option value="pending"
+                                                            {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                                            Pending</option>
                                                         <option value="confirmed"
                                                             {{ request('status') == 'confirmed' ? 'selected' : '' }}>
                                                             Confirmed</option>
@@ -63,6 +66,21 @@
                                                         <option value="cancelled"
                                                             {{ request('status') == 'cancelled' ? 'selected' : '' }}>
                                                             Cancelled</option>
+                                                        <option value="return_requested"
+                                                            {{ request('status') == 'return_requested' ? 'selected' : '' }}>
+                                                            Return Requested</option>
+                                                        <option value="return_processing"
+                                                            {{ request('status') == 'return_processing' ? 'selected' : '' }}>
+                                                            Return Processing</option>
+                                                        <option value="return_approved"
+                                                            {{ request('status') == 'return_approved' ? 'selected' : '' }}>
+                                                            Return Approved</option>
+                                                        <option value="return_rejected"
+                                                            {{ request('status') == 'return_rejected' ? 'selected' : '' }}>
+                                                            Return Rejected</option>
+                                                        <option value="refunded"
+                                                            {{ request('status') == 'refunded' ? 'selected' : '' }}>
+                                                            Refunded</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-2 col-md-6 col-6 mb-2">
@@ -152,6 +170,12 @@
                                                 </td>
                                                 <td>
                                                     @switch($order->status)
+                                                        @case('pending')
+                                                            <span class="badge badge-warning">
+                                                                <i class="fas fa-clock"></i> Pending
+                                                            </span>
+                                                        @break
+
                                                         @case('confirmed')
                                                             <span class="badge badge-success">
                                                                 <i class="fas fa-check-circle"></i> Confirmed
@@ -179,6 +203,36 @@
                                                         @case('cancelled')
                                                             <span class="badge badge-danger">
                                                                 <i class="fas fa-ban"></i> Cancelled
+                                                            </span>
+                                                        @break
+
+                                                        @case('return_requested')
+                                                            <span class="badge badge-warning">
+                                                                <i class="fas fa-undo"></i> Return Requested
+                                                            </span>
+                                                        @break
+
+                                                        @case('return_processing')
+                                                            <span class="badge badge-info">
+                                                                <i class="fas fa-cog"></i> Return Processing
+                                                            </span>
+                                                        @break
+
+                                                        @case('return_approved')
+                                                            <span class="badge badge-success">
+                                                                <i class="fas fa-check-circle"></i> Return Approved
+                                                            </span>
+                                                        @break
+
+                                                        @case('return_rejected')
+                                                            <span class="badge badge-danger">
+                                                                <i class="fas fa-times-circle"></i> Return Rejected
+                                                            </span>
+                                                        @break
+
+                                                        @case('refunded')
+                                                            <span class="badge badge-secondary">
+                                                                <i class="fas fa-money-bill-wave"></i> Refunded
                                                             </span>
                                                         @break
 
@@ -376,6 +430,8 @@
                                     <label for="status{{ $order->id }}">New Status <span
                                             class="text-danger">*</span></label>
                                     <select class="form-control" id="status{{ $order->id }}" name="status" required>
+                                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>
+                                            Pending</option>
                                         <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>
                                             Confirmed</option>
                                         <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>
@@ -386,6 +442,16 @@
                                             Delivered</option>
                                         <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
                                             Cancelled</option>
+                                        <option value="return_requested" {{ $order->status == 'return_requested' ? 'selected' : '' }}>
+                                            Return Requested</option>
+                                        <option value="return_processing" {{ $order->status == 'return_processing' ? 'selected' : '' }}>
+                                            Return Processing</option>
+                                        <option value="return_approved" {{ $order->status == 'return_approved' ? 'selected' : '' }}>
+                                            Return Approved</option>
+                                        <option value="return_rejected" {{ $order->status == 'return_rejected' ? 'selected' : '' }}>
+                                            Return Rejected</option>
+                                        <option value="refunded" {{ $order->status == 'refunded' ? 'selected' : '' }}>
+                                            Refunded</option>
                                     </select>
                                 </div>
                             </div>

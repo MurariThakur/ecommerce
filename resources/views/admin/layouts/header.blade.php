@@ -72,29 +72,35 @@
         </li>
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
+            <a class="nav-link" data-toggle="dropdown" href="#" id="notification-bell">
                 <i class="far fa-bell"></i>
-                <span class="badge badge-warning navbar-badge">15</span>
+                <span class="badge badge-warning navbar-badge" id="notification-count" style="display: none;">0</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification-dropdown" style="width: 350px; max-height: 400px; overflow-y: auto;">
+                <span class="dropdown-item dropdown-header bg-light" id="notification-header">
+                    <i class="fas fa-bell mr-2"></i>0 Notifications
+                </span>
+                <div id="notification-list">
+                    <div class="text-center p-4">
+                        <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No notifications</p>
+                    </div>
+                </div>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                    <span class="float-right text-muted text-sm">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                    <span class="float-right text-muted text-sm">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file mr-2"></i> 3 new reports
-                    <span class="float-right text-muted text-sm">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                <div class="dropdown-footer bg-light p-2">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="{{ route('admin.notifications.index') }}" class="btn btn-sm btn-primary btn-block">
+                                <i class="fas fa-eye mr-1"></i>View All
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-secondary btn-block" id="mark-all-read">
+                                <i class="fas fa-check mr-1"></i>Mark Read
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </li>
 
