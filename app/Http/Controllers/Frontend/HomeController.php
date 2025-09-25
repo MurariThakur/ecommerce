@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Slider;
 use App\Models\Partner;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -25,7 +26,7 @@ class HomeController extends Controller
 
         // Get active partners
         $partners = Partner::where('status', true)->orderBy('created_at', 'desc')->get();
-        
+
         // Get categories for home page
         $homeCategories = Category::where('status', true)
             ->where('isdelete', false)
@@ -33,8 +34,45 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword', 'sliders', 'partners', 'homeCategories'));
+        // Get categories for Recent Arrivals navigation
+        $navCategories = Category::where('status', true)
+            ->where('isdelete', false)
+            ->orderBy('name')
+            ->limit(4)
+            ->get();
+
+        // Get recent products for all categories
+        $allProducts = Product::with(['category', 'subcategory', 'productImages'])
+            ->where('status', true)
+            ->where('isdelete', false)
+            ->orderBy('created_at', 'desc')
+            ->limit(4)
+            ->get();
+
+        // Get recent products by category
+        $categoryProducts = [];
+        foreach ($navCategories as $category) {
+            $categoryProducts[$category->slug] = Product::with(['category', 'subcategory', 'productImages'])
+                ->where('status', true)
+                ->where('isdelete', false)
+                ->where('category_id', $category->id)
+                ->orderBy('created_at', 'desc')
+                ->limit(4)
+                ->get();
+        }
+
+        // Get trendy products
+        $trendyProducts = Product::with(['category', 'subcategory', 'productImages'])
+            ->where('status', true)
+            ->where('isdelete', false)
+            ->where('is_trendy', true)
+            ->orderBy('created_at', 'desc')
+            ->limit(8)
+            ->get();
+
+        return view('frontend.home', compact('meta_title', 'meta_description', 'meta_keyword', 'sliders', 'partners', 'homeCategories', 'navCategories', 'allProducts', 'categoryProducts', 'trendyProducts'));
     }
+
 
     public function contact()
     {

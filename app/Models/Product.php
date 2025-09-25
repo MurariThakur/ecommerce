@@ -20,11 +20,13 @@ class Product extends Model
         'additional_information',
         'shipping_return',
         'status',
+        'is_trendy',
         'isdelete'
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'is_trendy' => 'boolean',
         'isdelete' => 'boolean',
         'old_price' => 'decimal:2',
         'price' => 'decimal:2',

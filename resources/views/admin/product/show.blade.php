@@ -100,6 +100,20 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
+                                                        <td><strong>Trendy</strong></td>
+                                                        <td>
+                                                            @if ($product->is_trendy)
+                                                                <span class="badge badge-warning">
+                                                                    <i class="fas fa-fire"></i> Trendy
+                                                                </span>
+                                                            @else
+                                                                <span class="badge badge-light">
+                                                                    <i class="fas fa-minus"></i> No
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
                                                         <td><strong>Created At</strong></td>
                                                         <td>{{ $product->created_at }}</td>
                                                     </tr>
@@ -121,11 +135,11 @@
                                                         <img src="{{ $image->image_url }}"
                                                             alt="{{ $image->original_name }}" class="img-fluid">
                                                     @endforeach
-                                            @else
-                                                <div class="text-center text-muted py-4">
-                                                    <i class="fas fa-image fa-3x mb-3"></i>
-                                                    <p>No images available for this product</p>
-                                                </div>
+                                                @else
+                                                    <div class="text-center text-muted py-4">
+                                                        <i class="fas fa-image fa-3x mb-3"></i>
+                                                        <p>No images available for this product</p>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </div>

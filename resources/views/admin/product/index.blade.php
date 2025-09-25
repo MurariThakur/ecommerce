@@ -147,6 +147,7 @@
                                             <th>Sub</th>
                                             <th>Price</th>
                                             <th>Status</th>
+                                            <th>Trendy</th>
                                             <th>Created At</th>
                                             <th>Actions</th>
                                         </tr>
@@ -185,6 +186,17 @@
                                                     @else
                                                         <span class="badge badge-danger">
                                                             <i class="fas fa-times-circle"></i> Inactive
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($product->is_trendy)
+                                                        <span class="badge badge-warning">
+                                                            <i class="fas fa-fire"></i> Trendy
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-light">
+                                                            <i class="fas fa-minus"></i> No
                                                         </span>
                                                     @endif
                                                 </td>
@@ -228,7 +240,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center text-muted py-4">
+                                                <td colspan="8" class="text-center text-muted py-4">
                                                     <i class="fas fa-shopping-cart fa-3x mb-3"></i>
                                                     <p>No products found.</p>
                                                     <a href="{{ route('admin.product.create') }}"
