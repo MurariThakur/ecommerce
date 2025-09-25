@@ -25,6 +25,14 @@ class ContactController extends Controller
             $query->where('is_read', $request->status === 'read');
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
         $contacts = $query->latest()->paginate(10)->appends($request->query());
 
         return view('admin.contact.index', compact('contacts'));

@@ -9,11 +9,41 @@ use Illuminate\Http\Request;
 
 class RefundController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $refunds = Refund::with('order.user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = Refund::with('order.user');
+
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('refund_number', 'like', "%{$search}%")
+                  ->orWhereHas('order', function($orderQuery) use ($search) {
+                      $orderQuery->where('order_number', 'like', "%{$search}%")
+                                 ->orWhereHas('user', function($userQuery) use ($search) {
+                                     $userQuery->where('name', 'like', "%{$search}%")
+                                              ->orWhere('email', 'like', "%{$search}%");
+                                 });
+                  });
+            });
+        }
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->type) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $refunds = $query->orderBy('created_at', 'desc')->paginate(20);
 
         return view('admin.refunds.index', compact('refunds'));
     }
