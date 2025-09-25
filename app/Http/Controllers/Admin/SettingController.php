@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SettingRequest;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
@@ -51,57 +52,14 @@ class SettingController extends Controller
         return view('admin.settings.index', compact('settings'));
     }
 
-    public function update(Request $request)
+    public function update(SettingRequest $request)
     {
-        // Debug: Check if files are being received
-        if ($request->hasFile('website_logo')) {
-            \Log::info('Website logo file received: ' . $request->file('website_logo')->getClientOriginalName());
-        }
-
-        $request->validate([
-            'free_shipping_threshold' => 'required|numeric|min:0',
-            'website_name' => 'required|string|max:255',
-            'website_logo' => 'nullable|image|max:2048',
-            'favicon' => 'nullable|image|max:1024',
-            'footer_payment_icon' => 'nullable|image|max:2048',
-            'email' => 'nullable|email',
-            'alternative_email' => 'nullable|email',
-        ]);
-
-        // Update all settings
-        $settingsData = [
-            'free_shipping_threshold' => $request->free_shipping_threshold,
-            'website_name' => $request->website_name,
-            'footer_description' => $request->footer_description,
-            'office_address' => $request->office_address,
-            'mobile' => $request->mobile,
-            'alternative_mobile' => $request->alternative_mobile,
-            'email' => $request->email,
-            'alternative_email' => $request->alternative_email,
-            'working_hours' => $request->working_hours,
-            'facebook_link' => $request->facebook_link,
-            'instagram_link' => $request->instagram_link,
-            'twitter_link' => $request->twitter_link,
-            'youtube_link' => $request->youtube_link,
-            'pinterest_link' => $request->pinterest_link,
-            'turnstile_site_key' => $request->turnstile_site_key,
-            'stripe_public_key' => $request->stripe_public_key,
-            'stripe_secret_key' => $request->stripe_secret_key,
-            'paypal_client_id' => $request->paypal_client_id,
-            'paypal_client_secret' => $request->paypal_client_secret,
-            'razorpay_key_id' => $request->razorpay_key_id,
-            'razorpay_key_secret' => $request->razorpay_key_secret,
-            'mail_mailer' => $request->mail_mailer,
-            'mail_host' => $request->mail_host,
-            'mail_port' => $request->mail_port,
-            'mail_username' => $request->mail_username,
-            'mail_password' => $request->mail_password,
-            'mail_from_address' => $request->mail_from_address,
-            'mail_from_name' => $request->mail_from_name,
-        ];
+        $settingsData = $request->validated();
 
         foreach ($settingsData as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+            if (!in_array($key, ['website_logo', 'favicon', 'footer_payment_icon'])) {
+                Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+            }
         }
 
         // Handle file uploads

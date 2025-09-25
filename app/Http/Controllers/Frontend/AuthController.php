@@ -126,14 +126,21 @@ class AuthController extends Controller
         ]);
     }
 
-    public function frontendlogout()
+    public function frontendlogout(Request $request)
     {
         Auth::logout();
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully!',
-            'redirect' => route('frontend.home')
-        ]);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out successfully!',
+                'redirect' => route('frontend.home')
+            ]);
+        }
+        
+        return redirect()->route('frontend.home')->with('success', 'Logged out successfully!');
     }
 
     public function showForgotPasswordForm()

@@ -16,16 +16,12 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return redirect('/admin/login')->with('error', 'Please login to access this area.');
-        }
-
-        if (!Auth::user()->isAdmin()) {
+        if (!Auth::guard('admin')->user()->isAdmin()) {
             if ($request->ajax()) {
                 return response()->json(['message' => 'Access denied. Admin privileges required.'], 403);
             }
             
-            return redirect('/admin/dashboard')->with('error', 'Access denied. You need admin privileges to access this area.');
+            return redirect('/admin/login')->with('error', 'Access denied. You need admin privileges to access this area.');
         }
 
         return $next($request);

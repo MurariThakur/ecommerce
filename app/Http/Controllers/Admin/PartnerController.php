@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Partner;
+use App\Http\Requests\PartnerRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,22 +32,16 @@ class PartnerController extends Controller
         return view('admin.partners.create');
     }
 
-    public function store(Request $request)
+    public function store(PartnerRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|url',
-        ]);
+        $data = $request->validated();
+        $data['status'] = $request->has('status');
 
-        $logoPath = $request->file('logo')->store('partners', 'public');
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('partners', 'public');
+        }
 
-        Partner::create([
-            'name' => $request->name,
-            'logo' => $logoPath,
-            'link' => $request->link,
-            'status' => $request->has('status'),
-        ]);
+        Partner::create($data);
 
         return redirect()->route('admin.partners.index')->with('success', 'Partner created successfully.');
     }
@@ -61,19 +56,10 @@ class PartnerController extends Controller
         return view('admin.partners.edit', compact('partner'));
     }
 
-    public function update(Request $request, Partner $partner)
+    public function update(PartnerRequest $request, Partner $partner)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|url',
-        ]);
-
-        $data = [
-            'name' => $request->name,
-            'link' => $request->link,
-            'status' => $request->has('status'),
-        ];
+        $data = $request->validated();
+        $data['status'] = $request->has('status');
 
         if ($request->hasFile('logo')) {
             if ($partner->logo) {

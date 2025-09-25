@@ -10,7 +10,10 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::recent()->paginate(20);
+        // Auto-cleanup old notifications (older than 3 months)
+        $this->cleanupOldNotifications();
+        
+        $notifications = Notification::recent()->paginate(10);
         return view('admin.notifications.index', compact('notifications'));
     }
 
@@ -41,5 +44,13 @@ class NotificationController extends Controller
     {
         $notifications = Notification::recent()->limit(10)->get();
         return response()->json($notifications);
+    }
+
+    /**
+     * Clean up notifications older than 3 months
+     */
+    private function cleanupOldNotifications()
+    {
+        Notification::where('created_at', '<', now()->subMonths(2))->delete();
     }
 }

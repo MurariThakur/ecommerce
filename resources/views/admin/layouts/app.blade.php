@@ -137,7 +137,7 @@
                     <button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline-block;">
+                    <form method="POST" action="{{ route('admin.logout') }}" style="display: inline-block;">
                         @csrf
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt mr-2"></i>Yes, Logout

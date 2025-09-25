@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Slider;
+use App\Http\Requests\SliderRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,16 +40,9 @@ class SliderController extends Controller
         return view('admin.sliders.create');
     }
 
-    public function store(Request $request)
+    public function store(SliderRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image' => 'required|image|max:2048',
-            'button_name' => 'nullable|string|max:255',
-            'button_link' => 'nullable|url'
-        ]);
-
-        $data = $request->only(['title', 'button_name', 'button_link']);
+        $data = $request->validated();
         $data['status'] = $request->has('status');
 
         if ($request->hasFile('image')) {
@@ -70,16 +64,9 @@ class SliderController extends Controller
         return view('admin.sliders.edit', compact('slider'));
     }
 
-    public function update(Request $request, Slider $slider)
+    public function update(SliderRequest $request, Slider $slider)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048',
-            'button_name' => 'nullable|string|max:255',
-            'button_link' => 'nullable|url'
-        ]);
-
-        $data = $request->only(['title', 'button_name', 'button_link']);
+        $data = $request->validated();
         $data['status'] = $request->has('status');
 
         if ($request->hasFile('image')) {
