@@ -250,7 +250,14 @@ class PaymentController extends Controller
             $total = Cart::getTotal() + $firstShippingCost;
         }
 
-        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled'));
+        // Get payment gateway settings
+        $paymentSettings = [
+            'stripe_enabled' => \App\Models\Setting::where('key', 'stripe_status')->value('status') && !empty(\App\Models\Setting::where('key', 'stripe_public_key')->value('value')) && !empty(\App\Models\Setting::where('key', 'stripe_secret_key')->value('value')),
+            'paypal_enabled' => \App\Models\Setting::where('key', 'paypal_status')->value('status') && !empty(\App\Models\Setting::where('key', 'paypal_client_id')->value('value')) && !empty(\App\Models\Setting::where('key', 'paypal_client_secret')->value('value')),
+            'razorpay_enabled' => \App\Models\Setting::where('key', 'razorpay_status')->value('status') && !empty(\App\Models\Setting::where('key', 'razorpay_key_id')->value('value')) && !empty(\App\Models\Setting::where('key', 'razorpay_key_secret')->value('value'))
+        ];
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled', 'paymentSettings'));
     }
 
     /**

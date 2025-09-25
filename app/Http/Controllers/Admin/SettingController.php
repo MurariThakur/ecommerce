@@ -30,6 +30,15 @@ class SettingController extends Controller
             'youtube_link' => Setting::firstOrCreate(['key' => 'youtube_link'], ['value' => '']),
             'pinterest_link' => Setting::firstOrCreate(['key' => 'pinterest_link'], ['value' => '']),
             'turnstile_site_key' => Setting::firstOrCreate(['key' => 'turnstile_site_key'], ['value' => '']),
+            'stripe_public_key' => Setting::firstOrCreate(['key' => 'stripe_public_key'], ['value' => '']),
+            'stripe_secret_key' => Setting::firstOrCreate(['key' => 'stripe_secret_key'], ['value' => '']),
+            'stripe_status' => Setting::firstOrCreate(['key' => 'stripe_status'], ['value' => '', 'status' => false]),
+            'paypal_client_id' => Setting::firstOrCreate(['key' => 'paypal_client_id'], ['value' => '']),
+            'paypal_client_secret' => Setting::firstOrCreate(['key' => 'paypal_client_secret'], ['value' => '']),
+            'paypal_status' => Setting::firstOrCreate(['key' => 'paypal_status'], ['value' => '', 'status' => false]),
+            'razorpay_key_id' => Setting::firstOrCreate(['key' => 'razorpay_key_id'], ['value' => '']),
+            'razorpay_key_secret' => Setting::firstOrCreate(['key' => 'razorpay_key_secret'], ['value' => '']),
+            'razorpay_status' => Setting::firstOrCreate(['key' => 'razorpay_status'], ['value' => '', 'status' => false]),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -69,6 +78,12 @@ class SettingController extends Controller
             'youtube_link' => $request->youtube_link,
             'pinterest_link' => $request->pinterest_link,
             'turnstile_site_key' => $request->turnstile_site_key,
+            'stripe_public_key' => $request->stripe_public_key,
+            'stripe_secret_key' => $request->stripe_secret_key,
+            'paypal_client_id' => $request->paypal_client_id,
+            'paypal_client_secret' => $request->paypal_client_secret,
+            'razorpay_key_id' => $request->razorpay_key_id,
+            'razorpay_key_secret' => $request->razorpay_key_secret,
         ];
 
         foreach ($settingsData as $key => $value) {
@@ -86,8 +101,11 @@ class SettingController extends Controller
             }
         }
 
-        // Update free shipping status
+        // Update payment gateway statuses
         Setting::where('key', 'free_shipping_threshold')->update(['status' => $request->has('free_shipping_status')]);
+        Setting::where('key', 'stripe_status')->update(['status' => $request->has('stripe_status')]);
+        Setting::where('key', 'paypal_status')->update(['status' => $request->has('paypal_status')]);
+        Setting::where('key', 'razorpay_status')->update(['status' => $request->has('razorpay_status')]);
 
         return redirect()->back()->with('success', 'Settings updated successfully');
     }

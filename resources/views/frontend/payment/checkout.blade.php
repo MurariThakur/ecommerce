@@ -290,23 +290,37 @@
                                             </label>
                                         </div>
 
-                                        <div class="custom-control custom-radio" style="margin-top: 0px;">
-                                            <input type="radio" value="paypal" id="paypal" name="payment_method"
-                                                class="custom-control-input" required>
-                                            <label class="custom-control-label" for="paypal">
-                                                PayPal
-                                            </label>
-                                        </div>
+                                        @if ($paymentSettings['paypal_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="paypal" id="paypal"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="paypal">
+                                                    PayPal
+                                                </label>
+                                            </div>
+                                        @endif
 
-                                        <div class="custom-control custom-radio" style="margin-top: 0px;">
-                                            <input type="radio" value="stripe" id="CreditCard" name="payment_method"
-                                                class="custom-control-input" required>
-                                            <label class="custom-control-label" for="CreditCard">
-                                                Credit Card (Stripe)
-                                            </label>
-                                            <img src="{{ asset('frontend/assets/images/payments-summary.png') }}"
-                                                alt="payments cards">
-                                        </div>
+                                        @if ($paymentSettings['stripe_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="stripe" id="CreditCard"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="CreditCard">
+                                                    Credit Card (Stripe)
+                                                </label>
+                                                <img src="{{ asset('frontend/assets/images/payments-summary.png') }}"
+                                                    alt="payments cards">
+                                            </div>
+                                        @endif
+
+                                        @if ($paymentSettings['razorpay_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="razorpay" id="razorpay"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="razorpay">
+                                                    Razorpay
+                                                </label>
+                                            </div>
+                                        @endif
 
                                         <!-- Hidden fields for cart and shipping data -->
                                         <input type="hidden" name="shipping_method" id="selected-shipping"

@@ -216,9 +216,10 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="turnstile_site_key">Turnstile Site Key</label>
-                                        <input type="text" class="form-control" id="turnstile_site_key" name="turnstile_site_key" 
-                                               value="{{ old('turnstile_site_key', $settings['turnstile_site_key']->value) }}" 
-                                               placeholder="Cloudflare Turnstile Site Key">
+                                        <input type="text" class="form-control" id="turnstile_site_key"
+                                            name="turnstile_site_key"
+                                            value="{{ old('turnstile_site_key', $settings['turnstile_site_key']->value) }}"
+                                            placeholder="Cloudflare Turnstile Site Key">
                                     </div>
                                 </div>
                             </div>
@@ -266,6 +267,133 @@
                                     @error('free_shipping_threshold')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Gateway Settings -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Payment Gateway Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5>Stripe Settings</h5>
+                                        @if ($settings['stripe_status']->status)
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-check-circle"></i> Enabled
+                                            </span>
+                                        @else
+                                            <span class="badge badge-danger">
+                                                <i class="fas fa-times-circle"></i> Disabled
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="stripe_status"
+                                                name="stripe_status"
+                                                {{ $settings['stripe_status']->status ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="stripe_status">
+                                                <strong>Enable Stripe</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stripe_public_key">Stripe Public Key</label>
+                                        <input type="text" class="form-control" id="stripe_public_key"
+                                            name="stripe_public_key"
+                                            value="{{ old('stripe_public_key', $settings['stripe_public_key']->value) }}"
+                                            placeholder="pk_test_...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stripe_secret_key">Stripe Secret Key</label>
+                                        <input type="password" class="form-control" id="stripe_secret_key"
+                                            name="stripe_secret_key"
+                                            value="{{ old('stripe_secret_key', $settings['stripe_secret_key']->value) }}"
+                                            placeholder="sk_test_...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5>PayPal Settings</h5>
+                                        @if ($settings['paypal_status']->status)
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-check-circle"></i> Enabled
+                                            </span>
+                                        @else
+                                            <span class="badge badge-danger">
+                                                <i class="fas fa-times-circle"></i> Disabled
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="paypal_status"
+                                                name="paypal_status"
+                                                {{ $settings['paypal_status']->status ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="paypal_status">
+                                                <strong>Enable PayPal</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="paypal_client_id">PayPal Client ID</label>
+                                        <input type="text" class="form-control" id="paypal_client_id"
+                                            name="paypal_client_id"
+                                            value="{{ old('paypal_client_id', $settings['paypal_client_id']->value) }}"
+                                            placeholder="PayPal Client ID">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="paypal_client_secret">PayPal Client Secret</label>
+                                        <input type="password" class="form-control" id="paypal_client_secret"
+                                            name="paypal_client_secret"
+                                            value="{{ old('paypal_client_secret', $settings['paypal_client_secret']->value) }}"
+                                            placeholder="PayPal Client Secret">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5>Razorpay Settings</h5>
+                                        @if ($settings['razorpay_status']->status)
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-check-circle"></i> Enabled
+                                            </span>
+                                        @else
+                                            <span class="badge badge-danger">
+                                                <i class="fas fa-times-circle"></i> Disabled
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="razorpay_status"
+                                                name="razorpay_status"
+                                                {{ $settings['razorpay_status']->status ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="razorpay_status">
+                                                <strong>Enable Razorpay</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="razorpay_key_id">Razorpay Key ID</label>
+                                        <input type="text" class="form-control" id="razorpay_key_id"
+                                            name="razorpay_key_id"
+                                            value="{{ old('razorpay_key_id', $settings['razorpay_key_id']->value) }}"
+                                            placeholder="rzp_test_...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="razorpay_key_secret">Razorpay Key Secret</label>
+                                        <input type="password" class="form-control" id="razorpay_key_secret"
+                                            name="razorpay_key_secret"
+                                            value="{{ old('razorpay_key_secret', $settings['razorpay_key_secret']->value) }}"
+                                            placeholder="Razorpay Key Secret">
+                                    </div>
                                 </div>
                             </div>
                         </div>
