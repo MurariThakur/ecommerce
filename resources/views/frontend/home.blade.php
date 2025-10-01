@@ -411,11 +411,11 @@
 
             <div class="mb-2"></div><!-- End .mb-2 -->
         </div><!-- End .container -->
-        <div class="blog-posts pt-7 pb-7" style="background-color: #fafafa;">
-            <div class="container">
-                <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
+        @if ($homeBlogs->count() > 0)
+            <div class="blog-posts pt-7 pb-7" style="background-color: #fafafa;">
+                <div class="container">
+                    <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
 
-                @if ($homeBlogs->count() > 0)
                     <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
                         data-owl-options='{
                             "nav": false,
@@ -465,18 +465,14 @@
                             </article>
                         @endforeach
                     </div>
-                @else
-                    <div class="text-center">
-                        <p>No blog posts available.</p>
-                    </div>
-                @endif
-            </div><!-- container -->
 
-            <div class="more-container text-center mb-0 mt-3">
-                <a href="{{ route('frontend.blog') }}" class="btn btn-outline-darker btn-more"><span>View more
-                        articles</span><i class="icon-long-arrow-right"></i></a>
+                    <div class="more-container text-center mb-0 mt-3">
+                        <a href="{{ route('frontend.blog') }}" class="btn btn-outline-darker btn-more"><span>View more
+                                articles</span><i class="icon-long-arrow-right"></i></a>
+                    </div>
+                </div><!-- container -->
             </div>
-        </div>
+        @endif
         <div class="cta cta-display bg-image pt-4 pb-4"
             style="background-image: url({{ asset('frontend/assets/images/backgrounds/cta/bg-6.jpg') }});">
             <div class="container">

@@ -42,12 +42,7 @@
                                             <i class="icon-long-arrow-right"></i>
                                         </button>
 
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="signin-remember"
-                                                name="remember">
-                                            <label class="custom-control-label" for="signin-remember">Remember
-                                                Me</label>
-                                        </div><!-- End .custom-checkbox -->
+                                        
 
                                         <a href="{{ route('password.request') }}" class="forgot-link">Forgot Your
                                             Password?</a>

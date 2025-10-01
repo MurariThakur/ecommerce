@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
@@ -34,7 +33,19 @@ return new class extends Migration
             $table->boolean('is_payment')->default(false);
             $table->json('payment_data')->nullable();
             $table->boolean('isdelete')->default(false);
-            $table->enum('status', ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->enum('status', [
+                'pending',
+                'confirmed',
+                'processing',
+                'shipped',
+                'delivered',
+                'cancelled',
+                'return_requested',
+                'return_approved',
+                'return_rejected',
+                'refund_processing',
+                'refunded'
+            ])->default('pending')->change();
             $table->timestamp('expires_at')->nullable();
             $table->string('idempotency_token')->nullable()->unique();
             $table->timestamps();

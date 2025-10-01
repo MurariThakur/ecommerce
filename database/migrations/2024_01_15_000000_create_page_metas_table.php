@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('page_metas', function (Blueprint $table) {
             $table->id();
-            $table->string('page_name')->unique(); // e.g., 'home', 'about', 'contact', etc.
-            $table->string('route_name')->nullable(); // Laravel route name
+            $table->string('page_name')->unique(); 
+            $table->string('route_name')->nullable();
             $table->string('meta_title');
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();

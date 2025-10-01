@@ -24,6 +24,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->longText('additional_information')->nullable();
             $table->longText('shipping_return')->nullable();
+             $table->boolean('is_trendy')->default(false);
             $table->boolean('status')->default(true);
             $table->boolean('isdelete')->default(false);
             $table->timestamps();
