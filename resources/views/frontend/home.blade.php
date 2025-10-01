@@ -1,5 +1,38 @@
 @extends('frontend.layouts.app')
 
+@section('styles')
+    <style>
+        .btn-wishlist.btn-wishlist-add:before {
+            content: '\f233';
+            color: #c96;
+        }
+
+        /* Default state - add to wishlist for product-11 */
+        .product.product-11 .btn-product-icon:hover,
+        .product.product-11 .btn-product-icon:focus {
+            color: #fff;
+            background-color: #c96;
+            border-color: #fff;
+            border: 0;
+        }
+
+        /* When in wishlist - remove from wishlist for product-11 */
+        .product.product-11 .btn-wishlist-add:hover,
+        .product.product-11 .btn-wishlist-add:focus {
+            color: #fff;
+            background-color: #fff;
+            border-color: #fff;
+            border: 0;
+        }
+
+        .btn-wishlist-add:hover span,
+        .btn-wishlist-add:focus span {
+            color: #c96 !important;
+            background-color: #fff !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <main class="main">
         @if ($sliders->count() > 0)
@@ -141,8 +174,9 @@
                                         </a>
 
                                         <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist"><span>add to
-                                                    wishlist</span></a>
+                                            <a href="#"
+                                                class="btn-product-icon btn-wishlist btn-expandable home-wishlist-btn"
+                                                data-product-id="{{ $product->id }}"><span>add to wishlist</span></a>
                                         </div><!-- End .product-action-vertical -->
                                     </figure><!-- End .product-media -->
 
@@ -158,9 +192,9 @@
                                             ${{ number_format($product->price, 2) }}
                                         </div><!-- End .product-price -->
                                     </div><!-- End .product-body -->
-                                    <div class="product-action">
+                                    {{-- <div class="product-action">
                                         <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                    </div><!-- End .product-action -->
+                                    </div><!-- End .product-action --> --}}
                                 </div><!-- End .product -->
                             @endforeach
                         </div><!-- End .owl-carousel -->
@@ -168,7 +202,7 @@
                 </div><!-- End .tab-content -->
             </div><!-- End .container -->
         @endif
-        
+
 
         @if ($homeCategories->count() > 0)
             <div class="container categories pt-6">
@@ -216,8 +250,8 @@
 
                 <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab"
-                            role="tab" aria-controls="top-all-tab" aria-selected="true">All</a>
+                        <a class="nav-link active" id="top-all-link" data-toggle="tab" href="#top-all-tab" role="tab"
+                            aria-controls="top-all-tab" aria-selected="true">All</a>
                     </li>
                     @foreach ($navCategories as $category)
                         <li class="nav-item">
@@ -248,8 +282,9 @@
                                             </a>
 
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist "><span>add to
-                                                        wishlist</span></a>
+                                                <a href="#"
+                                                    class="btn-product-icon btn-wishlist btn-expandable home-wishlist-btn"
+                                                    data-product-id="{{ $product->id }}"><span>add to wishlist</span></a>
                                             </div><!-- End .product-action-vertical -->
                                         </figure><!-- End .product-media -->
 
@@ -261,10 +296,7 @@
                                                 ${{ number_format($product->price, 2) }}
                                             </div><!-- End .product-price -->
                                         </div><!-- End .product-body -->
-                                        <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to
-                                                    cart</span></a>
-                                        </div><!-- End .product-action -->
+                                        <!-- End .product-action -->
                                     </div><!-- End .product -->
                                 </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                             @empty
@@ -294,7 +326,9 @@
                                                 </a>
 
                                                 <div class="product-action-vertical">
-                                                    <a href="#" class="btn-product-icon btn-wishlist "><span>add to
+                                                    <a href="#"
+                                                        class="btn-product-icon btn-wishlist btn-expandable home-wishlist-btn"
+                                                        data-product-id="{{ $product->id }}"><span>add to
                                                             wishlist</span></a>
                                                 </div><!-- End .product-action-vertical -->
                                             </figure><!-- End .product-media -->
@@ -307,10 +341,7 @@
                                                     ${{ number_format($product->price, 2) }}
                                                 </div><!-- End .product-price -->
                                             </div><!-- End .product-body -->
-                                            <div class="product-action">
-                                                <a href="#" class="btn-product btn-cart"><span>add to
-                                                        cart</span></a>
-                                            </div><!-- End .product-action -->
+                                            <!-- End .product-action -->
                                         </div><!-- End .product -->
                                     </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                                 @empty
@@ -332,10 +363,10 @@
         </div><!-- .End .tab-pane -->
         </div><!-- End .tab-content -->
         <!-- <div class="more-container text-center">
-                    <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
-                        <span>Load more products</span><i class="icon-long-arrow-down"></i>
-                    </button>
-                </div><!-- End .more-container -->
+                                                    <button id="load-more-btn" class="btn btn-outline-darker btn-more" data-offset="4" data-category="all">
+                                                        <span>Load more products</span><i class="icon-long-arrow-down"></i>
+                                                    </button>
+                                                </div><!-- End .more-container -->
         </div><!-- End .container -->
 
         <div class="container">
@@ -384,9 +415,9 @@
             <div class="container">
                 <h2 class="title-lg text-center mb-3 mb-md-4">From Our Blog</h2><!-- End .title-lg text-center -->
 
-@if($homeBlogs->count() > 0)
-                <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
-                    data-owl-options='{
+                @if ($homeBlogs->count() > 0)
+                    <div class="owl-carousel owl-simple carousel-with-shadow" data-toggle="owl"
+                        data-owl-options='{
                             "nav": false,
                             "dots": true,
                             "items": 3,
@@ -404,35 +435,40 @@
                                 }
                             }
                         }'>
-                    @foreach($homeBlogs as $blog)
-                    <article class="entry entry-display">
-                        <figure class="entry-media">
-                            <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
-                                <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}" alt="{{ $blog->title }}">
-                            </a>
-                        </figure>
+                        @foreach ($homeBlogs as $blog)
+                            <article class="entry entry-display">
+                                <figure class="entry-media">
+                                    <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
+                                        <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}"
+                                            alt="{{ $blog->title }}">
+                                    </a>
+                                </figure>
 
-                        <div class="entry-body pb-4 text-center">
-                            <div class="entry-meta">
-                                <a href="#">{{ $blog->created_at->format('M d, Y') }}</a>, {{ $blog->comments->where('status', true)->count() }} Comments
-                            </div>
+                                <div class="entry-body pb-4 text-center">
+                                    <div class="entry-meta">
+                                        <a href="#">{{ $blog->created_at->format('M d, Y') }}</a>,
+                                        {{ $blog->comments->where('status', true)->count() }} Comments
+                                    </div>
 
-                            <h3 class="entry-title">
-                                <a href="{{ route('frontend.blog.detail', $blog->slug) }}">{{ Str::limit($blog->title, 30) }}</a>
-                            </h3>
+                                    <h3 class="entry-title">
+                                        <a
+                                            href="{{ route('frontend.blog.detail', $blog->slug) }}">{{ Str::limit($blog->title, 30) }}</a>
+                                    </h3>
 
-                            <div class="entry-content">
-                                <p>{{ Str::limit(strip_tags($blog->short_description ?: $blog->description), 80) }}</p>
-                                <a href="{{ route('frontend.blog.detail', $blog->slug) }}" class="read-more">Read More</a>
-                            </div>
-                        </div>
-                    </article>
-                    @endforeach
-                </div>
+                                    <div class="entry-content">
+                                        <p>{{ Str::limit(strip_tags($blog->short_description ?: $blog->description), 80) }}
+                                        </p>
+                                        <a href="{{ route('frontend.blog.detail', $blog->slug) }}" class="read-more">Read
+                                            More</a>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
                 @else
-                <div class="text-center">
-                    <p>No blog posts available.</p>
-                </div>
+                    <div class="text-center">
+                        <p>No blog posts available.</p>
+                    </div>
                 @endif
             </div><!-- container -->
 
@@ -463,4 +499,123 @@
             </div><!-- End .container -->
         </div><!-- End .cta -->
     </main>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const homeWishlistBtns = document.querySelectorAll('.home-wishlist-btn');
+
+        homeWishlistBtns.forEach(btn => {
+                // Check initial wishlist status
+                @auth
+                const productId = btn.dataset.productId;
+                fetch('{{ route('wishlist.toggle') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            check_only: true
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.in_wishlist) {
+                            btn.classList.add('btn-wishlist-add');
+                            btn.querySelector('span').textContent = 'remove from wishlist';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking wishlist status:', error);
+                    });
+            @endauth
+
+            btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    @guest
+                    $('#signin-modal').modal('show');
+                    return;
+                @endguest
+
+                const productId = this.dataset.productId;
+                const span = this.querySelector('span');
+
+                this.style.pointerEvents = 'none'; span.textContent = 'processing...';
+
+                fetch('{{ route('wishlist.toggle') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update all buttons for this product
+                        const allProductButtons = document.querySelectorAll(
+                            `[data-product-id="${productId}"]`);
+                        allProductButtons.forEach(button => {
+                            const buttonSpan = button.querySelector('span');
+                            if (data.in_wishlist) {
+                                button.classList.add('btn-wishlist-add');
+                                buttonSpan.textContent = 'remove from wishlist';
+                            } else {
+                                button.classList.remove('btn-wishlist-add');
+                                buttonSpan.textContent = 'add to wishlist';
+                            }
+                        });
+
+                        // Update header wishlist count
+                        const wishlistCount = document.getElementById('wishlist-count');
+                        if (wishlistCount) {
+                            wishlistCount.textContent = `(${data.wishlist_count})`;
+                        }
+
+                        // Update header heart icon
+                        updateHeaderHeartIcon(data.wishlist_count > 0);
+
+                        if (window.CartManager) {
+                            window.CartManager.showToast(data.message, 'success');
+                        }
+                    } else {
+                        if (window.CartManager) {
+                            window.CartManager.showToast(data.message, 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (window.CartManager) {
+                        window.CartManager.showToast('Error updating wishlist', 'error');
+                    }
+                })
+                .finally(() => {
+                    this.style.pointerEvents = 'auto';
+                });
+            });
+        });
+        });
+
+        function updateHeaderHeartIcon(hasItems) {
+            const heartIcon = document.getElementById('header-wishlist-icon');
+            if (heartIcon) {
+                if (hasItems) {
+                    heartIcon.className = 'icon-heart';
+                    heartIcon.style.color = 'rgb(204, 153, 102)';
+                } else {
+                    heartIcon.className = 'icon-heart-o';
+                    heartIcon.style.color = '';
+                }
+            }
+        }
+    </script>
 @endsection

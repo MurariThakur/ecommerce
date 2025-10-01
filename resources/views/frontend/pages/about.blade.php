@@ -2,7 +2,7 @@
 @section('title', 'About Us')
 @section('content')
     <main class="main">
-        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="page-header text-center" style="background-image: url('{{ asset('frontend/assets/images/page-header-bg.jpg') }}')">
             <div class="container">
                 <h1 class="page-title">About Us<span>Our Story</span></h1>
             </div>

@@ -2,28 +2,10 @@
      <div class="header-top">
          <div class="container">
              <div class="header-left">
-                 <div class="header-dropdown">
-                     <a href="#">Usd</a>
-                     <div class="header-menu">
-                         <ul>
-
-                             <li><a href="#">Usd</a></li>
-                         </ul>
-                     </div><!-- End .header-menu -->
-                 </div><!-- End .header-dropdown -->
-
-                 <div class="header-dropdown">
-                     <a href="#">Eng</a>
-                     <div class="header-menu">
-                         <ul>
-                             <li><a href="#">English</a></li>
-
-                         </ul>
-                     </div><!-- End .header-menu -->
-                 </div><!-- End .header-dropdown -->
+                 
              </div><!-- End .header-left -->
 
-             <div class="header-right">
+             <div class="header-right mt-1">
                  <ul class="top-menu">
                      <li>
                          <a href="#">Links</a>
@@ -148,7 +130,8 @@
                      <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
                          aria-haspopup="true" aria-expanded="false" data-display="static" style="position: relative;">
                          <i class="icon-shopping-cart"></i>
-                         <span class="cart-count" id="header-cart-count" style="position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-width: 18px;">{{ Cart::getTotalQuantity() }}</span>
+                         <span class="cart-count" id="header-cart-count"
+                             style="position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-width: 18px;">{{ Cart::getTotalQuantity() }}</span>
                      </a>
 
                      <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">

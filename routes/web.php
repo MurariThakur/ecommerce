@@ -201,6 +201,16 @@ Route::middleware(['auth:admin', 'admin'])->group(function () {
     Route::get('admin/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('admin.notifications.unread-count');
     Route::get('admin/notifications/recent', [NotificationController::class, 'getRecent'])->name('admin.notifications.recent');
 
+    // FAQ management routes
+    Route::get('/admin/faq', [\App\Http\Controllers\Admin\FaqController::class, 'index'])->name('admin.faq.index');
+    Route::get('/admin/faq/create', [\App\Http\Controllers\Admin\FaqController::class, 'create'])->name('admin.faq.create');
+    Route::post('/admin/faq/store', [\App\Http\Controllers\Admin\FaqController::class, 'store'])->name('admin.faq.store');
+    Route::get('/admin/faq/view/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'show'])->name('admin.faq.show');
+    Route::get('/admin/faq/edit/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'edit'])->name('admin.faq.edit');
+    Route::put('/admin/faq/update/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'update'])->name('admin.faq.update');
+    Route::post('/admin/faq/toggle-status/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'toggleStatus'])->name('admin.faq.toggle.status');
+    Route::delete('/admin/faq/delete/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'destroy'])->name('admin.faq.destroy');
+
 });
 
 Route::post('/cart/add', [PaymentController::class, 'addToCart'])->name('cart.add');

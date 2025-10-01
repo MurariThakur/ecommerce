@@ -160,6 +160,16 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a href="{{ url('admin/faq') }}"
+                    class="nav-link {{ request()->is('admin/faq*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-question-circle"></i>
+                    <p>
+                        FAQ Management
+                    </p>
+                </a>
+            </li>
+
             <li class="nav-item {{ request()->is('admin/blog*') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ request()->is('admin/blog*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-blog"></i>

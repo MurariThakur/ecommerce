@@ -821,6 +821,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             CartManager.init();
             initializeAuth();
+            checkGlobalWishlistStatus();
 
             // Check for session messages and show toast
             @if (session('success'))
@@ -839,6 +840,26 @@
                 CartManager.showToast('{{ session('info') }}', 'info');
             @endif
         });
+
+        function checkGlobalWishlistStatus() {
+            @auth
+            const wishlistCount = {{ auth()->user()->wishlists()->count() }};
+            updateHeaderHeartIcon(wishlistCount > 0);
+            @endauth
+        }
+
+        function updateHeaderHeartIcon(hasItems) {
+            const heartIcon = document.getElementById('header-wishlist-icon');
+            if (heartIcon) {
+                if (hasItems) {
+                    heartIcon.className = 'icon-heart';
+                    heartIcon.style.color = 'rgb(204, 153, 102)';
+                } else {
+                    heartIcon.className = 'icon-heart-o';
+                    heartIcon.style.color = '';
+                }
+            }
+        }
 
         function initializeAuth() {
             const registerForm = document.getElementById('register-form');

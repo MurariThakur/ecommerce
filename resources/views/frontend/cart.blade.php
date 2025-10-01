@@ -29,9 +29,9 @@
 @endsection
 @section('content')
     <main class="main">
-        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="page-header text-center" style="background-image: url('{{ asset('frontend/assets/images/page-header-bg.jpg') }}')">
             <div class="container">
-                <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
+                <h1 class="page-title">Shopping Cart</h1>
             </div>
         </div>
 
@@ -39,7 +39,6 @@
             <div class="container">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Shop</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
                 </ol>
             </div>

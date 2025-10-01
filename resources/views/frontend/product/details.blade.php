@@ -3,13 +3,33 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
     <style>
         .btn-wishlist.btn-wishlist-add:before {
-            content: '\f234' !important;
-            color: rgb(204, 153, 102) !important;
+            content: '\f233';
+            color: #c96;
         }
 
-        .related-wishlist-btn.btn-wishlist-add:before {
-            content: '\f234' !important;
-            color: rgb(204, 153, 102) !important;
+        .btn-wishlist.btn-wishlist-add:before {
+            content: '\f233';
+            color: #c96;
+        }
+
+        /* Default state - add to wishlist */
+        .btn-product-icon:hover span,
+        .btn-product-icon:focus span {
+            color: #fff;
+            background-color: #c96;
+        }
+
+        /* When in wishlist - remove from wishlist */
+        .btn-wishlist-add:hover,
+        .btn-wishlist-add:focus {
+            color: #fff;
+            background-color: #fff;
+        }
+
+        .btn-wishlist-add:hover span,
+        .btn-wishlist-add:focus span {
+            color: #c96 !important;
+            background-color: #fff !important;
         }
 
         .rating-input {
@@ -513,13 +533,12 @@
                                         <a href="#"
                                             class="btn-product-icon btn-wishlist btn-expandable related-wishlist-btn"
                                             data-product-id="{{ $relatedProduct->id }}"><span>add to wishlist</span></a>
-                                        <a href="#" class="btn-product-icon btn-quickview"
-                                            title="Quick view"><span>Quick view</span></a>
+
                                     </div><!-- End .product-action-vertical -->
 
-                                    <div class="product-action">
+                                    {{-- <div class="product-action">
                                         <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                    </div><!-- End .product-action -->
+                                    </div><!-- End .product-action --> --}}
                                 </figure><!-- End .product-media -->
 
                                 <div class="product-body">
@@ -907,6 +926,7 @@
                 .then(data => {
                     if (data.in_wishlist) {
                         btn.classList.add('btn-wishlist-add');
+                        btn.querySelector('span').textContent = 'remove from wishlist';
                     }
                 })
                 .catch(error => {

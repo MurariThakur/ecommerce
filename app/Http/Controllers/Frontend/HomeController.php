@@ -112,7 +112,9 @@ class HomeController extends Controller
         $meta_description = 'Find answers to frequently asked questions about our products and services.';
         $meta_keyword = 'faq, questions, help, support';
 
-        return view('frontend.pages.faq', compact('meta_title', 'meta_description', 'meta_keyword'));
+        $faqs = \App\Models\Faq::active()->orderBy('sort_order')->orderBy('created_at', 'desc')->get();
+
+        return view('frontend.pages.faq', compact('meta_title', 'meta_description', 'meta_keyword', 'faqs'));
     }
 
     public function paymentMethods()
