@@ -184,4 +184,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->is_admin ? 'Admin' : 'User';
     }
+
+    /**
+     * Get user's wishlist items
+     */
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

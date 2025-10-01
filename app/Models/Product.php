@@ -20,11 +20,13 @@ class Product extends Model
         'additional_information',
         'shipping_return',
         'status',
+        'is_trendy',
         'isdelete'
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'is_trendy' => 'boolean',
         'isdelete' => 'boolean',
         'old_price' => 'decimal:2',
         'price' => 'decimal:2',
@@ -85,6 +87,21 @@ class Product extends Model
     public function productSizes()
     {
         return $this->hasMany(ProductSize::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating') ?: 0;
+    }
+
+    public function reviewsCount()
+    {
+        return $this->reviews()->count();
     }
 
     /**

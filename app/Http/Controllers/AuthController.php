@@ -18,8 +18,8 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        // Redirect if already authenticated
-        if (Auth::check()) {
+        // Redirect if already authenticated as admin
+        if (Auth::guard('admin')->check()) {
             return redirect()->intended('/admin/dashboard');
         }
 
@@ -31,8 +31,8 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Check if already authenticated
-        if (Auth::check()) {
+        // Check if already authenticated as admin
+        if (Auth::guard('admin')->check()) {
             return redirect()->intended('/admin/dashboard');
         }
 
@@ -108,8 +108,8 @@ class AuthController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // Attempt authentication
-        if (Auth::attempt($credentials, $remember)) {
+        // Attempt authentication with admin guard
+        if (Auth::guard('admin')->attempt($credentials, $remember)) {
             // Clear rate limiting on successful login
             RateLimiter::clear($key);
 
@@ -120,15 +120,15 @@ class AuthController extends Controller
             $user->updateLastLogin();
 
             // Log successful login
-            \Log::info('User logged in successfully', [
-                'user_id' => Auth::id(),
-                'email' => Auth::user()->email,
+            \Log::info('Admin logged in successfully', [
+                'user_id' => Auth::guard('admin')->id(),
+                'email' => Auth::guard('admin')->user()->email,
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ]);
 
             return redirect()->intended('/admin/dashboard')
-                ->with('success', 'Welcome back, ' . Auth::user()->name . '!');
+                ->with('success', 'Welcome back, ' . Auth::guard('admin')->user()->name . '!');
         }
 
         // Authentication failed
@@ -151,22 +151,22 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        if (!Auth::check()) {
+        if (!Auth::guard('admin')->check()) {
             return redirect('/admin/login')->with('info', 'You are already logged out.');
         }
 
         // Log logout
-        \Log::info('User logged out', [
-            'user_id' => Auth::id(),
-            'email' => Auth::user()->email,
+        \Log::info('Admin logged out', [
+            'user_id' => Auth::guard('admin')->id(),
+            'email' => Auth::guard('admin')->user()->email,
             'ip' => $request->ip()
         ]);
 
         // Get user name before logout
-        $userName = Auth::user()->name;
+        $userName = Auth::guard('admin')->user()->name;
 
-        // Logout user
-        Auth::logout();
+        // Logout admin
+        Auth::guard('admin')->logout();
 
         // Invalidate session
         $request->session()->invalidate();
@@ -183,14 +183,14 @@ class AuthController extends Controller
      */
     public function logoutFromAllDevices(Request $request)
     {
-        if (!Auth::check()) {
+        if (!Auth::guard('admin')->check()) {
             return redirect('/admin/login')->with('error', 'You must be logged in to perform this action.');
         }
 
-        $user = Auth::user();
+        $user = Auth::guard('admin')->user();
 
         // Log the action
-        \Log::info('User logged out from all devices', [
+        \Log::info('Admin logged out from all devices', [
             'user_id' => $user->id,
             'email' => $user->email,
             'ip' => $request->ip()
@@ -202,7 +202,7 @@ class AuthController extends Controller
         ]);
 
         // Logout current session
-        Auth::logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
@@ -217,12 +217,12 @@ class AuthController extends Controller
     {
         if ($request->ajax()) {
             return response()->json([
-                'authenticated' => Auth::check(),
-                'user' => Auth::check() ? Auth::user()->only(['id', 'name', 'email']) : null
+                'authenticated' => Auth::guard('admin')->check(),
+                'user' => Auth::guard('admin')->check() ? Auth::guard('admin')->user()->only(['id', 'name', 'email']) : null
             ]);
         }
 
-        return Auth::check() ? response('Authenticated', 200) : response('Unauthenticated', 401);
+        return Auth::guard('admin')->check() ? response('Authenticated', 200) : response('Unauthenticated', 401);
     }
 
     /**
@@ -230,8 +230,8 @@ class AuthController extends Controller
      */
     public function sessionTimeout(Request $request)
     {
-        if (Auth::check()) {
-            Auth::logout();
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }

@@ -9,6 +9,7 @@ use Darryldecode\Cart\Facades\CartFacade as Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Models\Notification;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -250,7 +251,14 @@ class PaymentController extends Controller
             $total = Cart::getTotal() + $firstShippingCost;
         }
 
-        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled'));
+        // Get payment gateway settings
+        $paymentSettings = [
+            'stripe_enabled' => \App\Models\Setting::where('key', 'stripe_status')->value('status') && !empty(\App\Models\Setting::where('key', 'stripe_public_key')->value('value')) && !empty(\App\Models\Setting::where('key', 'stripe_secret_key')->value('value')),
+            'paypal_enabled' => \App\Models\Setting::where('key', 'paypal_status')->value('status') && !empty(\App\Models\Setting::where('key', 'paypal_client_id')->value('value')) && !empty(\App\Models\Setting::where('key', 'paypal_client_secret')->value('value')),
+            'razorpay_enabled' => \App\Models\Setting::where('key', 'razorpay_status')->value('status') && !empty(\App\Models\Setting::where('key', 'razorpay_key_id')->value('value')) && !empty(\App\Models\Setting::where('key', 'razorpay_key_secret')->value('value'))
+        ];
+
+        return view('frontend.payment.checkout', compact('cartContent', 'subTotal', 'total', 'shippingMethods', 'isFreeShipping', 'freeShippingThreshold', 'freeShippingEnabled', 'paymentSettings'));
     }
 
     /**
@@ -374,16 +382,7 @@ class PaymentController extends Controller
 
         $newTotal = $cartSubTotal - $discountAmount;
 
-        // Store discount in session
-        session([
-            'applied_discount' => [
-                'id' => $discount->id,
-                'name' => $discount->name,
-                'type' => $discount->type,
-                'value' => $discount->value,
-                'amount' => $discountAmount
-            ]
-        ]);
+        // No session storage needed - discount will be passed via form
 
         return response()->json([
             'success' => true,
@@ -396,8 +395,6 @@ class PaymentController extends Controller
 
     public function removeDiscount()
     {
-        session()->forget('applied_discount');
-
         return response()->json([
             'success' => true,
             'message' => 'Discount removed',
@@ -414,19 +411,79 @@ class PaymentController extends Controller
         $idempotencyToken = $request->idempotency_token ?? session('order_token', uniqid('order_', true));
         session(['order_token' => $idempotencyToken]);
 
-        // Check for duplicate order
-        $existingOrder = Order::where('idempotency_token', $idempotencyToken)
-            ->where('status', '!=', 'pending')
-            ->first();
+        // Check for existing orders
+        $existingOrder = Order::where('idempotency_token', $idempotencyToken)->first();
 
         if ($existingOrder) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
-                ]);
+            // If order is already confirmed/completed, prevent duplicate
+            if ($existingOrder->status !== 'pending') {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Order already processed. Order number: ' . $existingOrder->order_number
+                    ]);
+                }
+                return redirect()->route('cart.index')->with('error', 'Order already processed.');
             }
-            return redirect()->route('cart.index')->with('error', 'Order already processed.');
+
+            // Calculate current discount from request
+            $currentDiscount = 0;
+            $discountCode = $request->input('discount_name');
+            // dd($discountCode    );
+            if (!empty($discountCode) && trim($discountCode) !== '') {
+                $discount = \App\Models\Discount::where('name', trim($discountCode))
+                    ->where('status', true)
+                    ->whereDate('expire_date', '>=', now())
+                    ->first();
+                if ($discount) {
+                    $cartSubTotal = Cart::getSubTotal();
+                    if ($discount->type === 'percentage') {
+                        $currentDiscount = ($cartSubTotal * $discount->value) / 100;
+                        if ($discount->max_discount_amount && $currentDiscount > $discount->max_discount_amount) {
+                            $currentDiscount = $discount->max_discount_amount;
+                        }
+                    } else {
+                        $currentDiscount = $discount->value;
+                    }
+                    if ($currentDiscount > $cartSubTotal) {
+                        $currentDiscount = $cartSubTotal;
+                    }
+                }
+            }
+
+            // If pending order exists, check if order details have changed
+            $currentSubtotal = Cart::getSubTotal();
+            $currentShipping = (float) ($request->shipping_cost ?? 0);
+
+            $currentTotal = $currentSubtotal + $currentShipping - $currentDiscount;
+
+            $orderNeedsUpdate = abs($existingOrder->total - $currentTotal) > 0.01 ||
+                abs($existingOrder->shipping_cost - $currentShipping) > 0.01 ||
+                abs($existingOrder->discount_amount - $currentDiscount) > 0.01;
+
+            if ($existingOrder->payment_method === $request->payment_method && !$orderNeedsUpdate) {
+                // Same payment method and cart unchanged, reuse existing order
+                $order = $existingOrder;
+
+                // Process payment directly without creating new order
+                switch ($order->payment_method) {
+                    case 'cash':
+                        return $this->processCashPayment($order, $request);
+                    case 'paypal':
+                        return $this->processPaypalPayment($order, $request);
+                    case 'stripe':
+                        return $this->processStripePayment($order, $request);
+                    default:
+                        if ($request->ajax()) {
+                            return response()->json(['success' => false, 'message' => 'Invalid payment method']);
+                        }
+                        return redirect()->route('cart.index')->with('error', 'Invalid payment method');
+                }
+            } else {
+                // Cart changed or different payment method, delete old order and create new one
+                $existingOrder->orderItems()->delete();
+                $existingOrder->delete();
+            }
         }
 
         $cartContent = Cart::getContent();
@@ -477,21 +534,30 @@ class PaymentController extends Controller
         $subtotal = Cart::getSubTotal();
         $shippingCost = (float) ($request->shipping_cost ?? 0);
 
-        // Always use session discount as primary source (more reliable)
+        // Calculate discount amount from request
         $discountAmount = 0;
         $discountId = null;
-        $discountName = null;
-
-        if (session('applied_discount')) {
-            $sessionDiscount = session('applied_discount');
-            $discountAmount = (float) $sessionDiscount['amount'];
-            $discountId = $sessionDiscount['id'];
-            $discountName = $sessionDiscount['name'];
-        } else {
-            // Fallback to request data if no session
-            $discountAmount = (float) ($request->discount_amount ?? 0);
-            $discountId = $request->discount_id;
-            $discountName = $request->discount_name;
+        $discountName = $request->input('discount_name');
+        if (!empty($discountName) && trim($discountName) !== '') {
+            $discount = \App\Models\Discount::where('name', trim($discountName))
+                ->where('status', true)
+                ->whereDate('expire_date', '>=', now())
+                ->first();
+            if ($discount) {
+                $discountId = $discount->id;
+                $cartSubTotal = Cart::getSubTotal();
+                if ($discount->type === 'percentage') {
+                    $discountAmount = ($cartSubTotal * $discount->value) / 100;
+                    if ($discount->max_discount_amount && $discountAmount > $discount->max_discount_amount) {
+                        $discountAmount = $discount->max_discount_amount;
+                    }
+                } else {
+                    $discountAmount = $discount->value;
+                }
+                if ($discountAmount > $cartSubTotal) {
+                    $discountAmount = $cartSubTotal;
+                }
+            }
         }
 
         $total = $subtotal + $shippingCost - $discountAmount;
@@ -525,7 +591,7 @@ class PaymentController extends Controller
             'total' => $total,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
-            'expires_at' => now()->addMinutes(15),
+            'expires_at' => now()->addMinutes(2),
             'idempotency_token' => $idempotencyToken,
         ]);
 
@@ -564,6 +630,8 @@ class PaymentController extends Controller
      */
     private function processCashPayment($order, $request)
     {
+        \Log::info('Processing COD payment', ['order_id' => $order->id, 'amount' => $order->total]);
+
         $order->update([
             'status' => 'confirmed',
             'is_payment' => false,
@@ -571,6 +639,7 @@ class PaymentController extends Controller
             'payment_data' => ['method' => 'cash_on_delivery']
         ]);
 
+        \Log::info('COD payment processed successfully', ['order_id' => $order->id]);
         return $this->completeOrder($order, $request);
     }
 
@@ -579,6 +648,8 @@ class PaymentController extends Controller
      */
     private function processPaypalPayment($order, $request)
     {
+        \Log::info('Initiating PayPal payment', ['order_id' => $order->id, 'amount' => $order->total]);
+
         try {
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
@@ -603,9 +674,21 @@ class PaymentController extends Controller
             ]);
 
             if (isset($response['id']) && $response['id'] != null) {
+                \Log::info('PayPal order created successfully', ['order_id' => $order->id, 'paypal_order_id' => $response['id']]);
+
+                // Store PayPal data and extend expiration for payment processing
+                $order->update([
+                    'payment_data' => json_encode([
+                        'paypal_order_id' => $response['id'],
+                        'status' => 'redirected_to_gateway'
+                    ]),
+                    'expires_at' => now()->addMinutes(1) // Extend to 30 minutes for payment
+                ]);
+
                 foreach ($response['links'] as $links) {
                     if ($links['rel'] == 'approve') {
                         session(['paypal_order_id' => $order->id]);
+                        \Log::info('Redirecting to PayPal approval', ['order_id' => $order->id, 'approval_url' => $links['href']]);
 
                         if ($request->ajax()) {
                             return response()->json([
@@ -618,6 +701,7 @@ class PaymentController extends Controller
                 }
             }
 
+            \Log::error('PayPal order creation failed', ['order_id' => $order->id, 'response' => $response]);
             $order->delete();
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'PayPal payment failed']);
@@ -625,6 +709,7 @@ class PaymentController extends Controller
             return redirect()->route('cart.index')->with('error', 'PayPal payment failed');
 
         } catch (\Exception $e) {
+            \Log::error('PayPal payment error', ['order_id' => $order->id, 'error' => $e->getMessage()]);
             $order->delete();
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'PayPal error: ' . $e->getMessage()]);
@@ -638,6 +723,8 @@ class PaymentController extends Controller
      */
     private function processStripePayment($order, $request)
     {
+        \Log::info('Initiating Stripe payment', ['order_id' => $order->id, 'amount' => $order->total]);
+
         try {
             Stripe::setApiKey(config('services.stripe.secret', env('STRIPE_SECRET')));
 
@@ -656,12 +743,25 @@ class PaymentController extends Controller
                     ]
                 ],
                 'mode' => 'payment',
-                'success_url' => route('stripe.success', $order->id),
+                'success_url' => route('stripe.success', $order->id) . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('stripe.cancel', $order->id),
                 'metadata' => [
                     'order_id' => $order->id
                 ]
             ]);
+
+            \Log::info('Stripe session created successfully', ['order_id' => $order->id, 'session_id' => $session->id]);
+
+            // Store Stripe data and extend expiration for payment processing
+            $order->update([
+                'payment_data' => json_encode([
+                    'stripe_session_id' => $session->id,
+                    'status' => 'redirected_to_gateway'
+                ]),
+                'expires_at' => now()->addMinutes(1) // Extend to 30 minutes for payment
+            ]);
+
+            \Log::info('Redirecting to Stripe checkout', ['order_id' => $order->id, 'checkout_url' => $session->url]);
 
             if ($request->ajax()) {
                 return response()->json([
@@ -672,6 +772,7 @@ class PaymentController extends Controller
             return redirect($session->url);
 
         } catch (\Exception $e) {
+            \Log::error('Stripe payment error', ['order_id' => $order->id, 'error' => $e->getMessage()]);
             $order->delete();
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Stripe error: ' . $e->getMessage()]);
@@ -685,6 +786,7 @@ class PaymentController extends Controller
      */
     public function paypalSuccess($orderId)
     {
+        \Log::info('PayPal success callback received', ['order_id' => $orderId, 'token' => request('token')]);
 
         try {
             $order = Order::findOrFail($orderId);
@@ -695,13 +797,24 @@ class PaymentController extends Controller
 
             $response = $provider->capturePaymentOrder(request('token'));
             if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+                // Get real capture ID for refunds
+                $captureId = $response['purchase_units'][0]['payments']['captures'][0]['id'] ?? $response['id'];
+
+                \Log::info('PayPal payment completed successfully', [
+                    'order_id' => $order->id,
+                    'paypal_order_id' => $response['id'],
+                    'capture_id' => $captureId,
+                    'amount' => $order->total
+                ]);
+
                 $order->update([
                     'status' => 'confirmed',
                     'is_payment' => true,
                     'expires_at' => null,
                     'payment_data' => [
                         'method' => 'paypal',
-                        'transaction_id' => $response['id'],
+                        'transaction_id' => $captureId, // ✅ Real capture ID for refunds
+                        'order_id' => $response['id'],
                         'status' => 'completed',
                         'payer_id' => $response['payer']['payer_id'] ?? null,
                         'payment_status' => $response['status']
@@ -711,10 +824,12 @@ class PaymentController extends Controller
                 return $this->completeOrder($order);
             }
 
+            \Log::error('PayPal payment verification failed', ['order_id' => $order->id, 'response' => $response]);
             $order->delete();
             return redirect()->route('cart.index')->with('error', 'Payment verification failed');
 
         } catch (\Exception $e) {
+            \Log::error('PayPal success callback error', ['order_id' => $orderId, 'error' => $e->getMessage()]);
             return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
         }
     }
@@ -724,6 +839,8 @@ class PaymentController extends Controller
      */
     public function paypalCancel($orderId)
     {
+        \Log::info('PayPal payment cancelled', ['order_id' => $orderId]);
+
         $order = Order::find($orderId);
         if ($order) {
             $order->delete(); // Remove cancelled order
@@ -736,8 +853,38 @@ class PaymentController extends Controller
      */
     public function stripeSuccess($orderId)
     {
+        $sessionId = request('session_id');
+        \Log::info('Stripe success callback received', ['order_id' => $orderId, 'session_id' => $sessionId]);
+
+        if (!$sessionId) {
+            \Log::error('Stripe session ID missing', ['order_id' => $orderId]);
+            return redirect()->route('cart.index')->with('error', 'Payment verification failed - session ID missing');
+        }
+
         try {
             $order = Order::findOrFail($orderId);
+
+            // Get real Stripe charge ID for refunds
+            \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $paymentIntent = \Stripe\PaymentIntent::retrieve($session->payment_intent);
+
+            // Handle cases where charges might not be available yet
+            $chargeId = null;
+            if ($paymentIntent->charges && $paymentIntent->charges->data && count($paymentIntent->charges->data) > 0) {
+                $chargeId = $paymentIntent->charges->data[0]->id;
+            } else {
+                // Fallback: use payment intent ID for refunds
+                $chargeId = $session->payment_intent;
+            }
+
+            \Log::info('Stripe payment completed successfully', [
+                'order_id' => $order->id,
+                'session_id' => $sessionId,
+                'payment_intent_id' => $session->payment_intent,
+                'charge_id' => $chargeId,
+                'amount' => $order->total
+            ]);
 
             $order->update([
                 'status' => 'confirmed',
@@ -745,7 +892,9 @@ class PaymentController extends Controller
                 'expires_at' => null,
                 'payment_data' => [
                     'method' => 'stripe',
-                    'transaction_id' => request('session_id') ?? 'ST_' . time(),
+                    'transaction_id' => $chargeId, // ✅ Real charge ID for refunds
+                    'session_id' => $sessionId,
+                    'payment_intent_id' => $session->payment_intent,
                     'status' => 'completed'
                 ]
             ]);
@@ -753,6 +902,7 @@ class PaymentController extends Controller
             return $this->completeOrder($order);
 
         } catch (\Exception $e) {
+            \Log::error('Stripe success callback error', ['order_id' => $orderId, 'error' => $e->getMessage()]);
             return redirect()->route('cart.index')->with('error', 'Payment error: ' . $e->getMessage());
         }
     }
@@ -762,6 +912,8 @@ class PaymentController extends Controller
      */
     public function stripeCancel($orderId)
     {
+        \Log::info('Stripe payment cancelled', ['order_id' => $orderId]);
+
         $order = Order::find($orderId);
         if ($order) {
             $order->delete(); // Remove cancelled order
@@ -783,6 +935,17 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             \Log::error('Failed to queue order confirmation email: ' . $e->getMessage());
         }
+
+        // Create notification for new order
+        Notification::createNotification(
+            'order',
+            'New Order Placed',
+            'Order #' . $order->order_number . ' placed by ' . $order->first_name . ' ' . $order->last_name . ' - $' . number_format($order->total, 2),
+            route('admin.order.show', $order->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number, 'total' => $order->total],
+            'fas fa-shopping-cart',
+            'success'
+        );
 
         // Clear cart and sessions
         Cart::clear();

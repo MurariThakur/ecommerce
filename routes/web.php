@@ -17,17 +17,30 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\Frontend\PaymentController;
 use App\Http\Controllers\Frontend\UserDashboardController;
+use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\RefundController;
+use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Frontend\AuthController as FrontendAuthController;
+use App\Http\Controllers\Frontend\WishlistController;
+use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\ContactController as FrontendContactController;
+use App\Http\Controllers\WebhookController;
 
-// Authentication Routes
+// Admin Authentication Routes
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 Route::post('/logout-all-devices', [AuthController::class, 'logoutFromAllDevices'])->name('logout.all.devices');
 Route::get('/check-auth', [AuthController::class, 'checkAuth'])->name('auth.check');
 Route::get('/session-timeout', [AuthController::class, 'sessionTimeout'])->name('session.timeout');
 
 // Protected Routes (require authentication)
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth:admin', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 
     // Admin management routes
@@ -82,7 +95,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Settings management routes
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
-    Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+    Route::post('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+
+    // Contact management routes
+    Route::get('/admin/contact', [ContactController::class, 'index'])->name('admin.contact.index');
+    Route::get('/admin/contact/{contact}', [ContactController::class, 'show'])->name('admin.contact.show');
+    Route::delete('/admin/contact/{contact}', [ContactController::class, 'destroy'])->name('admin.contact.destroy');
+    Route::post('/admin/contact/{contact}/toggle-status', [ContactController::class, 'toggleStatus'])->name('admin.contact.toggle.status');
 
     // Order management routes
     Route::get('/admin/order', [OrderController::class, 'index'])->name('admin.order.index');
@@ -92,34 +111,57 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/order/toggle-payment/{order}', [OrderController::class, 'togglePaymentStatus'])->name('admin.order.toggle.payment');
 
     // Customer management routes
-    Route::get('/admin/customer', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customer.index');
-    Route::get('/admin/customer/view/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('admin.customer.show');
-    Route::delete('/admin/customer/delete/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('admin.customer.destroy');
-    Route::post('/admin/customer/toggle-status/{customer}', [\App\Http\Controllers\Admin\CustomerController::class, 'toggleStatus'])->name('admin.customer.toggle.status');
+    Route::get('/admin/customer', [CustomerController::class, 'index'])->name('admin.customer.index');
+    Route::get('/admin/customer/view/{customer}', [CustomerController::class, 'show'])->name('admin.customer.show');
+    Route::delete('/admin/customer/delete/{customer}', [CustomerController::class, 'destroy'])->name('admin.customer.destroy');
+    Route::post('/admin/customer/toggle-status/{customer}', [CustomerController::class, 'toggleStatus'])->name('admin.customer.toggle.status');
+
+    // Refund management routes
+    Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
+    Route::get('/admin/refund/view/{refund}', [RefundController::class, 'show'])->name('admin.refunds.show');
+    Route::post('/admin/refund/approve/{refund}', [RefundController::class, 'approve'])->name('admin.refunds.approve');
+    Route::post('/admin/refund/process/{refund}', [RefundController::class, 'process'])->name('admin.refunds.process');
+    Route::post('/admin/refund/reject/{refund}', [RefundController::class, 'reject'])->name('admin.refunds.reject');
+
+    // Slider management routes
+    Route::get('/admin/sliders', [SliderController::class, 'index'])->name('admin.sliders.index');
+    Route::get('/admin/sliders/create', [SliderController::class, 'create'])->name('admin.sliders.create');
+    Route::post('/admin/sliders/store', [SliderController::class, 'store'])->name('admin.sliders.store');
+    Route::get('/admin/sliders/view/{slider}', [SliderController::class, 'show'])->name('admin.sliders.show');
+    Route::get('/admin/sliders/edit/{slider}', [SliderController::class, 'edit'])->name('admin.sliders.edit');
+    Route::put('/admin/sliders/update/{slider}', [SliderController::class, 'update'])->name('admin.sliders.update');
+    Route::delete('/admin/sliders/delete/{slider}', [SliderController::class, 'destroy'])->name('admin.sliders.destroy');
+    Route::post('/admin/sliders/toggle-status/{slider}', [SliderController::class, 'toggleStatus'])->name('admin.sliders.toggle.status');
+
+    // Partner management routes
+    Route::get('/admin/partners', [PartnerController::class, 'index'])->name('admin.partners.index');
+    Route::get('/admin/partners/create', [PartnerController::class, 'create'])->name('admin.partners.create');
+    Route::post('/admin/partners/store', [PartnerController::class, 'store'])->name('admin.partners.store');
+    Route::get('/admin/partners/view/{partner}', [PartnerController::class, 'show'])->name('admin.partners.show');
+    Route::get('/admin/partners/edit/{partner}', [PartnerController::class, 'edit'])->name('admin.partners.edit');
+    Route::put('/admin/partners/update/{partner}', [PartnerController::class, 'update'])->name('admin.partners.update');
+    Route::delete('/admin/partners/delete/{partner}', [PartnerController::class, 'destroy'])->name('admin.partners.destroy');
+    Route::post('/admin/partners/toggle-status/{partner}', [PartnerController::class, 'toggleStatus'])->name('admin.partners.toggle.status');
 
     // Brand management routes
-    Route::resource('admin/brand', BrandController::class)->names([
-        'index' => 'admin.brand.index',
-        'create' => 'admin.brand.create',
-        'store' => 'admin.brand.store',
-        'show' => 'admin.brand.show',
-        'edit' => 'admin.brand.edit',
-        'update' => 'admin.brand.update',
-        'destroy' => 'admin.brand.destroy',
-    ]);
-    Route::post('admin/brand/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('admin.brand.toggle.status');
+    Route::get('/admin/brand', [BrandController::class, 'index'])->name('admin.brand.index');
+    Route::get('/admin/brand/create', [BrandController::class, 'create'])->name('admin.brand.create');
+    Route::post('/admin/brand/store', [BrandController::class, 'store'])->name('admin.brand.store');
+    Route::get('/admin/brand/view/{brand}', [BrandController::class, 'show'])->name('admin.brand.show');
+    Route::get('/admin/brand/edit/{brand}', [BrandController::class, 'edit'])->name('admin.brand.edit');
+    Route::put('/admin/brand/update/{brand}', [BrandController::class, 'update'])->name('admin.brand.update');
+    Route::delete('/admin/brand/delete/{brand}', [BrandController::class, 'destroy'])->name('admin.brand.destroy');
+    Route::post('/admin/brand/toggle-status/{brand}', [BrandController::class, 'toggleStatus'])->name('admin.brand.toggle.status');
 
     // Color management routes
-    Route::resource('admin/color', ColorController::class)->names([
-        'index' => 'admin.color.index',
-        'create' => 'admin.color.create',
-        'store' => 'admin.color.store',
-        'show' => 'admin.color.show',
-        'edit' => 'admin.color.edit',
-        'update' => 'admin.color.update',
-        'destroy' => 'admin.color.destroy',
-    ]);
-    Route::post('admin/color/{color}/toggle-status', [ColorController::class, 'toggleStatus'])->name('admin.color.toggle.status');
+    Route::get('/admin/color', [ColorController::class, 'index'])->name('admin.color.index');
+    Route::get('/admin/color/create', [ColorController::class, 'create'])->name('admin.color.create');
+    Route::post('/admin/color/store', [ColorController::class, 'store'])->name('admin.color.store');
+    Route::get('/admin/color/view/{color}', [ColorController::class, 'show'])->name('admin.color.show');
+    Route::get('/admin/color/edit/{color}', [ColorController::class, 'edit'])->name('admin.color.edit');
+    Route::put('/admin/color/update/{color}', [ColorController::class, 'update'])->name('admin.color.update');
+    Route::delete('/admin/color/delete/{color}', [ColorController::class, 'destroy'])->name('admin.color.destroy');
+    Route::post('/admin/color/toggle-status/{color}', [ColorController::class, 'toggleStatus'])->name('admin.color.toggle.status');
 
     // Product management routes
     Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.product.index');
@@ -131,6 +173,43 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/product/delete/{product}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
     Route::post('/admin/product/toggle-status/{product}', [ProductController::class, 'toggleStatus'])->name('admin.product.toggle.status');
     Route::get('/admin/product/subcategories', [ProductController::class, 'getSubcategories'])->name('admin.product.subcategories');
+
+    // Blog Category management routes
+    Route::get('/admin/blog-category', [BlogCategoryController::class, 'index'])->name('admin.blog-category.index');
+    Route::get('/admin/blog-category/create', [BlogCategoryController::class, 'create'])->name('admin.blog-category.create');
+    Route::post('/admin/blog-category/store', [BlogCategoryController::class, 'store'])->name('admin.blog-category.store');
+    Route::get('/admin/blog-category/view/{blog_category}', [BlogCategoryController::class, 'show'])->name('admin.blog-category.show');
+    Route::get('/admin/blog-category/edit/{blog_category}', [BlogCategoryController::class, 'edit'])->name('admin.blog-category.edit');
+    Route::put('/admin/blog-category/update/{blog_category}', [BlogCategoryController::class, 'update'])->name('admin.blog-category.update');
+    Route::delete('/admin/blog-category/delete/{blog_category}', [BlogCategoryController::class, 'destroy'])->name('admin.blog-category.destroy');
+    Route::post('/admin/blog-category/toggle-status/{blog_category}', [BlogCategoryController::class, 'toggleStatus'])->name('admin.blog-category.toggle.status');
+
+    // Blog management routes
+    Route::get('/admin/blog', [BlogController::class, 'index'])->name('admin.blog.index');
+    Route::get('/admin/blog/create', [BlogController::class, 'create'])->name('admin.blog.create');
+    Route::post('/admin/blog/store', [BlogController::class, 'store'])->name('admin.blog.store');
+    Route::get('/admin/blog/view/{blog}', [BlogController::class, 'show'])->name('admin.blog.show');
+    Route::get('/admin/blog/edit/{blog}', [BlogController::class, 'edit'])->name('admin.blog.edit');
+    Route::put('/admin/blog/update/{blog}', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::delete('/admin/blog/delete/{blog}', [BlogController::class, 'destroy'])->name('admin.blog.destroy');
+    Route::post('/admin/blog/toggle-status/{blog}', [BlogController::class, 'toggleStatus'])->name('admin.blog.toggle.status');
+
+    // Notification routes
+    Route::get('admin/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('admin/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+    Route::post('admin/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
+    Route::get('admin/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('admin.notifications.unread-count');
+    Route::get('admin/notifications/recent', [NotificationController::class, 'getRecent'])->name('admin.notifications.recent');
+
+    // FAQ management routes
+    Route::get('/admin/faq', [\App\Http\Controllers\Admin\FaqController::class, 'index'])->name('admin.faq.index');
+    Route::get('/admin/faq/create', [\App\Http\Controllers\Admin\FaqController::class, 'create'])->name('admin.faq.create');
+    Route::post('/admin/faq/store', [\App\Http\Controllers\Admin\FaqController::class, 'store'])->name('admin.faq.store');
+    Route::get('/admin/faq/view/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'show'])->name('admin.faq.show');
+    Route::get('/admin/faq/edit/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'edit'])->name('admin.faq.edit');
+    Route::put('/admin/faq/update/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'update'])->name('admin.faq.update');
+    Route::post('/admin/faq/toggle-status/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'toggleStatus'])->name('admin.faq.toggle.status');
+    Route::delete('/admin/faq/delete/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'destroy'])->name('admin.faq.destroy');
 
 });
 
@@ -155,14 +234,36 @@ Route::get('/stripe/success/{order}', [PaymentController::class, 'stripeSuccess'
 Route::get('/stripe/cancel/{order}', [PaymentController::class, 'stripeCancel'])->name('stripe.cancel');
 
 // Auth Routes
-Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('auth.register');
-Route::post('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name(name: 'auth.login');
-Route::post('/frontendlogout', [\App\Http\Controllers\Frontend\AuthController::class, 'frontendlogout'])->name('frontend.auth.logout');
-Route::get('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLink'])->name('password.email');
-Route::get('/reset-password/{email}/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPasswordForm'])->name('password.reset');
-Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('password.update');
-Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Frontend\AuthController::class, 'verify'])->name('verification.verify');
+Route::post('/register', [FrontendAuthController::class, 'register'])->name('auth.register');
+Route::post('/login', [FrontendAuthController::class, 'login'])->name('auth.login');
+Route::post('/frontendlogout', [FrontendAuthController::class, 'frontendlogout'])->name('frontend.auth.logout');
+Route::get('/forgot-password', [FrontendAuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [FrontendAuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{email}/{token}', [FrontendAuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [FrontendAuthController::class, 'resetPassword'])->name('password.update');
+Route::get('/email/verify/{id}/{hash}', [FrontendAuthController::class, 'verify'])->name('verification.verify');
+
+// Wishlist Routes (AJAX)
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::get('/wishlist/count', [WishlistController::class, 'getCount'])->name('wishlist.count');
+
+// Review Routes
+Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
+
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/blog', [HomeController::class, 'blog'])->name('frontend.blog');
+Route::get('/blog/{slug}', [HomeController::class, 'blogDetail'])->name('frontend.blog.detail');
+Route::post('/blog/{slug}/comment', [HomeController::class, 'storeComment'])->name('frontend.blog.comment')->middleware('user');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact', [FrontendContactController::class, 'store'])->name('contact.store');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/payment-methods', [HomeController::class, 'paymentMethods'])->name('payment.methods');
+Route::get('/returns', [HomeController::class, 'returns'])->name('returns');
+Route::get('/shipping', [HomeController::class, 'shipping'])->name('shipping');
+Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 
 // User Dashboard Routes (require authentication)
 Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
@@ -173,6 +274,8 @@ Route::middleware(['user'])->prefix('user')->name('user.')->group(function () {
     Route::post('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
     Route::get('/change-password', [UserDashboardController::class, 'changePassword'])->name('change-password');
     Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('change-password.update');
+    Route::post('/order/{id}/cancel', [UserDashboardController::class, 'cancelOrder'])->name('order.cancel');
+    Route::post('/order/{id}/return', [UserDashboardController::class, 'returnOrder'])->name('order.return');
 });
 
 // Frontend Routes (no authentication required)
@@ -182,3 +285,5 @@ Route::get('{slug?}/{subslug?}', [FrontendProductController::class, 'getCategory
 Route::get('{category_slug}/{subcategory_slug}/{product_slug}', [FrontendProductController::class, 'getProductDetails'])->name('product.details');
 
 
+Route::post('/stripe/webhook', [WebhookController::class, 'stripeWebhook'])->name('stripe.webhook');
+Route::post('/paypal/webhook', [WebhookController::class, 'paypalWebhook'])->name('paypal.webhook');

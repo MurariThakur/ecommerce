@@ -137,7 +137,7 @@
                     <button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline-block;">
+                    <form method="POST" action="{{ route('admin.logout') }}" style="display: inline-block;">
                         @csrf
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt mr-2"></i>Yes, Logout
@@ -186,6 +186,104 @@
     <script src="{{ url('assets/dist/js/demo.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ url('assets/dist/js/pages/dashboard3.js') }}"></script>
+    
+    <!-- Notification Scripts -->
+    <script>
+    $(document).ready(function() {
+        loadNotifications();
+        
+        // Load notifications every 30 seconds
+        setInterval(loadNotifications, 30000);
+        
+        // Mark all as read
+        $('#mark-all-read').click(function() {
+            $.post('{{ route('admin.notifications.mark-all-read') }}', {
+                _token: '{{ csrf_token() }}'
+            }).done(function() {
+                loadNotifications();
+            });
+        });
+    });
+    
+    function loadNotifications() {
+        $.get('{{ route('admin.notifications.unread-count') }}').done(function(data) {
+            $('#notification-count').text(data.count);
+            if(data.count > 0) {
+                $('#notification-count').show();
+            } else {
+                $('#notification-count').hide();
+            }
+        });
+        
+        $.get('{{ route('admin.notifications.recent') }}').done(function(notifications) {
+            let html = '';
+            if(notifications.length > 0) {
+                notifications.forEach(function(notification) {
+                    let readClass = notification.is_read ? 'bg-light' : 'bg-white';
+                    let newBadge = notification.is_read ? '' : '<span class="badge badge-danger badge-sm">New</span>';
+                    let url = notification.url ? `onclick="markAsRead(${notification.id}, '${notification.url}')"` : '';
+                    let textClass = notification.is_read ? 'text-muted' : 'text-dark';
+                    
+                    html += `
+                        <a href="#" class="dropdown-item ${readClass} ${textClass} border-bottom" ${url} style="padding: 12px 20px;">
+                            <div class="d-flex align-items-start">
+                                <div class="mr-3">
+                                    <i class="${notification.icon} text-${notification.color}" style="font-size: 16px;"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="mb-1 font-weight-bold" style="font-size: 13px;">${notification.title}</h6>
+                                        ${newBadge}
+                                    </div>
+                                    <p class="mb-1 text-muted" style="font-size: 12px; line-height: 1.3;">${notification.message}</p>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock mr-1"></i>${timeAgo(notification.created_at)}
+                                    </small>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
+            } else {
+                html = `
+                    <div class="text-center p-4">
+                        <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No notifications</p>
+                    </div>
+                `;
+            }
+            
+            $('#notification-list').html(html);
+            $('#notification-header').html(`<i class="fas fa-bell mr-2"></i>${notifications.length} Notifications`);
+        });
+    }
+    
+    function markAsRead(id, url) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/notifications/${id}/read`;
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+        form.submit();
+    }
+    
+    function timeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) return 'now';
+        if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + 'm';
+        if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + 'h';
+        return Math.floor(diffInSeconds / 86400) + 'd';
+    }
+    </script>
     
     <!-- Custom Scripts -->
     @stack('scripts')

@@ -8,13 +8,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ $meta_title ?? 'Ecommerce' }}</title>
+    <title>{{ $meta_title ?? (\App\Models\Setting::where('key', 'website_name')->value('value') ?? 'Ecommerce') }}</title>
     <meta name="keywords" content="{{ $meta_keyword ?? '' }}">
     <meta name="description" content="{{ $meta_description ?? '' }}">
     <meta name="author" content="">
     <!-- Favicon -->
 
-    <link rel="shortcut icon" href="{{ asset('frontend/assets/images/icons/favicon.ico') }}">
+    <link rel="shortcut icon"
+        href="{{ \App\Models\Setting::where('key', 'favicon')->value('value') ? asset('storage/' . \App\Models\Setting::where('key', 'favicon')->value('value')) : asset('frontend/assets/images/icons/favicon.ico') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Plugins CSS File -->
@@ -375,6 +376,13 @@
                 document.getElementById('discount-amount').textContent = discountAmount;
                 document.getElementById('discount-row').style.display = 'table-row';
                 document.getElementById('discount_code').value = '';
+
+                // Update the hidden form field
+                const formDiscountField = document.getElementById('form-discount-name');
+                if (formDiscountField) {
+                    formDiscountField.value = discountName;
+                }
+
                 this.hideDiscountMessages();
                 this.updateCheckoutTotal(newTotal);
             },
@@ -436,6 +444,13 @@
             clearAppliedDiscount: function() {
                 document.getElementById('discount-row').style.display = 'none';
                 document.getElementById('discount_code').value = '';
+
+                // Clear the hidden form field
+                const formDiscountField = document.getElementById('form-discount-name');
+                if (formDiscountField) {
+                    formDiscountField.value = '';
+                }
+
                 this.hideDiscountMessages();
 
                 fetch('{{ route('checkout.remove.discount') }}', {
@@ -806,6 +821,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             CartManager.init();
             initializeAuth();
+            checkGlobalWishlistStatus();
 
             // Check for session messages and show toast
             @if (session('success'))
@@ -824,6 +840,26 @@
                 CartManager.showToast('{{ session('info') }}', 'info');
             @endif
         });
+
+        function checkGlobalWishlistStatus() {
+            @auth
+            const wishlistCount = {{ auth()->user()->wishlists()->count() }};
+            updateHeaderHeartIcon(wishlistCount > 0);
+            @endauth
+        }
+
+        function updateHeaderHeartIcon(hasItems) {
+            const heartIcon = document.getElementById('header-wishlist-icon');
+            if (heartIcon) {
+                if (hasItems) {
+                    heartIcon.className = 'icon-heart';
+                    heartIcon.style.color = 'rgb(204, 153, 102)';
+                } else {
+                    heartIcon.className = 'icon-heart-o';
+                    heartIcon.style.color = '';
+                }
+            }
+        }
 
         function initializeAuth() {
             const registerForm = document.getElementById('register-form');

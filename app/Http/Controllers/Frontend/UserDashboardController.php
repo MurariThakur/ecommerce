@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Order;
+use App\Models\Review;
+use App\Models\Notification;
 
 class UserDashboardController extends Controller
 {
@@ -15,7 +17,7 @@ class UserDashboardController extends Controller
         $user = Auth::user();
 
         $stats = [
-            'total_orders' => Order::where('user_id', $user->id)->where('isdelete', false)->count(),
+            'total_orders' => Order::where('user_id', $user->id)->where('isdelete', false)->where('status', '!=', 'pending')->count(),
             'pending_orders' => Order::where('user_id', $user->id)->where('status', 'confirmed')->where('isdelete', false)->count(),
             'delivered_orders' => Order::where('user_id', $user->id)->where('status', 'delivered')->where('isdelete', false)->count(),
             'total_spent' => Order::where('user_id', $user->id)->where('status', 'delivered')->where('isdelete', false)->sum('total'),
@@ -23,6 +25,7 @@ class UserDashboardController extends Controller
 
         $recentOrders = Order::where('user_id', $user->id)
             ->where('isdelete', false)
+            ->where('status', '!=', 'pending')
             ->latest()
             ->take(5)
             ->get();
@@ -34,9 +37,21 @@ class UserDashboardController extends Controller
     {
         $orders = Order::where('user_id', Auth::id())
             ->where('isdelete', false)
+            ->where('status', '!=', 'pending')
             ->with('orderItems.product')
             ->latest()
             ->paginate(10);
+
+        // Add review status for delivered orders
+        foreach ($orders as $order) {
+            if ($order->status === 'delivered') {
+                foreach ($order->orderItems as $item) {
+                    $item->has_review = Review::where('user_id', Auth::id())
+                        ->where('product_id', $item->product_id)
+                        ->exists();
+                }
+            }
+        }
 
         return view('frontend.user.orders', compact('orders'));
     }
@@ -46,7 +61,8 @@ class UserDashboardController extends Controller
         $order = Order::where('user_id', Auth::id())
             ->where('id', $id)
             ->where('isdelete', false)
-            ->with(['orderItems.product', 'shipping'])
+            ->where('status', '!=', 'pending')
+            ->with(['orderItems.product', 'shipping', 'refunds'])
             ->firstOrFail();
 
         return view('frontend.user.order-details', compact('order'));
@@ -109,5 +125,113 @@ class UserDashboardController extends Controller
         ]);
 
         return redirect()->route('user.change-password')->with('success', 'Password updated successfully!');
+    }
+
+    public function cancelOrder($id)
+    {
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->where('isdelete', false)
+            ->whereIn('status', ['confirmed', 'processing', 'shipped'])
+            ->firstOrFail();
+
+        // Prevent cancellation of delivered orders
+        if ($order->status === 'delivered') {
+            return redirect()->back()->with('error', 'Cannot cancel delivered orders.');
+        }
+
+        // Create refund record if payment was made
+        if ($order->is_payment) {
+            $refund = \App\Models\Refund::create([
+                'order_id' => $order->id,
+                'refund_number' => 'REF-' . time() . '-' . rand(1000, 9999),
+                'amount' => $order->total,
+                'type' => 'cancellation',
+                'payment_method' => $order->payment_method,
+                'reason' => 'Order cancelled by customer',
+                'status' => 'approved',
+                'approved_at' => now(),
+                'estimated_days' => $order->payment_method === 'cod' ? 10 : 5
+            ]);
+
+            // Auto-process refund for cancellations
+            $refundService = new \App\Services\RefundService();
+            $refundService->processRefund($refund);
+
+            // Order status will be updated by RefundService to 'refunded'
+        } else {
+            $order->update(['status' => 'cancelled']);
+        }
+
+        Notification::createNotification(
+            'order_cancel',
+            'Order Cancelled',
+            'Order #' . $order->order_number . ' cancelled by customer ' . Auth::user()->name,
+            route('admin.order.show', $order->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number],
+            'fas fa-times-circle',
+            'warning'
+        );
+
+        $message = $order->is_payment
+            ? 'Order cancelled successfully. Refund will be processed within 3-5 business days.'
+            : 'Order cancelled successfully.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function returnOrder(Request $request, $id)
+    {
+        $request->validate([
+            'return_type' => 'required|string',
+            'reason' => 'nullable|string|max:500'
+        ]);
+
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->where('isdelete', false)
+            ->where('status', 'delivered')
+            ->firstOrFail();
+
+        // Combine dropdown reason with additional text
+        $returnReasons = [
+            'defective' => 'Defective/Damaged item',
+            'wrong_item' => 'Wrong item received',
+            'not_as_described' => 'Not as described',
+            'size_issue' => 'Size/Fit issue',
+            'quality_issue' => 'Quality not satisfactory',
+            'other' => 'Other'
+        ];
+
+        $reason = $returnReasons[$request->return_type] ?? $request->return_type;
+        if ($request->filled('reason')) {
+            $reason .= ' - ' . $request->reason;
+        }
+
+        // Create refund record
+        $refund = \App\Models\Refund::create([
+            'order_id' => $order->id,
+            'refund_number' => 'REF-' . time() . '-' . rand(1000, 9999),
+            'amount' => $order->total,
+            'type' => 'return',
+            'payment_method' => $order->payment_method,
+            'reason' => $reason,
+            'status' => 'initiated',
+            'estimated_days' => 7
+        ]);
+
+        $order->update(['status' => 'return_requested']);
+
+        Notification::createNotification(
+            'return_request',
+            'Return Request Submitted',
+            'Return request for Order #' . $order->order_number . ' by ' . Auth::user()->name . ' - Reason: ' . $request->return_type,
+            route('admin.refunds.show', $refund->id),
+            ['order_id' => $order->id, 'order_number' => $order->order_number, 'refund_id' => $refund->id],
+            'fas fa-undo',
+            'info'
+        );
+
+        return redirect()->back()->with('success', 'Return request submitted successfully. We will review and process within 24-48 hours.');
     }
 }

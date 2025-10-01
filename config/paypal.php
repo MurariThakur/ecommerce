@@ -4,22 +4,24 @@
  * Created by Raza Mehdi <srmk@outlook.com>.
  */
 
+use App\Models\Setting;
+
 return [
-    'mode'    => env('PAYPAL_MODE', 'sandbox'), // Can only be 'sandbox' Or 'live'. If empty or invalid, 'live' will be used.
+    'mode'    => 'sandbox',
     'sandbox' => [
-        'client_id'         => env('PAYPAL_SANDBOX_CLIENT_ID', ''),
-        'client_secret'     => env('PAYPAL_SANDBOX_CLIENT_SECRET', ''),
+        'client_id'         => Setting::get('paypal_client_id', ''),
+        'client_secret'     => Setting::get('paypal_client_secret', ''),
         'app_id'            => 'APP-80W284485P519543T',
     ],
     'live' => [
-        'client_id'         => env('PAYPAL_LIVE_CLIENT_ID', ''),
-        'client_secret'     => env('PAYPAL_LIVE_CLIENT_SECRET', ''),
-        'app_id'            => env('PAYPAL_LIVE_APP_ID', ''),
+        'client_id'         => Setting::get('paypal_client_id', ''),
+        'client_secret'     => Setting::get('paypal_client_secret', ''),
+        'app_id'            => Setting::get('paypal_client_id', ''),
     ],
 
-    'payment_action' => env('PAYPAL_PAYMENT_ACTION', 'Sale'), // Can only be 'Sale', 'Authorization' or 'Order'
-    'currency'       => env('PAYPAL_CURRENCY', 'USD'),
-    'notify_url'     => env('PAYPAL_NOTIFY_URL', ''), // Change this accordingly for your application.
-    'locale'         => env('PAYPAL_LOCALE', 'en_US'), // force gateway language  i.e. it_IT, es_ES, en_US ... (for express checkout only)
-    'validate_ssl'   => env('PAYPAL_VALIDATE_SSL', true), // Validate SSL when creating api client.
+    'payment_action' => 'Sale',
+    'currency'       => 'USD',
+    'notify_url'     => '',
+    'locale'         => 'en_US',
+    'validate_ssl'   => true,
 ];

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Slider extends Model
+{
+    protected $fillable = [
+        'title',
+        'image',
+        'button_name',
+        'button_link',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
+}

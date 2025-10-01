@@ -10,6 +10,9 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
+        'image',
+        'button_name',
+        'is_home',
         'meta_title',
         'meta_description',
         'meta_keyword',
@@ -20,6 +23,7 @@ class Category extends Model
     protected $casts = [
         'status' => 'boolean',
         'isdelete' => 'boolean',
+        'is_home' => 'boolean',
     ];
 
     /**

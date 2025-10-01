@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -24,6 +25,16 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
+
+            Notification::createNotification(
+                'user',
+                'New User Registration',
+                'New user "' . $user->name . '" has registered',
+                route('admin.user.index'),
+                ['user_id' => $user->id, 'email' => $user->email],
+                'fas fa-user-plus',
+                'success'
+            );
 
             try {
                 $verificationUrl = URL::temporarySignedRoute(
@@ -115,14 +126,21 @@ class AuthController extends Controller
         ]);
     }
 
-    public function frontendlogout()
+    public function frontendlogout(Request $request)
     {
         Auth::logout();
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully!',
-            'redirect' => route('frontend.home')
-        ]);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out successfully!',
+                'redirect' => route('frontend.home')
+            ]);
+        }
+        
+        return redirect()->route('frontend.home')->with('success', 'Logged out successfully!');
     }
 
     public function showForgotPasswordForm()

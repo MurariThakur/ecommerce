@@ -62,6 +62,24 @@
                                                     <td><code>{{ $category->slug }}</code></td>
                                                 </tr>
                                                 <tr>
+                                                    <td><strong>Button Name</strong></td>
+                                                    <td>{{ $category->button_name ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Show on Home</strong></td>
+                                                    <td>
+                                                        @if($category->is_home)
+                                                            <span class="badge badge-primary">
+                                                                <i class="fas fa-home"></i> Yes
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-secondary">
+                                                                <i class="fas fa-times"></i> No
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <td><strong>Status</strong></td>
                                                     <td>
                                                         @if($category->status)
@@ -87,8 +105,22 @@
                                         </div>
                                     </div>
 
-                                    <!-- SEO Information -->
+                                    <!-- Category Image -->
+                                    @if($category->image)
                                     <div class="card card-outline card-info">
+                                        <div class="card-header">
+                                            <h3 class="card-title">
+                                                <i class="fas fa-image"></i> Category Image
+                                            </h3>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-fluid rounded" style="max-height: 300px;">
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <!-- SEO Information -->
+                                    <div class="card card-outline card-warning">
                                         <div class="card-header">
                                             <h3 class="card-title">
                                                 <i class="fas fa-search"></i> SEO Information

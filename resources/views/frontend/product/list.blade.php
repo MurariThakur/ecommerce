@@ -6,6 +6,35 @@
     @endphp
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/nouislider/nouislider.css') }}">
     <style>
+        /* .btn-wishlist.btn-wishlist-add:before {
+                content: '\f004' !important;
+                color: rgb(204, 153, 102) !important;
+            } */
+        .btn-wishlist.btn-wishlist-add:before {
+            content: '\f233';
+            color: #c96;
+        }
+
+        /* Default state - add to wishlist */
+        .btn-product-icon:hover span,
+        .btn-product-icon:focus span {
+            color: #fff;
+            background-color: #c96;
+        }
+
+        /* When in wishlist - remove from wishlist */
+        .btn-wishlist-add:hover,
+        .btn-wishlist-add:focus {
+            color: #fff;
+            background-color: #fff;
+        }
+
+        .btn-wishlist-add:hover span,
+        .btn-wishlist-add:focus span {
+            color: #c96 !important;
+            background-color: #fff !important;
+        }
+
         .category-link {
             display: flex !important;
             justify-content: space-between !important;
@@ -187,16 +216,18 @@
                                                 </a>
 
                                                 <div class="product-action-vertical">
-                                                    <a href="#" class="btn-product-icon btn-wishlist btn-expandable">
+                                                    <a href="#"
+                                                        class="btn-product-icon btn-wishlist btn-expandable  list-wishlist-btn"
+                                                        data-product-id="{{ $product->id }}">
                                                         <span>add to wishlist</span>
                                                     </a>
                                                 </div>
 
-                                                <div class="product-action">
+                                                {{-- <div class="product-action">
                                                     <a href="#" class="btn-product btn-cart">
                                                         <span>add to cart</span>
                                                     </a>
-                                                </div>
+                                                </div> --}}
                                             </figure>
 
                                             <div class="product-body">
@@ -837,7 +868,114 @@
         // Clean all filters function
         function cleanAllFilters() {
             window.location.href = '{{ $cleanAllUrl ?? '' }}';
+        }
 
+        // Wishlist functionality
+        const listWishlistBtns = document.querySelectorAll('.list-wishlist-btn');
+
+        listWishlistBtns.forEach(btn => {
+            // Check initial wishlist status
+            @auth
+            const productId = btn.dataset.productId;
+            fetch('{{ route('wishlist.toggle') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        check_only: true
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.in_wishlist) {
+                        btn.classList.add('btn-wishlist-add');
+                        btn.querySelector('span').textContent = 'remove from wishlist';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking wishlist status:', error);
+                });
+        @endauth
+
+        btn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                @guest
+                $('#signin-modal').modal('show');
+                return;
+            @endguest
+
+            const productId = this.dataset.productId;
+            const span = this.querySelector('span');
+
+            this.style.pointerEvents = 'none'; span.textContent = 'processing...';
+
+            fetch('{{ route('wishlist.toggle') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.in_wishlist) {
+                        this.classList.add('btn-wishlist-add');
+                        span.textContent = 'remove from wishlist';
+                    } else {
+                        this.classList.remove('btn-wishlist-add');
+                        span.textContent = 'add to wishlist';
+                    }
+
+                    // Update header wishlist count
+                    const wishlistCount = document.getElementById('wishlist-count');
+                    if (wishlistCount) {
+                        wishlistCount.textContent = `(${data.wishlist_count})`;
+                    }
+
+                    // Update header heart icon
+                    updateHeaderHeartIcon(data.wishlist_count > 0);
+
+                    if (window.CartManager) {
+                        window.CartManager.showToast(data.message, 'success');
+                    }
+                } else {
+                    if (window.CartManager) {
+                        window.CartManager.showToast(data.message, 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (window.CartManager) {
+                    window.CartManager.showToast('Error updating wishlist', 'error');
+                }
+            })
+            .finally(() => {
+                this.style.pointerEvents = 'auto';
+            });
+        });
+        });
+
+        function updateHeaderHeartIcon(hasItems) {
+            const heartIcon = document.getElementById('header-wishlist-icon');
+            if (heartIcon) {
+                if (hasItems) {
+                    heartIcon.className = 'icon-heart';
+                    heartIcon.style.color = 'rgb(204, 153, 102)';
+                } else {
+                    heartIcon.className = 'icon-heart-o';
+                    heartIcon.style.color = '';
+                }
+            }
         }
     </script>
 @endsection

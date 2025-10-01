@@ -121,6 +121,82 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ url('admin/refunds') }}"
+                    class="nav-link {{ request()->is('admin/refund*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-undo"></i>
+                    <p>
+                        Refunds
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/sliders') }}"
+                    class="nav-link {{ request()->is('admin/slider*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-images"></i>
+                    <p>
+                        Sliders
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/partners') }}"
+                    class="nav-link {{ request()->is('admin/partner*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-handshake"></i>
+                    <p>
+                        Partners
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/contact') }}"
+                    class="nav-link {{ request()->is('admin/contact*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-envelope"></i>
+                    <p>
+                        Contact Messages
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/faq') }}"
+                    class="nav-link {{ request()->is('admin/faq*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-question-circle"></i>
+                    <p>
+                        FAQ Management
+                    </p>
+                </a>
+            </li>
+
+            <li class="nav-item {{ request()->is('admin/blog*') ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ request()->is('admin/blog*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-blog"></i>
+                    <p>
+                        Blog Management
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('admin/blog-category') }}"
+                            class="nav-link {{ request()->is('admin/blog-category*') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Blog Categories</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/blog') }}"
+                            class="nav-link {{ request()->is('admin/blog') || request()->is('admin/blog/create') || request()->is('admin/blog/*/edit') || request()->is('admin/blog/view/*') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Blogs</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ url('admin/settings') }}"
                     class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cog"></i>

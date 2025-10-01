@@ -8,16 +8,16 @@
 @endsection
 @section('content')
     <main class="main">
-        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="page-header text-center"
+            style="background-image: url('{{ asset('frontend/assets/images/page-header-bg.jpg') }}')">
             <div class="container">
-                <h1 class="page-title">Checkout<span>Shop</span></h1>
+                <h1 class="page-title">Checkout</h1>
             </div><!-- End .container -->
         </div><!-- End .page-header -->
         <nav aria-label="breadcrumb" class="breadcrumb-nav">
             <div class="container">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Shop</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Checkout</li>
                 </ol>
             </div><!-- End .container -->
@@ -34,53 +34,66 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <label>First Name *</label>
-                                        <input type="text" name="first_name" class="form-control" value="{{ auth()->check() ? explode(' ', auth()->user()->name)[0] : '' }}" required>
+                                        <input type="text" name="first_name" class="form-control"
+                                            value="{{ auth()->check() ? explode(' ', auth()->user()->name)[0] : '' }}"
+                                            required>
                                     </div><!-- End .col-sm-6 -->
 
                                     <div class="col-sm-6">
                                         <label>Last Name *</label>
-                                        <input type="text" name="last_name" class="form-control" value="{{ auth()->check() && count(explode(' ', auth()->user()->name)) > 1 ? explode(' ', auth()->user()->name)[1] : '' }}" required>
+                                        <input type="text" name="last_name" class="form-control"
+                                            value="{{ auth()->check() && count(explode(' ', auth()->user()->name)) > 1 ? explode(' ', auth()->user()->name)[1] : '' }}"
+                                            required>
                                     </div><!-- End .col-sm-6 -->
                                 </div><!-- End .row -->
 
                                 <label>Company Name (Optional)</label>
-                                <input type="text" name="company" class="form-control" value="{{ auth()->user()->company ?? '' }}">
+                                <input type="text" name="company" class="form-control"
+                                    value="{{ auth()->user()->company ?? '' }}">
 
                                 <label>Country *</label>
-                                <input type="text" name="country" class="form-control" value="{{ auth()->user()->country ?? '' }}" required>
+                                <input type="text" name="country" class="form-control"
+                                    value="{{ auth()->user()->country ?? '' }}" required>
 
                                 <label>Street address *</label>
                                 <input type="text" name="address_line_1" class="form-control"
-                                    placeholder="House number and Street name" value="{{ auth()->user()->address_line_1 ?? '' }}" required>
+                                    placeholder="House number and Street name"
+                                    value="{{ auth()->user()->address_line_1 ?? '' }}" required>
                                 <input type="text" name="address_line_2" class="form-control"
-                                    placeholder="Appartments, suite, unit etc ..." value="{{ auth()->user()->address_line_2 ?? '' }}">
+                                    placeholder="Appartments, suite, unit etc ..."
+                                    value="{{ auth()->user()->address_line_2 ?? '' }}">
 
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <label>Town / City *</label>
-                                        <input type="text" name="city" class="form-control" value="{{ auth()->user()->city ?? '' }}" required>
+                                        <input type="text" name="city" class="form-control"
+                                            value="{{ auth()->user()->city ?? '' }}" required>
                                     </div><!-- End .col-sm-6 -->
 
                                     <div class="col-sm-6">
                                         <label>State / County *</label>
-                                        <input type="text" name="state" class="form-control" value="{{ auth()->user()->state ?? '' }}" required>
+                                        <input type="text" name="state" class="form-control"
+                                            value="{{ auth()->user()->state ?? '' }}" required>
                                     </div><!-- End .col-sm-6 -->
                                 </div><!-- End .row -->
 
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <label>Postcode / ZIP *</label>
-                                        <input type="text" name="postal_code" class="form-control" value="{{ auth()->user()->postal_code ?? '' }}" required>
+                                        <input type="text" name="postal_code" class="form-control"
+                                            value="{{ auth()->user()->postal_code ?? '' }}" required>
                                     </div><!-- End .col-sm-6 -->
 
                                     <div class="col-sm-6">
                                         <label>Phone *</label>
-                                        <input type="tel" name="phone" class="form-control" value="{{ auth()->user()->phone ?? '' }}" required>
+                                        <input type="tel" name="phone" class="form-control"
+                                            value="{{ auth()->user()->phone ?? '' }}" required>
                                     </div><!-- End .col-sm-6 -->
                                 </div><!-- End .row -->
 
                                 <label>Email address *</label>
-                                <input type="email" name="email" class="form-control" value="{{ auth()->user()->email ?? '' }}" required>
+                                <input type="email" name="email" class="form-control"
+                                    value="{{ auth()->user()->email ?? '' }}" required>
 
                                 @guest
                                     <div class="custom-control custom-checkbox">
@@ -277,23 +290,37 @@
                                             </label>
                                         </div>
 
-                                        <div class="custom-control custom-radio" style="margin-top: 0px;">
-                                            <input type="radio" value="paypal" id="paypal" name="payment_method"
-                                                class="custom-control-input" required>
-                                            <label class="custom-control-label" for="paypal">
-                                                PayPal
-                                            </label>
-                                        </div>
+                                        @if ($paymentSettings['paypal_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="paypal" id="paypal"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="paypal">
+                                                    PayPal
+                                                </label>
+                                            </div>
+                                        @endif
 
-                                        <div class="custom-control custom-radio" style="margin-top: 0px;">
-                                            <input type="radio" value="stripe" id="CreditCard" name="payment_method"
-                                                class="custom-control-input" required>
-                                            <label class="custom-control-label" for="CreditCard">
-                                                Credit Card (Stripe)
-                                            </label>
-                                            <img src="{{ asset('frontend/assets/images/payments-summary.png') }}"
-                                                alt="payments cards">
-                                        </div>
+                                        @if ($paymentSettings['stripe_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="stripe" id="CreditCard"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="CreditCard">
+                                                    Credit Card (Stripe)
+                                                </label>
+                                                <img src="{{ asset('frontend/assets/images/payments-summary.png') }}"
+                                                    alt="payments cards">
+                                            </div>
+                                        @endif
+
+                                        @if ($paymentSettings['razorpay_enabled'])
+                                            <div class="custom-control custom-radio" style="margin-top: 0px;">
+                                                <input type="radio" value="razorpay" id="razorpay"
+                                                    name="payment_method" class="custom-control-input" required>
+                                                <label class="custom-control-label" for="razorpay">
+                                                    Razorpay
+                                                </label>
+                                            </div>
+                                        @endif
 
                                         <!-- Hidden fields for cart and shipping data -->
                                         <input type="hidden" name="shipping_method" id="selected-shipping"
@@ -305,10 +332,13 @@
                                         @if (session('applied_discount'))
                                             <input type="hidden" name="discount_id"
                                                 value="{{ session('applied_discount.id') }}">
-                                            <input type="hidden" name="discount_name"
+                                            <input type="hidden" name="discount_name" id="form-discount-name"
                                                 value="{{ session('applied_discount.name') }}">
                                             <input type="hidden" name="discount_amount"
                                                 value="{{ session('applied_discount.amount') }}">
+                                        @else
+                                            <input type="hidden" name="discount_name" id="form-discount-name"
+                                                value="">
                                         @endif
                                     </div><!-- End .accordion -->
 

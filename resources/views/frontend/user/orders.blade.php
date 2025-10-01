@@ -57,6 +57,25 @@
                                                         <a href="{{ route('user.order.details', $order->id) }}"
                                                             class="btn btn-outline-primary-2 btn-sm">View
                                                             Details</a>
+                                                        @if (in_array($order->status, ['confirmed', 'processing', 'shipped']))
+                                                            <form action="{{ route('user.order.cancel', $order->id) }}"
+                                                                method="POST" class="d-inline ml-1"
+                                                                onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-danger btn-sm">Cancel
+                                                                    Order</button>
+                                                            </form>
+                                                        @endif
+                                                        @if ($order->status === 'delivered')
+                                                            @foreach ($order->orderItems as $item)
+                                                                @if ($item->product && !$item->has_review)
+                                                                    <a href="{{ url($item->product->category->slug . '/' . $item->product->subcategory->slug . '/' . $item->product->slug) }}#product-review-tab"
+                                                                        class="btn btn-success btn-sm ml-1 review-btn"
+                                                                        target="_blank">Rate & Review</a>
+                                                                    @break
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

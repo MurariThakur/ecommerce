@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -51,21 +52,14 @@ class AdminController extends Controller
         return view('admin.admin.create', compact('title'));
     }
 
-    public function store(Request $request)
+    public function store(AdminRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+        $data = $request->validated();
+        $data['password'] = bcrypt($data['password']);
+        $data['is_admin'] = 1;
+        $data['is_active'] = 1;
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'is_admin' => 1,
-            'is_active' => 1,
-        ]);
+        User::create($data);
 
         return redirect()->route('admin.index')
             ->with('success', 'Admin created successfully!');
@@ -96,24 +90,17 @@ class AdminController extends Controller
     /**
      * Update admin
      */
-    public function update(Request $request, $id)
+    public function update(AdminRequest $request, $id)
     {
         $admin = User::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6|confirmed',
-        ]);
-
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'is_active' => $request->has('is_active') ? 1 : 0,
-        ];
+        $data = $request->validated();
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
         if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
         }
 
         $admin->update($data);
@@ -130,7 +117,7 @@ class AdminController extends Controller
         $admin = User::findOrFail($id);
 
         // Prevent deleting current user
-        if ($admin->id === Auth::id()) {
+        if ($admin->id === Auth::guard('admin')->id()) {
             return back()->with('error', 'You cannot delete your own account!');
         }
 
@@ -148,7 +135,7 @@ class AdminController extends Controller
         $admin = User::findOrFail($id);
 
         // Prevent deactivating current user
-        if ($admin->id === Auth::id()) {
+        if ($admin->id === Auth::guard('admin')->id()) {
             return back()->with('error', 'You cannot deactivate your own account!');
         }
 

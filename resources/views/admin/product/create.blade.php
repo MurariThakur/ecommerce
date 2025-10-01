@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @push('styles')
-<link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-lite.min.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-lite.min.css') }}">
 @endpush
 @section('content')
     <div class="content-wrapper">
@@ -28,7 +28,7 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                 @include('admin.layouts.message')
+                @include('admin.layouts.message')
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -110,9 +110,12 @@
                                                         @foreach ($colors as $key => $value)
                                                             <div class="col-md-6 col-lg-4">
                                                                 <div class="form-check mb-2">
-                                                                    <input class="form-check-input" type="checkbox" name="colors[]" value="{{ $key }}"
-                                                                        id="color_{{ $key }}" {{ in_array($key, old('colors', [])) ? 'checked' : '' }}>
-                                                                    <label class="form-check-label" for="color_{{ $key }}">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        name="colors[]" value="{{ $key }}"
+                                                                        id="color_{{ $key }}"
+                                                                        {{ in_array($key, old('colors', [])) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="color_{{ $key }}">
                                                                         {{ $value }}
                                                                     </label>
                                                                 </div>
@@ -193,14 +196,17 @@
                                         <div class="card">
                                             <div class="card-header">
                                                 <h6 class="card-title mb-0">Image Gallery</h6>
-                                                <button type="button" class="btn btn-primary btn-sm float-right" id="add-image">Add Images</button>
+                                                <button type="button" class="btn btn-primary btn-sm float-right"
+                                                    id="add-image">Add Images</button>
                                             </div>
                                             <div class="card-body">
-                                                <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                                                <input type="file" id="image-input" accept="image/*" multiple
+                                                    style="display: none;">
                                                 <div id="images-container">
                                                     <div class="text-center p-4" id="no-images-message">
                                                         <i class="fas fa-image fa-3x text-muted mb-3"></i>
-                                                        <p class="text-muted">No images uploaded yet. Click "Add Images" to start.</p>
+                                                        <p class="text-muted">No images uploaded yet. Click "Add Images" to
+                                                            start.</p>
                                                     </div>
                                                 </div>
                                                 <div id="sortable" class="row" style="display: none;">
@@ -223,7 +229,8 @@
 
                                     <div class="form-group">
                                         <label for="description">Description</label>
-                                        <textarea class="form-control summernote @error('description') is-invalid @enderror" id="description" name="description" rows="5">{{ old('description') }}</textarea>
+                                        <textarea class="form-control summernote @error('description') is-invalid @enderror" id="description"
+                                            name="description" rows="5">{{ old('description') }}</textarea>
                                         @error('description')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -233,8 +240,8 @@
 
                                     <div class="form-group">
                                         <label for="additional_information">Additional Information</label>
-                                        <textarea class="form-control summernote @error('additional_information') is-invalid @enderror" id="additional_information"
-                                            name="additional_information" rows="3">{{ old('additional_information') }}</textarea>
+                                        <textarea class="form-control summernote @error('additional_information') is-invalid @enderror"
+                                            id="additional_information" name="additional_information" rows="3">{{ old('additional_information') }}</textarea>
                                         @error('additional_information')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -244,7 +251,8 @@
 
                                     <div class="form-group">
                                         <label for="shipping_return">Shipping & Return</label>
-                                        <textarea class="form-control summernote @error('shipping_return') is-invalid @enderror" id="shipping_return" name="shipping_return" rows="3">{{ old('shipping_return') }}</textarea>
+                                        <textarea class="form-control summernote @error('shipping_return') is-invalid @enderror" id="shipping_return"
+                                            name="shipping_return" rows="3">{{ old('shipping_return') }}</textarea>
                                         @error('shipping_return')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -260,6 +268,18 @@
                                                 name="status" value="1" {{ old('status', true) ? 'checked' : '' }}>
                                             <label class="custom-control-label" for="status">
                                                 Active
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="is_trendy">Trendy Product</label>
+                                        <div class="custom-control custom-switch">
+                                            <input type="hidden" name="is_trendy" value="0">
+                                            <input type="checkbox" class="custom-control-input" id="is_trendy"
+                                                name="is_trendy" value="1" {{ old('is_trendy') ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="is_trendy">
+                                                Mark as Trendy
                                             </label>
                                         </div>
                                     </div>
@@ -284,8 +304,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
-<script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
+    <script src="{{ url('assets/plugins/summernote/summernote-lite.min.js') }}"></script>
+    <script src="{{ url('assets/sortable/jquery-ui.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Initialize Summernote editor
@@ -408,7 +428,9 @@
                 if (files.length > 0) {
                     // Check if adding these files would exceed the limit
                     if (uploadedImages.length + files.length > 10) {
-                        showImageError('You can upload a maximum of 10 images. Please remove some images before adding new ones.');
+                        showImageError(
+                            'You can upload a maximum of 10 images. Please remove some images before adding new ones.'
+                            );
                         this.value = ''; // Reset input
                         return;
                     }
@@ -428,7 +450,8 @@
                 // Check file type
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
                 if (!allowedTypes.includes(file.type)) {
-                    showImageError(`Invalid file type: ${file.name}. Only JPEG, PNG, GIF, and WebP images are allowed.`);
+                    showImageError(
+                        `Invalid file type: ${file.name}. Only JPEG, PNG, GIF, and WebP images are allowed.`);
                     return false;
                 }
 
@@ -490,14 +513,18 @@
 
                     // Check minimum dimensions (50x50)
                     if (width < 50 || height < 50) {
-                        showImageError(`Image dimensions too small: ${fileName}. Minimum size is 50x50 pixels. Current size: ${width}x${height}`);
+                        showImageError(
+                            `Image dimensions too small: ${fileName}. Minimum size is 50x50 pixels. Current size: ${width}x${height}`
+                            );
                         callback(false);
                         return;
                     }
 
                     // Check maximum dimensions (4000x4000)
                     if (width > 4000 || height > 4000) {
-                        showImageError(`Image dimensions too large: ${fileName}. Maximum size is 4000x4000 pixels. Current size: ${width}x${height}`);
+                        showImageError(
+                            `Image dimensions too large: ${fileName}. Maximum size is 4000x4000 pixels. Current size: ${width}x${height}`
+                            );
                         callback(false);
                         return;
                     }

@@ -100,10 +100,11 @@
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
+                                            <th>Image</th>
                                             <th>Name</th>
-                                            <th>Slug</th>
+                                            <th>Button Name</th>
+                                            <th>Home</th>
                                             <th>Status</th>
-                                            <th>Created At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -111,10 +112,28 @@
                                         @forelse($categories as $category)
                                             <tr>
                                                 <td>
+                                                    @if ($category->image)
+                                                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    @else
+                                                        <span class="text-muted">No Image</span>
+                                                    @endif
+                                                </td>
+                                                <td>
                                                     <strong>{{ $category->name }}</strong>
                                                 </td>
                                                 <td>
-                                                    <code>{{ $category->slug }}</code>
+                                                    {{ $category->button_name ?? '-' }}
+                                                </td>
+                                                <td>
+                                                    @if ($category->is_home)
+                                                        <span class="badge badge-primary">
+                                                            <i class="fas fa-home"></i> Yes
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-secondary">
+                                                            <i class="fas fa-times"></i> No
+                                                        </span>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     @if ($category->status == 1)
@@ -126,11 +145,6 @@
                                                             <i class="fas fa-times-circle"></i> Inactive
                                                         </span>
                                                     @endif
-                                                </td>
-                                                <td>
-                                                    <span title="{{ $category->created_at->format('M d, Y H:i:s') }}">
-                                                        {{ $category->created_at->format('M d, Y') }}
-                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex gap-1">
@@ -167,7 +181,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center text-muted py-4">
+                                                <td colspan="6" class="text-center text-muted py-4">
                                                     <i class="fas fa-tags fa-3x mb-3"></i>
                                                     <p>No categories found.</p>
                                                     <a href="{{ route('admin.category.create') }}"

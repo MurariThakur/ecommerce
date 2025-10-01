@@ -2,37 +2,26 @@
      <div class="header-top">
          <div class="container">
              <div class="header-left">
-                 <div class="header-dropdown">
-                     <a href="#">Usd</a>
-                     <div class="header-menu">
-                         <ul>
-
-                             <li><a href="#">Usd</a></li>
-                         </ul>
-                     </div><!-- End .header-menu -->
-                 </div><!-- End .header-dropdown -->
-
-                 <div class="header-dropdown">
-                     <a href="#">Eng</a>
-                     <div class="header-menu">
-                         <ul>
-                             <li><a href="#">English</a></li>
-
-                         </ul>
-                     </div><!-- End .header-menu -->
-                 </div><!-- End .header-dropdown -->
+                 
              </div><!-- End .header-left -->
 
-             <div class="header-right">
+             <div class="header-right mt-1">
                  <ul class="top-menu">
                      <li>
                          <a href="#">Links</a>
                          <ul>
-                             <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
-                             <li><a href="{{ asset('wishlist.html') }}"><i class="icon-heart-o"></i>My Wishlist
-                                     <span>(3)</span></a></li>
-                             <li><a href="{{ asset('about.html') }}">About Us</a></li>
-                             <li><a href="{{ asset('contact.html') }}">Contact Us</a></li>
+                             <li><a href="tel:{{ \App\Models\Setting::where('key', 'mobile')->value('value') ?? '#' }}"><i
+                                         class="icon-phone"></i>Call:
+                                     {{ \App\Models\Setting::where('key', 'mobile')->value('value') ?? '+0123 456 789' }}</a>
+                             </li>
+                             <li><a href="{{ auth()->check() ? route('wishlist.index') : '#signin-modal' }}"
+                                     {{ !auth()->check() ? 'data-toggle=modal' : '' }}><i class="icon-heart-o"
+                                         id="header-wishlist-icon"></i>My Wishlist
+                                     <span
+                                         id="wishlist-count">({{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }})</span></a>
+                             </li>
+                             <li><a href="{{ route('about') }}">About Us</a></li>
+                             <li><a href="{{ route('contact') }}">Contact Us</a></li>
                              @auth
                                  <li><a href="{{ route('user.dashboard') }}"><i class="icon-user"></i>Dashboard</a></li>
                              @else
@@ -53,8 +42,9 @@
                  </button>
 
                  <a href="{{ url('') }}" class="logo">
-                     <img src="{{ asset('frontend/assets/images/logo.png') }}" alt="Molla Logo" width="105"
-                         height="25">
+                     <img src="{{ \App\Models\Setting::where('key', 'website_logo')->value('value') ? asset('storage/' . \App\Models\Setting::where('key', 'website_logo')->value('value')) : asset('frontend/assets/images/logo.png') }}"
+                         alt="{{ \App\Models\Setting::where('key', 'website_name')->value('value') ?? 'Ecommerce' }}"
+                         width="105" height="25">
                  </a>
 
                  <nav class="main-nav">
@@ -138,9 +128,10 @@
 
                  <div class="dropdown cart-dropdown" id="cart-dropdown">
                      <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                         aria-haspopup="true" aria-expanded="false" data-display="static">
+                         aria-haspopup="true" aria-expanded="false" data-display="static" style="position: relative;">
                          <i class="icon-shopping-cart"></i>
-                         <span class="cart-count" id="header-cart-count">{{ Cart::getTotalQuantity() }}</span>
+                         <span class="cart-count" id="header-cart-count"
+                             style="position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-width: 18px;">{{ Cart::getTotalQuantity() }}</span>
                      </a>
 
                      <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown-menu">

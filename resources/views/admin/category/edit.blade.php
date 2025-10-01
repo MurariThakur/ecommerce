@@ -31,7 +31,7 @@
                             <h3 class="card-title">Edit Category</h3>
                         </div>
                         <!-- /.card-header -->
-                        <form action="{{ route('admin.category.update', $category) }}" method="POST">
+                        <form action="{{ route('admin.category.update', $category) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="card-body">
@@ -53,6 +53,43 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="image">Category Image</label>
+                                    @if($category->image)
+                                        <div class="mb-2">
+                                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-thumbnail" style="max-width: 200px;">
+                                        </div>
+                                    @endif
+                                    <input type="file" class="form-control-file @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+                                    <small class="form-text text-muted">Leave empty to keep current image</small>
+                                    @error('image')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="button_name">Button Name</label>
+                                    <input type="text" class="form-control @error('button_name') is-invalid @enderror" id="button_name" name="button_name" value="{{ old('button_name', $category->button_name) }}">
+                                    @error('button_name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="is_home">Show on Home Page</label>
+                                    <div class="custom-control custom-switch">
+                                        <input type="hidden" name="is_home" value="0">
+                                        <input type="checkbox" class="custom-control-input" id="is_home" name="is_home" value="1" {{ old('is_home', $category->is_home) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="is_home">
+                                            Display on Home Page
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
