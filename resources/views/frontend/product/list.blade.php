@@ -257,9 +257,9 @@
                                                 </div>
                                                 <div class="ratings-container">
                                                     <div class="ratings">
-                                                        <div class="ratings-val" style="width: 80%;"></div>
+                                                        <div class="ratings-val" style="width: {{ $product->averageRating() * 20 }}%;"></div>
                                                     </div>
-                                                    <span class="ratings-text">( 4 Reviews )</span>
+                                                    <span class="ratings-text">( {{ $product->reviewsCount() }} Reviews )</span>
                                                 </div>
                                             </div>
                                         </div>
