@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => \App\Models\Setting::where('key', 'mail_mailer')->value('value') ?: env('MAIL_MAILER', 'log'),
+    'default' => \App\Helpers\SettingsHelper::get('mail_mailer', env('MAIL_MAILER', 'log')),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,12 +39,12 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => \App\Models\Setting::where('key', 'mail_scheme')->value('value') ?: env('MAIL_SCHEME'),
-            'url' => \App\Models\Setting::where('key', 'mail_url')->value('value') ?: env('MAIL_URL'),
-            'host' => \App\Models\Setting::where('key', 'mail_host')->value('value') ?: env('MAIL_HOST', '127.0.0.1'),
-            'port' => \App\Models\Setting::where('key', 'mail_port')->value('value') ?: env('MAIL_PORT', 2525),
-            'username' => \App\Models\Setting::where('key', 'mail_username')->value('value') ?: env('MAIL_USERNAME'),
-            'password' => \App\Models\Setting::where('key', 'mail_password')->value('value') ?: env('MAIL_PASSWORD'),
+            'scheme' => \App\Helpers\SettingsHelper::get('mail_scheme', env('MAIL_SCHEME')),
+            'url' => \App\Helpers\SettingsHelper::get('mail_url', env('MAIL_URL')),
+            'host' => \App\Helpers\SettingsHelper::get('mail_host', env('MAIL_HOST', '127.0.0.1')),
+            'port' => \App\Helpers\SettingsHelper::get('mail_port', env('MAIL_PORT', 2525)),
+            'username' => \App\Helpers\SettingsHelper::get('mail_username', env('MAIL_USERNAME')),
+            'password' => \App\Helpers\SettingsHelper::get('mail_password', env('MAIL_PASSWORD')),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
@@ -111,8 +111,8 @@ return [
     */
 
     'from' => [
-        'address' => \App\Models\Setting::where('key', 'mail_from_address')->value('value') ?: env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => \App\Models\Setting::where('key', 'mail_from_name')->value('value') ?: env('MAIL_FROM_NAME', 'Example'),
+        'address' => \App\Helpers\SettingsHelper::get('mail_from_address', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+        'name' => \App\Helpers\SettingsHelper::get('mail_from_name', env('MAIL_FROM_NAME', 'Example')),
     ],
 
 ];
