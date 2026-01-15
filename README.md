@@ -2,17 +2,24 @@
 
 # 🛍️ Laravel E-Commerce Platform
 
-<img src="https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12.0" />
-<img src="https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2+" />
-<img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL 8.0+" />
-<img src="https://img.shields.io/badge/Bootstrap-5.0-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap 5.0" />
-<img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript ES6+" />
+<br />
 
-### 🚀 A Modern, Feature-Rich E-Commerce Platform
+**Built with Modern Technologies for Enterprise-Grade E-Commerce**
 
-**Built with Laravel 12 | Fully Dynamic Admin Control | Production-Ready**
+![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-[📖 Quick Start](#-installation) &nbsp; • &nbsp; [✨ Features](#-features) &nbsp; • &nbsp; [📁 Structure](#️-project-structure) &nbsp; • &nbsp; [🤝 Contributing](#-contributing)
+<br />
+
+### 🚀 Production-Ready & Fully Customizable
+
+**Complete Admin Control • Dynamic Frontend • Secure Payments • Real-time Notifications**
+
+[📖 Quick Start](#-installation) &nbsp; • &nbsp; [✨ Features](#-features) &nbsp; • &nbsp; [🛠️ Tech Stack](#️-tech-stack) &nbsp; • &nbsp; [📁 Structure](#️-project-structure)
 
 </div>
 
@@ -77,68 +84,131 @@
 
 ## 🛠️ Tech Stack
 
-### Backend Stack
+### 🔙 Backend Architecture
+
 <div align="center">
 
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **Laravel** | 12.0 | PHP Framework |
-| **PHP** | 8.2+ | Server Language |
-| **MySQL** | 8.0+ | Database |
-| **Composer** | Latest | PHP Package Manager |
+```
+┌─────────────────────────────────────────────────────────┐
+│           BACKEND TECHNOLOGY STACK                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+</div>
+
+| Technology | Version | Purpose | Status |
+|-----------|---------|---------|--------|
+| **Laravel** | 12.0 | PHP Web Framework | ![Active](https://img.shields.io/badge/Active-green) |
+| **PHP** | 8.2+ | Server Language | ![Latest](https://img.shields.io/badge/Latest-blue) |
+| **MySQL** | 8.0+ | Relational Database | ![Stable](https://img.shields.io/badge/Stable-green) |
+| **Composer** | Latest | Dependency Manager | ![Updated](https://img.shields.io/badge/Updated-blue) |
+
+<div align="left">
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" height="60" alt="Laravel" title="Laravel 12.0" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.php.net" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" height="60" alt="PHP" title="PHP 8.2+" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.mysql.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" height="60" alt="MySQL" title="MySQL 8.0+" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://getcomposer.org" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/composer/composer-original.svg" height="60" alt="Composer" title="Composer" />
+  </a>
+</div>
+
+**Core Features:**
+- Laravel Sanctum for API Authentication
+- Redis/Memcached for Caching
+- Database Queue System
+- Blade Templating Engine
+
+### 🎨 Frontend Technology
+
+<div align="center">
+
+```
+┌─────────────────────────────────────────────────────────┐
+│         FRONTEND TECHNOLOGY STACK                        │
+└─────────────────────────────────────────────────────────┘
+```
+
+</div>
+
+| Technology | Version | Purpose | Status |
+|-----------|---------|---------|--------|
+| **HTML5** | Latest | Markup Language | ![Modern](https://img.shields.io/badge/Modern-blue) |
+| **CSS3** | Latest | Styling | ![Latest](https://img.shields.io/badge/Latest-blue) |
+| **JavaScript** | ES6+ | Client Scripting | ![Modern](https://img.shields.io/badge/Modern-blue) |
+| **Bootstrap** | 5.0 | CSS Framework | ![Stable](https://img.shields.io/badge/Stable-green) |
+| **Vite** | 5.0 | Build Tool | ![Fast](https://img.shields.io/badge/Fast-brightgreen) |
+
+<div align="left">
+  <a href="https://html.spec.whatwg.org" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" height="60" alt="HTML5" title="HTML5" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.w3.org/Style/CSS" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" height="60" alt="CSS3" title="CSS3" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" height="60" alt="JavaScript" title="JavaScript ES6+" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://getbootstrap.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg" height="60" alt="Bootstrap" title="Bootstrap 5.0" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://vitejs.dev" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg" height="60" alt="Vite" title="Vite 5.0" />
+  </a>
+</div>
+
+**Core Features:**
+- Responsive Mobile-First Design
+- Fast Asset Bundling with Vite
+- Font Awesome Icon Library
+- Google Maps Integration
+- jQuery for DOM Manipulation
+
+### 🔌 Integration & Services
+
+<div align="center">
+
+```
+┌─────────────────────────────────────────────────────────┐
+│        THIRD-PARTY INTEGRATIONS                         │
+└─────────────────────────────────────────────────────────┘
+```
 
 </div>
 
 <div align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg" height="50" alt="Laravel" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" height="50" alt="PHP" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" height="50" alt="MySQL" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/composer/composer-original.svg" height="50" alt="Composer" />
+  <a href="https://www.paypal.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/paypal/paypal-original.svg" height="50" alt="PayPal" title="PayPal" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://stripe.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/stripe/stripe-original.svg" height="50" alt="Stripe" title="Stripe" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.mailgun.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mailgun/mailgun-original.svg" height="50" alt="Mailgun" title="Mailgun Email Service" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.cloudflare.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cloudflare/cloudflare-original.svg" height="50" alt="Cloudflare" title="Cloudflare Security" />
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.redis.io" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" height="50" alt="Redis" title="Redis Cache" />
+  </a>
 </div>
 
-- **Authentication**: Laravel Sanctum
-- **File Storage**: Local & Cloud Storage
-- **Queue System**: Database/Redis
-- **Cache**: File/Redis/Memcached
-
-### Frontend Stack
-<div align="center">
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **Bootstrap** | 5.0 | CSS Framework |
-| **JavaScript** | ES6+ | Client Language |
-| **Vite** | Latest | Build Tool |
-| **jQuery** | Latest | DOM Manipulation |
-
-</div>
-
-<div align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="50" alt="HTML5" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" height="50" alt="CSS3" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="50" alt="JavaScript" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" height="50" alt="Bootstrap" />&nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jquery/jquery-original.svg" height="50" alt="jQuery" />
-</div>
-
-- **Template Engine**: Blade
-- **Build Tool**: Vite
-- **Icons**: Font Awesome
-- **Maps**: Google Maps API
-
-### Third-Party Integrations
-<div align="center">
-
-| Service | Purpose |
-|---------|---------|
-| **PayPal & Stripe** | Payment Processing |
-| **SMTP/Mailgun/SES** | Email Service |
-| **Intervention Image** | Image Processing |
-| **DomPDF** | PDF Generation |
-| **Maatwebsite Excel** | Excel Export |
-| **Cloudflare Turnstile** | Security |
-
-</div>
+| Service | Category | Purpose |
+|---------|----------|---------|
+| 💳 **PayPal & Stripe** | Payment Gateways | Secure online payments |
+| 📧 **Mailgun/SES** | Email Services | Transactional emails |
+| 🖼️ **Intervention Image** | Image Processing | Dynamic image optimization |
+| 📄 **DomPDF** | PDF Generation | Invoice & report generation |
+| 📊 **Maatwebsite Excel** | Data Export | Excel file generation |
+| 🛡️ **Cloudflare Turnstile** | Security | Bot protection & verification |
+| ⚡ **Redis** | Caching | High-speed data caching |
+| 🗺️ **Google Maps** | Location Services | Address mapping & directions |
 
 ---
 
@@ -367,8 +437,6 @@ ecommerce/
 
 ---
 
----
-
 ## 📚 Resources & Acknowledgments
 
 | Resource | Purpose |
@@ -380,23 +448,13 @@ ecommerce/
 
 ---
 
-## 📄 License
-
-This project is open-source software licensed under the [MIT license](LICENSE.md).
-
----
-
 <div align="center">
 
 ### 🎉 Thank You for Using Our E-Commerce Platform!
 
-**Questions?** Check the [documentation](#-installation) or open an issue.
-
-**Want to contribute?** We love pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md)
-
 ---
 
-<sub>Made with ❤️ by the Developer Community | Powered by Laravel 12</sub>
+<sub>Made with ❤️ by Murari | Powered by Laravel 12</sub>
 
 [⬆ Back to Top](#-laravel-e-commerce-platform)
 
