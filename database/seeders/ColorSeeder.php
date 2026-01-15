@@ -2,33 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Color;
-use Illuminate\Support\Str;
 
 class ColorSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
         $colors = [
-            ['name' => 'Red', 'color_code' => '#FF0000'],
-            ['name' => 'Green', 'color_code' => '#00FF00'],
-            ['name' => 'Blue', 'color_code' => '#0000FF'],
-            ['name' => 'Yellow', 'color_code' => '#FFFF00'],
-            ['name' => 'Black', 'color_code' => '#000000'],
+            ['name' => 'Black', 'color_code' => '#000000', 'status' => true],
+            ['name' => 'White', 'color_code' => '#FFFFFF', 'status' => true],
+            ['name' => 'Red', 'color_code' => '#FF0000', 'status' => true],
+            ['name' => 'Blue', 'color_code' => '#0000FF', 'status' => true],
+            ['name' => 'Green', 'color_code' => '#008000', 'status' => true],
+            ['name' => 'Yellow', 'color_code' => '#FFFF00', 'status' => true],
+            ['name' => 'Purple', 'color_code' => '#800080', 'status' => true],
+            ['name' => 'Orange', 'color_code' => '#FFA500', 'status' => true],
+            ['name' => 'Pink', 'color_code' => '#FFC0CB', 'status' => true],
+            ['name' => 'Gray', 'color_code' => '#808080', 'status' => true],
+            ['name' => 'Brown', 'color_code' => '#A52A2A', 'status' => true],
+            ['name' => 'Navy', 'color_code' => '#000080', 'status' => true],
+            ['name' => 'Gold', 'color_code' => '#FFD700', 'status' => true],
+            ['name' => 'Silver', 'color_code' => '#C0C0C0', 'status' => true],
         ];
 
         foreach ($colors as $color) {
-            Color::create([
-                'name' => $color['name'],
-                'color_code' => $color['color_code'],
-                'status' => true,
-                'is_deleted' => false,
-            ]);
+            $color['is_deleted'] = false;
+            Color::create($color);
         }
     }
 }

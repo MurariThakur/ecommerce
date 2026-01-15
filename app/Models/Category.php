@@ -138,4 +138,12 @@ class Category extends Model
             ->orderBy('name')
             ->get();
     }
+
+    public function getImageUrlAttribute()
+    {
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        return asset('storage/' . $this->image);
+    }
 }

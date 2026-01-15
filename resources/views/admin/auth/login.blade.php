@@ -14,8 +14,7 @@
     <!-- icheck bootstrap -->
     <link rel="stylesheet" href="{{ url('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte.min.css') }}"
-</head>
+    <link rel="stylesheet" href="{{ url('assets/dist/css/adminlte.min.css') }}" </head>
 
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -49,59 +48,30 @@
                             </div>
                         </div>
                     </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <div class="icheck-primary">
-              <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-              <label for="remember">
-                Remember Me
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary btn-block py-2">Sign In</button>
-          </div>
-        </div>
-                    </div>
-                </form>
-
-                <!-- OR Divider -->
-                <div class="text-center mb-3">
-                    <div class="d-flex align-items-center">
-                        <hr class="flex-grow-1">
-                        <span class="px-3 text-muted small">OR</span>
-                        <hr class="flex-grow-1">
-                    </div>
-                </div>
-
-                <div class="social-auth-links text-center mb-4">
-                    <div class="row" style="margin: 0 8px;">
-                        <div class="col-6 pr-1">
-                            <a href="#" class="btn btn-block btn-primary py-2 mb-2">
-                                <i class="fab fa-facebook mr-1"></i> Facebook
-                            </a>
-                        </div>
-                        <div class="col-6 pl-1">
-                            <a href="#" class="btn btn-block btn-danger py-2 mb-2">
-                                <i class="fab fa-google-plus mr-1"></i> Google+
-                            </a>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="icheck-primary">
+                                <input type="checkbox" name="remember" id="remember"
+                                    {{ old('remember') ? 'checked' : '' }}>
+                                <label for="remember">
+                                    Remember Me
+                                </label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- /.social-auth-links -->
 
-                <div class="text-center mb-3">
-                    <a href="forgot-password.html" class="text-muted">
-                        <i class="fas fa-key mr-1"></i>Forgot your password?
-                    </a>
-                </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block py-2">Sign In</button>
+                        </div>
+                    </div>
             </div>
-            <!-- /.card-body -->
+            </form>
+
         </div>
-        <!-- /.card -->
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
     </div>
     <!-- /.login-box -->
 

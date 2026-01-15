@@ -114,7 +114,7 @@
                                             </h3>
                                         </div>
                                         <div class="card-body text-center">
-                                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-fluid rounded" style="max-height: 300px;">
+                                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="img-fluid rounded" style="max-height: 300px;">
                                         </div>
                                     </div>
                                     @endif

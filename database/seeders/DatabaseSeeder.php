@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             ColorSeeder::class,
             ProductSeeder::class,
+            SliderSeeder::class,
+            BlogSeeder::class,
+            PartnerSeeder::class,
+            SettingSeeder::class,
             FaqSeeder::class,
         ]);
         

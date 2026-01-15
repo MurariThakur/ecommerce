@@ -54,7 +54,7 @@
                                     @foreach ($sliders as $slider)
                                         <div class="intro-slide">
                                             <figure class="slide-image">
-                                                <img src="{{ asset('storage/' . $slider->image) }}"
+                                                <img src="{{ $slider->image_url }}"
                                                     alt="{{ $slider->title }}">
                                             </figure><!-- End .slide-image -->
 
@@ -108,11 +108,11 @@
                             @foreach ($partners as $partner)
                                 @if ($partner->link)
                                     <a href="{{ $partner->link }}" target="_blank" class="brand">
-                                        <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}">
+                                        <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}">
                                     </a>
                                 @else
                                     <div class="brand">
-                                        <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}">
+                                        <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}">
                                     </div>
                                 @endif
                             @endforeach
@@ -215,7 +215,7 @@
                                 <div class="banner banner-display banner-link-anim col-lg-12 col-6">
                                     <a href="{{ url($category->slug) }}">
                                         @if ($category->image)
-                                            <img src="{{ asset('storage/' . $category->image) }}"
+                                            <img src="{{ $category->image_url }}"
                                                 alt="{{ $category->name }}">
                                         @else
                                             <img src="{{ asset('frontend/assets/images/banners/home/banner-2.jpg') }}"
@@ -439,7 +439,7 @@
                             <article class="entry entry-display">
                                 <figure class="entry-media">
                                     <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
-                                        <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/home/post-1.jpg') }}"
+                                        <img src="{{ $blog->image_url }}"
                                             alt="{{ $blog->title }}">
                                     </a>
                                 </figure>

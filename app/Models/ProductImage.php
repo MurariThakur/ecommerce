@@ -28,6 +28,10 @@ class ProductImage extends Model
      */
     public function getImageUrlAttribute()
     {
+        // Check if it's an external URL
+        if (filter_var($this->image_path, FILTER_VALIDATE_URL)) {
+            return $this->image_path;
+        }
         return asset('storage/' . $this->image_path);
     }
 
@@ -47,7 +51,8 @@ class ProductImage extends Model
         parent::boot();
 
         static::deleting(function ($productImage) {
-            if (Storage::disk('public')->exists($productImage->image_path)) {
+            // Only delete local files, not external URLs
+            if (!filter_var($productImage->image_path, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($productImage->image_path)) {
                 Storage::disk('public')->delete($productImage->image_path);
             }
         });

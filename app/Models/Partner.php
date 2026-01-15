@@ -19,4 +19,12 @@ class Partner extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function getLogoUrlAttribute()
+    {
+        if (filter_var($this->logo, FILTER_VALIDATE_URL)) {
+            return $this->logo;
+        }
+        return asset('storage/' . $this->logo);
+    }
 }
