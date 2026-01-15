@@ -66,7 +66,7 @@ class ReviewController extends Controller
             'review',
             'New Product Review',
             'New ' . $request->rating . '-star review for "' . $product->title . '" by ' . Auth::user()->name,
-            route('product.detail', $product->slug),
+            route('product.details', $product->slug),
             ['review_id' => $review->id, 'product_id' => $product->id, 'rating' => $request->rating],
             'fas fa-star',
             'info'

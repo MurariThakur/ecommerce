@@ -17,4 +17,12 @@ class Slider extends Model
     protected $casts = [
         'status' => 'boolean'
     ];
+
+    public function getImageUrlAttribute()
+    {
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        return asset('storage/' . $this->image);
+    }
 }

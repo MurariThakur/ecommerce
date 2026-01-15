@@ -36,7 +36,7 @@
 
                 <figure class="product-image-container ms-3">
                     <a href="{{ $item->attributes->url ?? '#' }}" class="product-image">
-                        <img src="{{ $item->attributes->image }}" alt="{{ $item->name }}" class="img-fluid"
+                        <img src="{{ filter_var($item->attributes->image, FILTER_VALIDATE_URL) ? $item->attributes->image : asset('storage/' . $item->attributes->image) }}" alt="{{ $item->name }}" class="img-fluid"
                             style="width: 50px;">
                     </a>
                 </figure>

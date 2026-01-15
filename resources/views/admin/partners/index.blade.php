@@ -95,7 +95,7 @@
                                         @forelse($partners as $partner)
                                             <tr>
                                                 <td>
-                                                    <img src="{{ asset('storage/' . $partner->logo) }}"
+                                                    <img src="{{ $partner->logo_url }}"
                                                         alt="{{ $partner->name }}" class="img-thumbnail"
                                                         style="width: 50px; height: 50px; object-fit: contain;">
                                                 </td>

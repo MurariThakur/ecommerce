@@ -25,7 +25,7 @@
                     <div class="col-lg-9">
                         <article class="entry single-entry">
                             <figure class="entry-media">
-                                <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/single/post-1.jpg') }}"
+                                <img src="{{ $blog->image_url }}"
                                     alt="{{ $blog->title }}">
                             </figure>
 
@@ -76,7 +76,7 @@
                                         <article class="entry entry-grid">
                                             <figure class="entry-media">
                                                 <a href="{{ route('frontend.blog.detail', $relatedBlog->slug) }}">
-                                                    <img src="{{ $relatedBlog->image ? asset('storage/' . $relatedBlog->image) : asset('frontend/assets/images/blog/grid/3cols/post-1.jpg') }}"
+                                                    <img src="{{ $relatedBlog->image_url }}"
                                                         alt="{{ $relatedBlog->title }}">
                                                 </a>
                                             </figure>
@@ -207,7 +207,7 @@
                                         <li>
                                             <figure>
                                                 <a href="{{ route('frontend.blog.detail', $recentBlog->slug) }}">
-                                                    <img src="{{ $recentBlog->image ? asset('storage/' . $recentBlog->image) : asset('frontend/assets/images/blog/sidebar/post-1.jpg') }}"
+                                                    <img src="{{ $recentBlog->image_url }}"
                                                         alt="{{ $recentBlog->title }}">
                                                 </a>
                                             </figure>

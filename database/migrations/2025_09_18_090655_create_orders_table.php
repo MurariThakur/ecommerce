@@ -45,7 +45,7 @@ return new class extends Migration {
                 'return_rejected',
                 'refund_processing',
                 'refunded'
-            ])->default('pending')->change();
+            ])->default('pending');
             $table->timestamp('expires_at')->nullable();
             $table->string('idempotency_token')->nullable()->unique();
             $table->timestamps();

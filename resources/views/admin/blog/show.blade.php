@@ -94,7 +94,7 @@
                                                     </h3>
                                                 </div>
                                                 <div class="card-body text-center">
-                                                    <img src="{{ asset('storage/' . $blog->image) }}"
+                                                    <img src="{{ $blog->image_url }}"
                                                         alt="{{ $blog->title }}" class="img-fluid"
                                                         style="max-width: 100%; height: auto;">
                                                 </div>

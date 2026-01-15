@@ -104,11 +104,12 @@ class PaymentController extends Controller
             return back()->with('success', $message);
         }
 
-        // Product image from storage
+        // Product image
         $image = null;
         if ($product->productImages->count() > 0) {
             $productImage = $product->productImages->first();
-            $image = asset('storage/' . $productImage->image_path);
+            // Use the image_url attribute which handles external URLs properly
+            $image = $productImage->image_url;
         }
 
         // Product URL

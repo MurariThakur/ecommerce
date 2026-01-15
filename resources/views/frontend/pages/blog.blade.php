@@ -39,7 +39,7 @@
                             <article class="entry entry-grid text-center">
                                 <figure class="entry-media">
                                     <a href="{{ route('frontend.blog.detail', $blog->slug) }}">
-                                        <img src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('frontend/assets/images/blog/grid/3cols/post-1.jpg') }}"
+                                        <img src="{{ $blog->image_url }}"
                                             alt="{{ $blog->title }}">
                                     </a>
                                 </figure><!-- End .entry-media -->

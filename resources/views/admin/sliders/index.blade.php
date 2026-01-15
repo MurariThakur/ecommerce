@@ -99,7 +99,7 @@
                                         @forelse($sliders as $slider)
                                             <tr>
                                                 <td>
-                                                    <img src="{{ asset('storage/' . $slider->image) }}"
+                                                    <img src="{{ $slider->image_url }}"
                                                         alt="{{ $slider->title }}" class="img-thumbnail"
                                                         style="width: 80px; height: 50px; object-fit: cover;">
                                                 </td>

@@ -36,8 +36,8 @@ return [
     ],
 
     'stripe' => [
-        'key' => \App\Models\Setting::get('stripe_public_key', ''),
-        'secret' => \App\Models\Setting::get('stripe_secret_key', ''),
+        'key' => \App\Helpers\SettingsHelper::get('stripe_public_key', env('STRIPE_KEY', '')),
+        'secret' => \App\Helpers\SettingsHelper::get('stripe_secret_key', env('STRIPE_SECRET', '')),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 

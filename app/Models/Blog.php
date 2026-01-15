@@ -68,4 +68,16 @@ class Blog extends Model
     {
         return $this->hasMany(BlogComment::class);
     }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return asset('frontend/assets/images/blog/grid/3cols/post-1.jpg');
+        }
+        
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        return asset('storage/' . $this->image);
+    }
 }

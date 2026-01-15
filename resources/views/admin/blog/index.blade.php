@@ -117,7 +117,7 @@
                                             <tr>
                                                 <td>
                                                     @if ($blog->image)
-                                                        <img src="{{ asset('storage/' . $blog->image) }}"
+                                                        <img src="{{ $blog->image_url }}"
                                                             alt="{{ $blog->title }}" class="img-thumbnail"
                                                             style="width: 50px; height: 50px; object-fit: cover;">
                                                     @else

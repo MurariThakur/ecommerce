@@ -113,7 +113,7 @@
                                             <tr>
                                                 <td>
                                                     @if ($category->image)
-                                                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
                                                     @else
                                                         <span class="text-muted">No Image</span>
                                                     @endif

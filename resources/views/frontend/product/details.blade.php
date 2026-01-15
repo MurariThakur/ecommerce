@@ -288,7 +288,7 @@
                                 </form>
 
 
-                                <div class="product-details-footer">
+                                {{-- <div class="product-details-footer">
                                     <div class="product-cat">
                                         <span>Category:</span>
                                         <a href="{{ url($category->slug) }}">{{ $category->name }}</a>,
@@ -310,7 +310,7 @@
                                         <a href="#" class="social-icon" title="Pinterest" target="_blank"><i
                                                 class="icon-pinterest"></i></a>
                                     </div>
-                                </div><!-- End .product-details-footer -->
+                                </div><!-- End .product-details-footer --> --}}
                             </div><!-- End .product-details -->
                         </div><!-- End .col-md-6 -->
                     </div><!-- End .row -->

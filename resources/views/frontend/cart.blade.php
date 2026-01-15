@@ -75,7 +75,7 @@
                                                     <div class="product d-flex align-items-center">
                                                         <figure class="product-media me-3">
                                                             <a href="{{ $item->attributes->url ?? '#' }}">
-                                                                <img src="{{ $item->attributes->image ?? 'assets/images/products/table/product-1.jpg' }}"
+                                                                <img src="{{ filter_var($item->attributes->image, FILTER_VALIDATE_URL) ? $item->attributes->image : asset('storage/' . $item->attributes->image) }}"
                                                                     alt="Product image">
                                                             </a>
                                                         </figure>
