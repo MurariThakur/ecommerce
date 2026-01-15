@@ -14,7 +14,18 @@ A comprehensive, feature-rich e-commerce platform built with **Laravel 12**
 
 ---
 
-### [🚀 Live Demo](#) • [📖 Documentation](#installation) • [🐛 Report Bug](#) • [💡 Request Feature](#)
+## 🎯 Quick Overview
+
+| Aspect | Details |
+|--------|---------|
+| 🏗️ **Architecture** | MVC with Service Layer |
+| 🔒 **Authentication** | Laravel Sanctum + Custom Auth |
+| 💾 **Database** | MySQL 8.0+ with Eloquent ORM |
+| 🎨 **Frontend** | Bootstrap 5 + Blade Templates |
+| 📦 **Package Manager** | Composer + NPM |
+| 🚀 **Build Tool** | Vite |
+| 💳 **Payments** | PayPal, Stripe, Cash on Delivery |
+| 📧 **Email** | SMTP, Mailgun, SES Support |
 
 </div>
 
@@ -69,7 +80,26 @@ A comprehensive, feature-rich e-commerce platform built with **Laravel 12**
 
 ---
 
-## 🛠️ Tech Stack
+## � Feature Comparison
+
+| Feature | Customer | Admin |
+|---------|----------|-------|
+| 🛍️ Browse Products | ✅ | ✅ |
+| 🔍 Advanced Search | ✅ | ✅ |
+| 🛒 Shopping Cart | ✅ | ❌ |
+| ❤️ Wishlist | ✅ | ❌ |
+| 👤 User Profile | ✅ | ✅ |
+| 📦 Order Management | ✅ | ✅ |
+| 💬 Reviews & Ratings | ✅ | ✅ |
+| 💳 Payments | ✅ | ❌ |
+| 📊 Analytics & Reports | ❌ | ✅ |
+| 🎛️ Dynamic Control | ❌ | ✅ |
+| 📧 Email Notifications | ✅ | ✅ |
+| 📱 Responsive Design | ✅ | ✅ |
+
+---
+
+## �🛠️ Tech Stack
 
 ### **Backend**
 <div align="left">
