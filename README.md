@@ -1,16 +1,20 @@
-# 🛒 Laravel E-Commerce Platform
-
 <div align="center">
 
-![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+# 🛍️ E-Commerce Platform
 
-**A comprehensive, feature-rich e-commerce platform built with Laravel 12**
+## Powered by Laravel
 
-[🚀 Live Demo](#) • [📖 Documentation](#installation) • [🐛 Report Bug](#) • [💡 Request Feature](#)
+A comprehensive, feature-rich e-commerce platform built with **Laravel 12**
+
+![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-7952B3?style=flat-square&logo=bootstrap&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+
+---
+
+### [🚀 Live Demo](#) • [📖 Documentation](#installation) • [🐛 Report Bug](#) • [💡 Request Feature](#)
 
 </div>
 
